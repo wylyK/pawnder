@@ -1,3 +1,7 @@
+"""
+Entrypoint to Flask backend server
+"""
+
 from flask import Flask
 
 app = Flask(__name__)
