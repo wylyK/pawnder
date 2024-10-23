@@ -27,6 +27,7 @@ def create_user():
     lname = data['LName']
     password = data['Password']
     username = data['Username']
+    role = data['Role']
 
     # Create user with Firebase Authentication
     try:
@@ -42,9 +43,33 @@ def create_user():
             "Contact": contact,
             "FirstName": fname,
             "LastName": lname,
-            "Username": username
+            "ID": user_id,
+            "Username": username,
+            "Role": role
         }
         user_ref.set(user_profile_data)
         return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# DELETE a user by ID
+@users_api.delete('/users/<user_id>')
+def delete_user_by_id(user_id):
+    # Delete user from Firebase Authentication
+    try:
+        auth.delete_user(user_id)
+    except Exception as e:
+        return jsonify({"error": f"Error deleting user in Firebase Auth: {str(e)}"}), 500
+
+    # Delete user profile data from Firestore
+    user_ref = user_db.collection("USER").document(user_id)
+    user_doc = user_ref.get()
+
+    if user_doc.exists:
+        try:
+            user_ref.delete()
+            return jsonify({"message": f"User {user_id} deleted successfully"}), 200
+        except Exception as e:
+            return jsonify({"error": f"Error deleting user profile: {str(e)}"}), 500
+    else:
+        return jsonify({"error": "User not found"}), 404
