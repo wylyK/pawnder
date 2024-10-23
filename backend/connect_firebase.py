@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class SasFirebase:
+class PawnderFirebase:
     def __init__(self):
         self.firebaseConfig = {
             "apiKey": os.environ.get("FIREBASE_API_KEY"),
