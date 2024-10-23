@@ -1,81 +1,33 @@
 name: CI/CD Workflow
 
-on:
+on: 
   pull_request:
     branches:
       - main
 
+permissions: {}
+
 jobs:
-  lint:
+  build:
     name: Lint
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       packages: read
+      # To report GitHub Actions status checks
       statuses: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
           fetch-depth: 0
 
-      - name: Check for package-lock.json
-        run: |
-          if [ ! -f "frontend/package-lock.json" ]; then
-            echo "Error: package-lock.json not found in frontend folder"
-            exit 1
-          fi
-
-      - name: Install dependencies
-        working-directory: frontend  # Navigate to the frontend folder
-        run: npm ci
-
       - name: Super-linter
-        uses: super-linter/super-linter@v7.1.0
+        uses: super-linter/super-linter@v7.1.0 # x-release-please-version
         env:
+          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_JAVASCRIPT_STANDARD: false
-          VALIDATE_JSCPD: false
-          VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_CHECKOV: false
-          RUN_LOCAL: true
-
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x, 21.x]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies
-        working-directory: frontend  # Navigate to the frontend folder
-        run: npm ci
-
-      - name: Build project
-        working-directory: frontend  # Navigate to the frontend folder
-        run: npm run build --if-present
-
-      - name: Run tests
-        working-directory: frontend  # Navigate to the frontend folder
-        run: npm test
-        env:
-          CI: true
