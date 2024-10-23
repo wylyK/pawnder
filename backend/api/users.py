@@ -41,8 +41,8 @@ def create_user():
         user_ref = user_db.collection("USER").document(user_id)
         user_profile_data = {
             "Contact": contact,
-            "FirstName": fname,
-            "LastName": lname,
+            "FName": fname,
+            "LName": lname,
             "ID": user_id,
             "Username": username,
             "Role": role
@@ -51,6 +51,22 @@ def create_user():
         return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# PUT update user profile data by ID
+@users_api.put('/users/<user_id>')
+def update_user_by_id(user_id):
+    data = request.json
+    user_ref = user_db.collection("USER").document(user_id)
+    user_doc = user_ref.get()
+
+    if user_doc.exists:
+        try:
+            user_ref.update(data)
+            return jsonify({"message": f"User {user_id} updated successfully"}), 200
+        except Exception as e:
+            return jsonify({"error": f"Error updating user: {str(e)}"}), 500
+    else:
+        return jsonify({"error": "User not found"}), 404
     
 # DELETE a user by ID
 @users_api.delete('/users/<user_id>')
