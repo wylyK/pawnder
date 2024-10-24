@@ -1,13 +1,18 @@
-import firebase_admin
-from firebase_admin import credentials
+"""
+Handles Firebase connection for the Pawnder app.
+"""
+
 import os
 from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials
 
 load_dotenv()
 
 class PawnderFirebase:
+    """Initializes the Firebase connection using environment variables."""
     def __init__(self):
-        self.firebaseConfig = {
+        self.firebase_config = {
             "apiKey": os.environ.get("FIREBASE_API_KEY"),
             "authDomain": os.environ.get("FIREBASE_AUTH_DOMAIN"),
             "databaseURL": "",
@@ -19,3 +24,4 @@ class PawnderFirebase:
 
         if not firebase_admin._apps:
             firebase_admin.initialize_app(cred)
+

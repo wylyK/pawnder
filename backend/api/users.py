@@ -89,3 +89,5 @@ def delete_user_by_id(user_id):
             return jsonify({"error": f"Error deleting user profile: {str(e)}"}), 500
     else:
         return jsonify({"error": "User not found"}), 404
+    
+    
