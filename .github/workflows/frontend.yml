@@ -1,7 +1,8 @@
+---
 name: Frontend CI
 
 on: # yamllint disable-line rule:truthy
-  push: 
+  push:
     branches:
       - main
   pull_request:
