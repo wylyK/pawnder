@@ -1,5 +1,5 @@
-import React from 'react';
-import NavBar from '../components/Navigation/NavBar'; 
+import React from "react";
+import NavBar from "../components/Navigation/NavBar";
 
 export default function Home() {
   return (
@@ -13,12 +13,12 @@ export default function Home() {
 }
 
 const containerStyle = {
-  display: 'flex', // Flexbox to place NavBar and main content side by side
-  height: '100vh', // Full viewport height
+  display: "flex", // Flexbox to place NavBar and main content side by side
+  height: "100vh", // Full viewport height
 };
 
 const mainStyle = {
-  marginLeft: '80px',
-  padding: '20px',
-  width: '100%',
+  marginLeft: "80px",
+  padding: "20px",
+  width: "100%",
 };
