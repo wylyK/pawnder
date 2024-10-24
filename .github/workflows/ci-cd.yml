@@ -15,23 +15,24 @@ jobs:
     permissions:
       contents: read
       packages: read
-      # To report GitHub Actions status checks
       statuses: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
           fetch-depth: 0
 
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install # or yarn install, if you are using Yarn
+
+      # Run Super-linter
       - name: Super-linter
-        uses: super-linter/super-linter@v7.1.0 # x-release-please-version
+        uses: super-linter/super-linter@v7.1.0
         env:
-          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_WORKSPACE: frontend # The default workspace to run in
+          DEFAULT_WORKSPACE: frontend
           VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_JSCPD: false
           VALIDATE_TYPESCRIPT_STANDARD: false
@@ -45,3 +46,4 @@ jobs:
           VALIDATE_PYTHON_PYLINT: false
           VALIDATE_PYTHON_MYPY: false
           VALIDATE_PYTHON_PYINK: false
+

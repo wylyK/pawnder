@@ -1,10 +1,10 @@
-import React from "react";
 import Link from "next/link";
-import { MdOutlineHome } from "react-icons/md";
-import { IoMdNotificationsOutline } from "react-icons/io";
+import React from "react";
 import { CiCalendar } from "react-icons/ci";
-import { PiPawPrint } from "react-icons/pi";
 import { FaRegUser } from "react-icons/fa";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import { MdOutlineHome } from "react-icons/md";
+import { PiPawPrint } from "react-icons/pi";
 import styles from "./NavBar.module.css";
 
 const NavBar: React.FC = () => {
