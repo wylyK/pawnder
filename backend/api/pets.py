@@ -7,6 +7,17 @@ pets_api = Blueprint('pets_api', __name__)
 pawnder_firebase = PawnderFirebase()
 pet_db = firestore.client()
 
+# GET all pet profiles
+@pets_api.get('/pets')
+def get_all_pets():
+    pets_ref = pet_db.collection("PET")
+    pets_docs = pets_ref.stream()
+    try:
+        pets = {pet.id: pet.to_dict() for pet in pets_docs}
+        return jsonify(pets), 200
+    except Exception as e:
+        return jsonify({"error": f"Error getting pets: {str(e)}"}), 500
+
 # GET pet profile by ID
 @pets_api.get('/pets/<pet_id>')
 def get_pet_by_id(pet_id):
@@ -18,7 +29,7 @@ def get_pet_by_id(pet_id):
     else:
         return jsonify({"error": "Pet not found"}), 404
     
-# POST create new pet profile
+# POST create new pet profile with basic information
 @pets_api.post('/pets/create')
 def create_pet():
     data = request.json
