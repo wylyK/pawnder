@@ -1,0 +1,41 @@
+/* components/PetOverview.module.css */
+.card {
+  background-color: #fff;
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  overflow: hidden; /* Ensure the image stays within the border */
+  text-align: left; /* Center content */
+  width: 300px; /* Adjust the width as needed */
+  margin: 20px;
+  transition: transform 0.2s; /* Smooth hover animation */
+}
+
+.card:hover {
+  transform: scale(1.05); /* Zoom effect on hover */
+}
+
+.card img {
+  width: 100%; /* Make the image fill the card width */
+  height: 250px;
+  object-fit: cover;
+  border-radius: 15px;
+   /* Crop image to fit */
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 5px 0 0px 0;
+}
+
+.card-subtitle {
+  color: #777;
+  font-size: 1rem;
+  margin: 0px 0 7px 0;
+}
+
+  
