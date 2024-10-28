@@ -1,5 +1,6 @@
 // components/PetOverview.tsx
 import React from "react";
+import { AiOutlinePlus } from "react-icons/ai"; // Importing Plus icon
 import styles from "./PetOverview.module.css";
 
 interface Pet {
@@ -12,12 +13,12 @@ const pets: Pet[] = [
   {
     name: "Cookie",
     breed: "Samoyed",
-    image: "/retriever.jpeg", // Use public folder for images
+    image: "/doggo.JPG",
   },
   {
     name: "Spike",
     breed: "Maine Coon",
-    image: "/catto.jpeg",
+    image: "/catto2.webp",
   },
 ];
 
@@ -33,6 +34,11 @@ const PetOverview: React.FC = () => {
           </div>
         </div>
       ))}
+      {/* Add Pet Card */}
+      <div className={`${styles.card} ${styles.addCard}`}>
+        <AiOutlinePlus size={50} color="#555" />
+        <p className={styles["add-pet-text"]}>Add Pet</p>
+      </div>
     </div>
   );
 };
