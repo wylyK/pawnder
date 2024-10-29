@@ -1,0 +1,40 @@
+/* NavBar.module.css */
+.nav {
+  background-color: #ffc297;
+  height: 100vh;
+  width: 80px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.li {
+  margin: 40px 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.link {
+  color: #ff7578;
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: #eb4335;
+}
