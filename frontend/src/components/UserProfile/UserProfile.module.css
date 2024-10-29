@@ -1,10 +1,10 @@
-.profileInfo {
+.profile-info {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.profilePic {
+.profile-pic {
   position: relative;
   margin-bottom: 1.5rem;
 }
@@ -16,7 +16,7 @@
   object-fit: cover;
 }
 
-.editIcon {
+.edit-icon {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -26,21 +26,21 @@
   cursor: pointer;
 }
 
-.profileForm {
+.profile-form {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.profileForm label {
+.profile-form label {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
   font-size: 1rem;
 }
 
-.profileForm input,
-.profileForm select {
+.profile-form input,
+.profile-form select {
   flex: 1;
   padding: 0.5rem;
   margin-left: 1rem;
@@ -48,7 +48,7 @@
   border-radius: 5px;
 }
 
-.editButton {
+.edit-button {
   background-color: #ff7578;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -58,6 +58,6 @@
   font-size: 1rem;
 }
 
-.editButton:hover {
+.edit-button:hover {
   background-color: #e91e63;
 }
