@@ -4,8 +4,6 @@ from connect_firebase import PawnderFirebase
 from dotenv import load_dotenv
 import os
 import requests
-from functools import wraps
-from datetime import datetime
 
 users_api = Blueprint('users_api', __name__)
 pawnder_firebase = PawnderFirebase()
