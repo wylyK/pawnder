@@ -1,0 +1,7 @@
+@import url("tailwindcss/base");
+@import url("tailwindcss/components");
+@import url("tailwindcss/utilities");
+
+body {
+  background-color: #ffddd2;
+}
