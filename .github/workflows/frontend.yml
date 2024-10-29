@@ -49,3 +49,4 @@ jobs:
           VALIDATE_JSON: false
           VALIDATE_TSX: false
           VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_CSS: false
