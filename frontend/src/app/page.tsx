@@ -1,6 +1,7 @@
 import React, { CSSProperties } from "react";
 import NavBar from "../components/Navigation/NavBar";
 import PetOverview from "../components/PetOverview/PetOverview";
+import Reminders from "@/components/Reminder/Reminders";
 
 // Home page component
 const Page: React.FC = () => {
@@ -13,6 +14,7 @@ const Page: React.FC = () => {
           <PetOverview />
         </div>
       </main>
+      <Reminders/>
     </div>
   );
 };
