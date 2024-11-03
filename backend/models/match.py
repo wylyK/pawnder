@@ -31,6 +31,3 @@ class Match:
         return(
             f"Match(myPetID={self.myPetID}, petID={self.petID}, status={self.status})"
         )
-    
-    def set_status_to_match(self):
-        self.status = Status.MATCHED.value
