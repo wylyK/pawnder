@@ -1,11 +1,10 @@
 class Pet:
-    def __init__(self, name, age, breed, avatar, location, description, weight, drug, diet, userId, petID=""):
-        self.petId = petID
+    def __init__(self, name, age, breed, type, avatar, description, weight, drug, diet, userId):
         self.name = name
         self.age = age
         self.breed = breed
+        self.type = type
         self.avatar = avatar
-        self.location = location
         self.description = description
         self.weight = weight
         self.drug = drug
@@ -14,7 +13,7 @@ class Pet:
 
     @staticmethod
     def from_dict(source):
-        pet = Pet(source['petId'], source['name'], source['age'], source['breed'], source['avatar'], source['location'], source['description'], source['userId'])
+        pet = Pet(source['petId'], source['name'], source['age'], source['breed'], source['type'], source['avatar'], source['description'], source['userId'])
         if 'weight' in source:
             pet.weight = source['weight']
         if 'drug' in source:
@@ -28,8 +27,8 @@ class Pet:
             'name': self.name,
             'age': self.age,
             'breed': self.breed,
+            'type': self.type,
             'avatar': self.avatar,
-            'location': self.location,
             'description': self.description,
             'userId': self.userId
         }
