@@ -1,13 +1,13 @@
 class User:
-    def __init__(self, FName, LName, email, location, role, PetId, avatar, userId=""):
-        self.Id = userId
+    def __init__(self, FName, LName, Email, Location, Role, PetId, Avatar, Id=""):
+        self.Id = Id
         self.FName = FName
         self.LName = LName
-        self.email = email
-        self.location = location
-        self.role = role
+        self.Email = Email
+        self.Location = Location
+        self.Role = Role
         self.PetId = PetId
-        self.avatar = avatar
+        self.Avatar = Avatar
         
     def from_dict(source):
         user = User( 
@@ -28,10 +28,10 @@ class User:
             'Id': self.Id,
             'FName': self.FName,
             'LName': self.LName,
-            'Email': self.email,
-            'Avatar': self.avatar,
-            'Location': self.location,
-            'Role': self.role
+            'Email': self.Email,
+            'Avatar': self.Avatar,
+            'Location': self.Location,
+            'Role': self.Role
         }
         if self.PetId: 
             user['PetId'] = self.PetId
@@ -39,7 +39,7 @@ class User:
     
     def __repr__(self):
         return (
-            f"User(FName={self.FName}, LName={self.LName}, Email={self.email}, "
-            f"Avatar={self.avatar}, Location={self.location}, Role={self.role}, "
-            f"PetId={self.PetId}), "
+            f"User(FName={self.FName}, LName={self.LName}, Email={self.Email}, "
+            f"Avatar={self.Avatar}, Location={self.Location}, Role={self.Role}, "
+            f"PetId={self.PetId}), Id={self.Id}"
         )

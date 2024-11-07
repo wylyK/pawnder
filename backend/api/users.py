@@ -94,13 +94,12 @@ def get_user_by_id(user_id):
 @users_api.post('/users')
 def create_user():
     data = request.json
-    print(data)
     create = User.from_dict(data)
     password = data['Password']
     
     # Create user with Firebase Authentication
     try:
-        user = auth.create_user(email=create.email, password=password)
+        user = auth.create_user(email=create.Email, password=password)
         user_id = user.uid
     except Exception as e:
         return jsonify({"error": str(e)}), 400
