@@ -5,29 +5,29 @@ class Status(Enum):
     MATCHED = "matched"
 
 class Match:
-    def __init__(self, myPetID, petID, status=Status.PENDING.value):
-        self.myPetID = myPetID
-        self.petID = petID
-        self.status = status
+    def __init__(self, PetId, Status=Status.PENDING.value):
+        self.PetId = PetId
+        self.Status = Status
 
     @staticmethod
     def from_dict(source):
-        match = Match(source['myPetID'], source['petID'])
-        if 'status' in source:
-            match.status = source['status']
+        if 'PetId' not in source:
+            raise ValueError("PetId is missing in the provided data.")
+        match = Match(source['PetId'])
+        if 'Status' in source:
+            match.Status = source['Status']
         else:
-            match.status = Status.PENDING.value
+            match.Status = Status.PENDING.value
         return match
     
     def to_dict(self):
         match = {
-            'myPetID': self.myPetID,
-            'petID': self.petID,
-            'status': self.status,
+            'PetId': self.PetId,
+            'Status': self.Status,
         }
         return match
     
     def __repr__(self):
         return(
-            f"Match(myPetID={self.myPetID}, petID={self.petID}, status={self.status})"
+            f"Match(PetId={self.PetId}, Status={self.Status})"
         )

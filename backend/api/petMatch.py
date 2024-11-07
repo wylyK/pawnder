@@ -9,73 +9,125 @@ pawnder_firebase = PawnderFirebase()
 db = firestore.client()
 pet_db = db.collection("PET")
 
-# Match with a pet
-@pet_match_api.post('/match')
-def match():
+# Send a match request to a pet
+@pet_match_api.post('/pets/<petId>/matches')
+def match(petId):
     data = request.json
-    match = Match.from_dict(data)
+    otherPetId = Match.from_dict(data).PetId
+    match_data = Match(petId)
 
     try:
-        pet_doc_ref = pet_db.document(match.myPetID)
-        pet_doc_ref.collection("MATCH").add(match.to_dict())
-        return jsonify({"message": f"Match successfully with pet of petID {match.petID}"}), 201
+        pet_doc_ref = pet_db.document(otherPetId)
+        pet_doc_ref.collection("MATCH").add(match_data.to_dict())
+        return jsonify({"message": f"Match successfully with pet of PetID {otherPetId}"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+        
+   
+# Get all the ID of pets with different match status with my pet 
+# /pets/<petID>/matches?status=matched
+# /pets/<petID>/matches?status=pending
+@pet_match_api.get('/pets/<petId>/matches')
+def get_all_matched(petId):
+    status = request.args.get('status') 
+    if status == Status.MATCHED.value:
+        try:
+            pet_doc_ref = pet_db.document(petId)
+            match_collection = pet_doc_ref.collection("MATCH")
 
-# Unmatch with a pet
-@pet_match_api.delete('/unmatch')
-def unmatch():
+            matched_docs = match_collection.where("Status", "==", Status.MATCHED.value).get()
+            matched_pet_ids = [match.PetId for doc in matched_docs if (match := Match.from_dict(doc.to_dict()))]
+
+            return jsonify(matched_pet_ids if matched_pet_ids else None), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        try:
+            pet_doc_ref = pet_db.document(petId)
+            match_collection = pet_doc_ref.collection("MATCH")
+
+            pending_docs = match_collection.where("Status", "==", Status.PENDING.value).get()
+            pending_pet_ids = [match.PetId for doc in pending_docs if (match := Match.from_dict(doc.to_dict()))]
+
+            return jsonify(pending_pet_ids if pending_pet_ids else None), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    
+
+# /pets/<petId>/matches?action=accept Accept a pending match request
+@pet_match_api.put('/pets/<petId>/matches')
+def accept_pending_match(petId):
     data = request.json
-    match = Match.from_dict(data)
+    otherPetId = Match.from_dict(data).PetId
+    action = request.args.get("action", "accept")
 
+    if action == "accept":
+        try:
+            # Update my pet status with other pet to matched
+            update_match_data = Match(otherPetId, Status.MATCHED.value)
+            my_pet_doc_ref = pet_db.document(petId)
+            match_collection = my_pet_doc_ref.collection("MATCH")
+            
+            match_doc_ref = match_collection.where("PetId", "==", otherPetId).get()[0].reference
+            match_doc_ref.update(update_match_data.to_dict())
+
+            # Create an entry in other pet MATCH collection
+            match_data = Match(petId, Status.MATCHED.value)
+            other_pet_doc_ref = pet_db.document(otherPetId)
+            match_collection = other_pet_doc_ref.collection("MATCH").add(match_data.to_dict())
+            return jsonify({"message": f"Match status updated to 'matched' with petID {otherPetId}"}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Invalid action specified"}), 400
+
+
+# Heler function to unmatch pet
+def unmatch_pet(petId, otherPetId):
     try:
-        pet_doc_ref = pet_db.document(match.myPetID)
+        other_pet_doc_ref = pet_db.document(otherPetId)
+        other_match_collection = other_pet_doc_ref.collection("MATCH")
+        other_match_doc_ref = other_match_collection.where("PetId", "==", petId).get()[0].reference
+        
+        # If the request is matched -> Need to delete the entry in my pet MATCH table as well
+        if Match.from_dict(other_match_doc_ref.get().to_dict()).Status == Status.MATCHED.value:
+            pet_doc_ref = pet_db.document(petId)
+            match_collection = pet_doc_ref.collection("MATCH")
+            match_doc_ref = match_collection.where("PetId", "==", otherPetId).get()[0].reference
+            match_doc_ref.delete()
+        
+        # Delete Match entry in other pet MATCH table 
+        other_match_doc_ref.delete()
+
+        return jsonify({"message": f"Unmatch successfully with pet of petId {otherPetId}"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+# Helper function to reject pet
+def reject_pet(petId, otherPetId):
+    try:
+        pet_doc_ref = pet_db.document(petId)
         match_collection = pet_doc_ref.collection("MATCH")
-        match_doc_ref = match_collection.where("petID", "==", match.petID).get()[0].reference
+        match_doc_ref = match_collection.where("PetId", "==", otherPetId).get()[0].reference
         match_doc_ref.delete()
-        return jsonify({"message": f"Unmatch successfully with pet of petID {match.petID}"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-# Get all the ID of pets that have matched status with petID
-@pet_match_api.get('/match/<myPetID>')
-def get_all_matched(myPetID):
-    try:
-        pet_doc_ref = pet_db.document(myPetID)
-        match_collection = pet_doc_ref.collection("MATCH")
 
-        matched_docs = match_collection.where("status", "==", Status.MATCHED.value).get()
-        matched_pet_ids = [match.petID for doc in matched_docs if (match := Match.from_dict(doc.to_dict()))]
-
-        return jsonify(matched_pet_ids if matched_pet_ids else None), 200
+        return jsonify({"message": f"Reject pet with petId {otherPetId}"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Get all the ID of pets that have pending status with petID
-@pet_match_api.get('/match/pending/<myPetID>')
-def get_all_pending(myPetID):
-    try:
-        pet_doc_ref = pet_db.document(myPetID)
-        match_collection = pet_doc_ref.collection("MATCH")
 
-        pending_docs = match_collection.where("status", "==", Status.PENDING.value).get()
-        pending_pet_ids = [match.petID for doc in pending_docs if (match := Match.from_dict(doc.to_dict()))]
-
-        return jsonify(pending_pet_ids if pending_pet_ids else None), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-# Accept a pending match request
-@pet_match_api.put('/match/pending')
-def accept_pending_match():
+# /pets/<petId>/matches?action=unmatch Unmatch with a pet that we have matched with or have sent a request
+# /pets/<petId>/matches?action=reject  Reject a matching request from another pet
+@pet_match_api.delete('/pets/<petId>/matches')
+def unmatch(petId):
     data = request.json
-    match = Match.from_dict(data)
+    otherPetId = Match.from_dict(data).PetId
+    action = request.args.get("action")
 
-    try:
-        pet_doc_ref = pet_db.document(match.myPetID)
-        match_collection = pet_doc_ref.collection("MATCH")
-        match_doc_ref = match_collection.where("petID", "==", match.petID).get()[0].reference
-        match_doc_ref.update({"status": Status.MATCHED.value})
-        return jsonify({"message": f"Match status updated to 'matched' with petID {match.petID}"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    if action == "unmatch":
+        return unmatch_pet(petId, otherPetId)
+    elif action == "reject":
+        return reject_pet(petId, otherPetId)
+    else:
+        return jsonify({"error": "Invalid action specified"}), 400
