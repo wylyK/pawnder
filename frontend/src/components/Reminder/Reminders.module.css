@@ -1,7 +1,7 @@
 .reminders {
     background: white;
     width: 100vw;
-    height: 275px;
+    height: 35vh;
     position: fixed;
     right: 0;
     bottom: 0;
@@ -10,7 +10,6 @@
     justify-content: left;
     align-items: center;
     font-size: 1.1rem;
-    z-index: -1;
 }
 
 .addReminder {
@@ -20,8 +19,8 @@
     box-shadow: 0 8px 5px #e0dcdc;
     color: #575252;
     cursor: pointer;
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 60%;
     margin: 0px 20px 0px 150px;
     display: flex;
     flex-direction: column;
@@ -43,7 +42,7 @@
     box-sizing: border-box;
     overflow: hidden;
     width: 280px;
-    height: 140px;
+    height: 60%;
     margin: 0px 20px;
     padding: 0px 20px 20px 20px;
     display: flex;
