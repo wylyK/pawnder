@@ -2,8 +2,7 @@ from backend.models.health import Health
 from backend.models.match import Match
 from backend.models.event import Event
 class Pet:
-    def __init__(self, Name, Age, Breed, Type, Avatar, UserID, Description="", Tag=[], HealthRecords=[], MatchRecords=[], EventRecords=[], ID=""):
-        self.ID = ID
+    def __init__(self, Name, Age, Breed, Type, Avatar, UserId, Description="", Tag=[], HealthRecords=[], MatchRecords=[], EventRecords=[]):
         self.Name = Name
         self.Age = Age
         self.Breed = Breed
@@ -11,7 +10,7 @@ class Pet:
         self.Avatar = Avatar
         self.Description = Description
         self.Tag = Tag
-        self.UserID = UserID
+        self.UserId = UserId
         self.HealthRecords = HealthRecords
         self.MatchRecords = MatchRecords
         self.EventRecords = EventRecords
@@ -24,25 +23,23 @@ class Pet:
             source['Breed'],
             source['Type'],
             source['Avatar'],
-            source.get('UserID', ""),
+            source.get('UserId', ""),
             source.get('Description', ""),
             source.get('Tag', []),
             [Health.from_dict(health) for health in source.get('HealthRecords', [])],
             [Match.from_dict(match) for match in source.get('MatchRecords', [])],
             [Event.from_dict(event) for event in source.get('EventRecords', [])],
-            source.get('ID', "")
         )
         return pet
 
     def to_dict(self):
         pet = {
-            'ID': self.ID,
             'Name': self.Name,
             'Age': self.Age,
             'Breed': self.Breed,
             'Type': self.Type,
             'Avatar': self.Avatar,
-            'UserID': self.UserID,
+            'UserId': self.UserId,
             'Description': self.Description,
             'Tag': self.Tag,
             'HealthRecords': [health.to_dict() for health in self.HealthRecords],
@@ -54,7 +51,7 @@ class Pet:
     def __repr__(self):
         return (
             f"Pet(Name={self.Name}, Age={self.Age}, Breed={self.Breed}, "
-            f"Avatar={self.Avatar}, Description={self.Description}, UserID={self.UserID}, "
+            f"Avatar={self.Avatar}, Description={self.Description}, UserId={self.UserId}, "
             f"HealthRecords={self.HealthRecords}, MatchRecords={self.MatchRecords}, "
             f"EventRecords={self.EventRecords})"
         )
