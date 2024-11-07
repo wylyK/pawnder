@@ -1,6 +1,8 @@
 // components/PetOverview.tsx
+"use client";
+
 import React from "react";
-import { AiOutlinePlus } from "react-icons/ai"; // Importing Plus icon
+import { AiOutlinePlus } from "react-icons/ai";
 import styles from "./PetOverview.module.css";
 
 interface Pet {
@@ -10,21 +12,16 @@ interface Pet {
 }
 
 const pets: Pet[] = [
-  {
-    name: "Cookie",
-    breed: "Samoyed",
-    image: "/doggo.JPG",
-  },
-  {
-    name: "Spike",
-    breed: "Maine Coon",
-    image: "/catto2.webp",
-  },
+  { name: "Fionn", breed: "Irish Settler + Golden Retriever", image: "/doggo.JPG" },
+  { name: "Spike", breed: "Maine Coon", image: "/catto2.webp" },
+  { name: "Luna", breed: "Golden Retriever", image: "/retriever.jpeg" },
+  { name: "Max", breed: "Labrador", image: "/dog2.avif" },
+  { name: "Bella", breed: "Pomeranian", image: "/catto.jpeg" },
 ];
 
-const PetOverview: React.FC = () => {
-  return (
-    <div style={gridStyle}>
+const PetOverview: React.FC = () => (
+  <div className={styles.wrapper}>
+    <div className={styles.grid}>
       {pets.map((pet, index) => (
         <div key={index} className={styles.card}>
           <img src={pet.image} alt={pet.name} />
@@ -34,21 +31,12 @@ const PetOverview: React.FC = () => {
           </div>
         </div>
       ))}
-      {/* Add Pet Card */}
       <div className={`${styles.card} ${styles.addCard}`}>
         <AiOutlinePlus size={50} color="#555" />
-        <p className={styles["add-pet-text"]}>Add Pet</p>
+        <p>Add Pet</p>
       </div>
     </div>
-  );
-};
-
-const gridStyle: React.CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "20px",
-  justifyContent: "center",
-  marginTop: "20px",
-};
+  </div>
+);
 
 export default PetOverview;

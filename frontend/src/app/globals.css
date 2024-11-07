@@ -3,3 +3,9 @@ body {
   font-family: 'Open Sans', sans-serif;
   color: #575252;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  width: 100%;
+}

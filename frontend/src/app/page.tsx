@@ -1,14 +1,21 @@
 import React, { CSSProperties } from "react";
 import NavBar from "../components/Navigation/NavBar";
 import PetOverview from "../components/PetOverview/PetOverview";
+import { FaPaw } from "react-icons/fa"; // Import paw icon
 
-// Home page component
 const Page: React.FC = () => {
   return (
     <div style={containerStyle}>
       <NavBar />
       <main style={mainStyle}>
-        <h1 style={headingStyle}> Your Pets</h1>
+        {/* Header section with logo */}
+        <div style={headerStyle}>
+          <h1 style={headingStyle}>Your Pets</h1>
+          <div style={logoStyle}>
+            <FaPaw size={30} color="#555" style={{ marginRight: "8px" }} />
+            <span style={titleStyle}>Pawnder</span>
+          </div>
+        </div>
         <div style={cardContainerStyle}>
           <PetOverview />
         </div>
@@ -21,12 +28,41 @@ const Page: React.FC = () => {
 const containerStyle: CSSProperties = {
   display: "flex",
   height: "100vh",
+  overflowX: "hidden",
+  width: "100%",
 };
 
 const mainStyle: CSSProperties = {
   marginLeft: "80px",
   padding: "20px",
-  width: "100%",
+  width: "calc(100% - 80px)",
+};
+
+const headerStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "10px",
+  paddingRight: "30px",
+};
+
+const headingStyle: CSSProperties = {
+  fontSize: "3rem",
+  fontWeight: 550,
+  marginBottom: "0px",
+  marginLeft: "30px",
+};
+
+const logoStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+};
+
+const titleStyle: CSSProperties = {
+  fontSize: "1.5rem",
+  fontWeight: "bold",
+  color: "#555",
+  marginRight: "20px"
 };
 
 const cardContainerStyle: CSSProperties = {
@@ -34,13 +70,8 @@ const cardContainerStyle: CSSProperties = {
   flexWrap: "wrap",
   gap: "20px",
   marginTop: "20px",
+  overflowX: "auto", // Allow horizontal scrolling for pets
+  width: "100%", // Ensure it fills the width
 };
-
-const headingStyle: CSSProperties = {
-  fontSize: "2rem", // Adjust size as needed
-  fontWeight: "bold",
-  marginBottom: "20px",
-};
-
 
 export default Page;
