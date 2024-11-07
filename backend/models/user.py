@@ -1,5 +1,5 @@
 class User:
-    def __init__(self, FName, LName, Email, Location, Role, PetId, Avatar, Id=""):
+    def __init__(self, FName, LName, Email, Location, Role, PetId = [], Avatar = "", Id=""):
         self.Id = Id
         self.FName = FName
         self.LName = LName
@@ -25,16 +25,18 @@ class User:
     
     def to_dict(self):
         user = {
-            'Id': self.Id,
             'FName': self.FName,
             'LName': self.LName,
             'Email': self.Email,
-            'Avatar': self.Avatar,
             'Location': self.Location,
             'Role': self.Role
         }
+        if self.Id:
+            user['Id'] = self.Id
         if self.PetId: 
             user['PetId'] = self.PetId
+        if self.Avatar:
+            user['Avatar'] = self.Avatar
         return user
     
     def __repr__(self):
