@@ -13,45 +13,66 @@ def get_all_pets():
     pets_ref = pet_db.collection("PET")
     pets_docs = pets_ref.stream()
     try:
-        pets = {pet.id: pet.to_dict() for pet in pets_docs}
+        pets = {}
+        for pet in pets_docs:
+            pet_data = pet.to_dict()
+            pet_data['MatchRecords'] = [
+                match.to_dict() for match in pet.reference.collection("MATCH").stream()
+            ]
+            pet_data['HealthRecords'] = [
+                record.to_dict() for record in pet.reference.collection("HEALTH").stream()
+            ]
+            pet_data['EventRecords'] = [
+                event.to_dict() for event in pet.reference.collection("EVENT").stream()
+            ]
+            pets[pet.id] = pet_data
         return jsonify(pets), 200
     except Exception as e:
         return jsonify({"error": f"Error getting pets: {str(e)}"}), 500
 
-# GET pet profile by ID
+# GET pet profile by Firestore document ID
 @pets_api.get('/pets/<pet_id>')
 def get_pet_by_id(pet_id):
     pet_ref = pet_db.collection("PET").document(pet_id)
     pet_doc = pet_ref.get()
 
     if pet_doc.exists:
-        return jsonify({pet_doc.id: pet_doc.to_dict()}), 200  
+        pet_data = pet_doc.to_dict()
+        pet_data['MatchRecords'] = [
+            match.to_dict() for match in pet_ref.collection("MATCH").stream()
+        ]
+        pet_data['HealthRecords'] = [
+            record.to_dict() for record in pet_ref.collection("HEALTH").stream()
+        ]
+        pet_data['EventRecords'] = [
+            event.to_dict() for event in pet_ref.collection("EVENT").stream()
+        ]
+        return jsonify({pet_id: pet_data}), 200
     else:
         return jsonify({"error": "Pet not found"}), 404
-    
+
 # POST create new pet profile with basic information
 @pets_api.post('/pets/create')
 def create_pet():
     data = request.json
-
-    name = data['Name']
-    age = data['Age']
-    breed = data['Breed']
-    avatar = data['Avatar']
-    location = data['Location']
-    description = data['Description']
-    userId = data['UserId']
-
     try: 
-        pet = Pet(name, age, breed, avatar, location, description, userId)
-        print(pet.to_dict())
+        pet = Pet(
+            Name=data['Name'],
+            Age=data['Age'],
+            Breed=data['Breed'],
+            Type=data['Type'],
+            Avatar=data['Avatar'],
+            Description=data.get('Description', ""),
+            Tag=data.get('Tag', []),
+            UserId=data['UserId']
+        )
         pet_ref = pet_db.collection("PET").document()
         pet_ref.set(pet.to_dict())
         return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-# PUT update pet profile data by ID
+
+# PUT update pet profile data by Firestore document ID
 @pets_api.put('/pets/<pet_id>')
 def update_pet_by_id(pet_id):
     data = request.json
@@ -60,13 +81,14 @@ def update_pet_by_id(pet_id):
 
     if pet_doc.exists:
         pet = Pet.from_dict(pet_doc.to_dict())
-        pet.name = data['Name']
-        pet.age = data['Age']
-        pet.breed = data['Breed']
-        pet.avatar = data['Avatar']
-        pet.location = data['Location']
-        pet.description = data['Description']
-        pet.userId = data['UserId']
+        pet.Name = data.get('Name', pet.Name)
+        pet.Age = data.get('Age', pet.Age)
+        pet.Breed = data.get('Breed', pet.Breed)
+        pet.Type = data.get('Type', pet.Type)
+        pet.Avatar = data.get('Avatar', pet.Avatar)
+        pet.Description = data.get('Description', pet.Description)
+        pet.Tag = data.get('Tag', pet.Tag)
+        pet.UserId = data.get('UserId', pet.UserId)
 
         try:
             pet_ref.set(pet.to_dict())
@@ -74,9 +96,9 @@ def update_pet_by_id(pet_id):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     else:
-        return jsonify({"error": "Pet not found"}),
+        return jsonify({"error": "Pet not found"}), 404
 
-# DELETE pet profile by ID
+# DELETE pet profile by Firestore document ID
 @pets_api.delete('/pets/<pet_id>')
 def delete_pet_by_id(pet_id):
     pet_ref = pet_db.collection("PET").document(pet_id)

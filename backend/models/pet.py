@@ -1,46 +1,57 @@
+from backend.models.health import Health
+from backend.models.match import Match
+from backend.models.event import Event
 class Pet:
-    def __init__(self, name, age, breed, type, avatar, description, weight, drug, diet, userId):
-        self.name = name
-        self.age = age
-        self.breed = breed
-        self.type = type
-        self.avatar = avatar
-        self.description = description
-        self.weight = weight
-        self.drug = drug
-        self.diet = diet
-        self.userId = userId
+    def __init__(self, Name, Age, Breed, Type, Avatar, UserId, Description="", Tag=[], HealthRecords=[], MatchRecords=[], EventRecords=[]):
+        self.Name = Name
+        self.Age = Age
+        self.Breed = Breed
+        self.Type = Type
+        self.Avatar = Avatar
+        self.Description = Description
+        self.Tag = Tag
+        self.UserId = UserId
+        self.HealthRecords = HealthRecords
+        self.MatchRecords = MatchRecords
+        self.EventRecords = EventRecords
 
     @staticmethod
     def from_dict(source):
-        pet = Pet(source['petId'], source['name'], source['age'], source['breed'], source['type'], source['avatar'], source['description'], source['userId'])
-        if 'weight' in source:
-            pet.weight = source['weight']
-        if 'drug' in source:
-            pet.drug = source['drug']
-        if 'diet' in source:
-            pet.diet = source['diet']
+        pet = Pet(
+            source['Name'],
+            source['Age'],
+            source['Breed'],
+            source['Type'],
+            source['Avatar'],
+            source.get('UserId', ""),
+            source.get('Description', ""),
+            source.get('Tag', []),
+            [Health.from_dict(health) for health in source.get('HealthRecords', [])],
+            [Match.from_dict(match) for match in source.get('MatchRecords', [])],
+            [Event.from_dict(event) for event in source.get('EventRecords', [])],
+        )
         return pet
-    
+
     def to_dict(self):
         pet = {
-            'name': self.name,
-            'age': self.age,
-            'breed': self.breed,
-            'type': self.type,
-            'avatar': self.avatar,
-            'description': self.description,
-            'userId': self.userId
+            'Name': self.Name,
+            'Age': self.Age,
+            'Breed': self.Breed,
+            'Type': self.Type,
+            'Avatar': self.Avatar,
+            'UserId': self.UserId,
+            'Description': self.Description,
+            'Tag': self.Tag,
+            'HealthRecords': [health.to_dict() for health in self.HealthRecords],
+            'MatchRecords': [match.to_dict() for match in self.MatchRecords],
+            'EventRecords': [event.to_dict() for event in self.EventRecords]
         }
-        if self.weight:
-            pet['weight'] = self.weight
-        if self.drug:
-            pet['drug'] = self.drug
-        if self.diet:
-            pet['diet'] = self.diet
         return pet
-    
+
     def __repr__(self):
-        return(
-            f"Pet(name={self.name}, age={self.age}, breed={self.breed}, avatar={self.avatar}, location={self.location}, description={self.description}, weight={self.weight}, drug={self.drug}, diet={self.diet}, userId={self.userId})"
+        return (
+            f"Pet(Name={self.Name}, Age={self.Age}, Breed={self.Breed}, "
+            f"Avatar={self.Avatar}, Description={self.Description}, UserId={self.UserId}, "
+            f"HealthRecords={self.HealthRecords}, MatchRecords={self.MatchRecords}, "
+            f"EventRecords={self.EventRecords})"
         )

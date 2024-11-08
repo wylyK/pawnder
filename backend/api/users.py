@@ -4,6 +4,7 @@ from connect_firebase import PawnderFirebase
 from dotenv import load_dotenv
 import os
 import requests
+from models.user import User
 
 users_api = Blueprint('users_api', __name__)
 pawnder_firebase = PawnderFirebase()
@@ -71,7 +72,7 @@ def login():
 @users_api.post('/users/logout')
 def logout():
     try:
-        session.clear()
+        session.clear() # logout user by clearning the session
         return jsonify({"message": "Logout successful."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -93,17 +94,12 @@ def get_user_by_id(user_id):
 @users_api.post('/users')
 def create_user():
     data = request.json
-
-    contact = data['Contact']
-    fname = data['FName']
-    lname = data['LName']
+    create = User.from_dict(data)
     password = data['Password']
-    username = data['Username']
-    role = data['Role']
-
+    
     # Create user with Firebase Authentication
     try:
-        user = auth.create_user(email=username, password=password)
+        user = auth.create_user(email=create.Email, password=password)
         user_id = user.uid
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -111,14 +107,8 @@ def create_user():
     # Store user profile data in Firestore
     try:
         user_ref = user_db.collection("USER").document(user_id)
-        user_profile_data = {
-            "Contact": contact,
-            "FName": fname,
-            "LName": lname,
-            "ID": user_id,
-            "Username": username,
-            "Role": role
-        }
+        create.Id = user_id
+        user_profile_data = User.to_dict(create)
         user_ref.set(user_profile_data)
         return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     except Exception as e:
