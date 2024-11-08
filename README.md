@@ -1,3 +1,5 @@
 # pawnder
 
-Run 'npx prettier . --write' before add and commit files
+# [Development](./docs/development.md)
+
+# [API Instruction](./docs/api_instructions.md)
