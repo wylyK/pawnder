@@ -1,0 +1,116 @@
+.Login {
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    margin: auto;
+    margin-top: 200px;
+    width:  400px;
+    height: 425px;
+    box-shadow: 0 8px 5px #e0dcdc;
+}
+
+.logoIcon {
+    transform: scale(1.2);
+}
+
+.logoText {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.Login form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Login form h1 {
+    color: #ef4a75;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    font-weight: 800;
+}
+
+.emailField, .passwordField {
+    background: rgb(251, 240, 239);
+    border: none;
+    border-radius: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 80%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+}
+
+.emailField input, .passwordField input {
+    background: rgb(251, 240, 239);
+    border: none;
+    margin-left: 15px;
+    width: 280px;
+}
+
+.userIcon, .lockIcon {
+    margin-bottom: 2.5px;
+}
+
+.rememberMe {
+    width: 80%;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+}
+
+.rememberMe input {
+    transform: scale(1.2);
+}
+
+.rememberMe input:hover {
+    transform: scale(1.25);
+}
+
+.rememberText {
+    margin-top: 2px;
+    margin-left: 8px;
+}
+
+.submit {
+    background: linear-gradient(90deg,#fd2b7b, #fd2b7b, #ff7158, #ff7158);
+    background-size: 200%;
+    background-position: 50%;
+    transition: background-position 0.3s;
+    color: white;
+    font-size: 19px;
+    font-weight: bold; 
+    margin-top: 15px;
+    margin-bottom: 20px;
+    width: calc(80% + 30px);
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+}
+
+.submit:hover {
+    background-position: 100% 0;
+}
+
+.signUp {
+    border: none;
+    background-color: white;
+    color: #fd2b7b;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.signUp:hover {
+    color: #ff7158;
+}
+
+
