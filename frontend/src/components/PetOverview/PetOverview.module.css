@@ -1,8 +1,8 @@
 /* Wrapper for Grid */
 .wrapper {
   display: flex;
-  overflow: hidden; /* Prevents content overflow */
-  height: calc(100vh - 40px); /* Adjust height with padding */
+  overflow: hidden; 
+  height: 500px; 
   padding: 0px;
 }
 
@@ -83,4 +83,9 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-right: 20px;
+}
+/* Remove blue color and underline from links */
+.link {
+  color: inherit; /* Inherit color from parent, so it won't be blue */
+  text-decoration: none; /* Remove underline */
 }
