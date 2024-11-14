@@ -22,8 +22,8 @@ const HomePage: React.FC = () => {
         <div style={cardContainerStyle}>
           <PetOverview />
         </div>
+        <Reminders/>
       </main>
-      <Reminders/>
     </div>
   );
 };
