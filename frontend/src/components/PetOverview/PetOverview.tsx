@@ -14,9 +14,19 @@ interface Pet {
 }
 
 const pets: Pet[] = [
-  { id: "1", name: "Fionn", breed: "Irish Setter + Golden Retriever", image: "/doggo.JPG" },
+  {
+    id: "1",
+    name: "Fionn",
+    breed: "Irish Setter + Golden Retriever",
+    image: "/doggo.JPG",
+  },
   { id: "2", name: "Spike", breed: "Maine Coon", image: "/dog2.avif" },
-  { id: "3", name: "Luna", breed: "Golden Retriever", image: "/retriever.jpeg" },
+  {
+    id: "3",
+    name: "Luna",
+    breed: "Golden Retriever",
+    image: "/retriever.jpeg",
+  },
   { id: "4", name: "Max", breed: "Labrador", image: "/dog2.avif" },
   { id: "5", name: "Bella", breed: "Pomeranian", image: "/catto.jpeg" },
 ];
@@ -36,7 +46,11 @@ const PetOverview: React.FC = () => {
     <div className={styles.wrapper}>
       <div className={styles.grid}>
         {pets.map((pet) => (
-          <div key={pet.id} className={styles.card} onClick={() => handleOpenModal(pet.id)}>
+          <div
+            key={pet.id}
+            className={styles.card}
+            onClick={() => handleOpenModal(pet.id)}
+          >
             <img src={pet.image} alt={pet.name} />
             <div className={styles["card-content"]}>
               <h2 className={styles["card-title"]}>{pet.name}</h2>

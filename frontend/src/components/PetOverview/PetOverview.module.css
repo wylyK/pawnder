@@ -1,8 +1,8 @@
 /* Wrapper for Grid */
 .wrapper {
   display: flex;
-  overflow: hidden; 
-  height: 500px; 
+  overflow: hidden;
+  height: 500px;
   padding: 0px;
 }
 
@@ -15,7 +15,6 @@
   scrollbar-width: thin; /* Slim scrollbar */
   align-items: flex-start;
   margin-right: 20px;
-
 }
 
 .grid::-webkit-scrollbar {

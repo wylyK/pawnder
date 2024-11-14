@@ -22,7 +22,7 @@ const HomePage: React.FC = () => {
         <div style={cardContainerStyle}>
           <PetOverview />
         </div>
-        <Reminders/>
+        <Reminders />
       </main>
     </div>
   );
@@ -66,7 +66,7 @@ const titleStyle: CSSProperties = {
   fontSize: "1.5rem",
   fontWeight: "bold",
   color: "#555",
-  marginRight: "20px"
+  marginRight: "20px",
 };
 
 const cardContainerStyle: CSSProperties = {

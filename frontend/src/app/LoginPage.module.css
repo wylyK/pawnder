@@ -1,156 +1,158 @@
 .loginContainer {
-    margin: auto;
-    width:  400px;
-    height: 500px;
+  margin: auto;
+  width: 400px;
+  height: 500px;
 }
 
 .login {
-    background: white;
-    border-radius: 20px;
-    padding: 15px;
-    margin-top: 200px;
-    width:  400px;
-    height: 425px;
-    box-shadow: 0 8px 5px #e0dcdc;
+  background: white;
+  border-radius: 20px;
+  padding: 15px;
+  margin-top: 200px;
+  width: 400px;
+  height: 425px;
+  box-shadow: 0 8px 5px #e0dcdc;
 }
 
 .logoIcon {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 .logoText {
-    margin-left: 10px;
-    font-weight: bold;
+  margin-left: 10px;
+  font-weight: bold;
 }
 
 .login form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .login form h1 {
-    color: var(--main-color1);
-    margin-top: 10px;
-    margin-bottom: 40px;
-    font-weight: 800;
+  color: var(--main-color1);
+  margin-top: 10px;
+  margin-bottom: 40px;
+  font-weight: 800;
 }
 
 .textField {
-    background: var(--background-color);
-    border: none;
-    border-radius: 20px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    padding-left: 15px;
-    padding-right: 15px;
-    width: 80%;
-    height: 40px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: left;
+  background: var(--background-color);
+  border: none;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 80%;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
 }
 
-.textField:hover{
-    color: var(--main-color3);
+.textField:hover {
+  color: var(--main-color3);
 }
 
 .textField input {
-    background: none;
-    border: none;
-    margin-left: 15px;
-    width: 280px;
-    height: 35px;
+  background: none;
+  border: none;
+  margin-left: 15px;
+  width: 280px;
+  height: 35px;
 }
 
 .textField input:focus {
-    outline: none;
+  outline: none;
 }
 
 .textIcon {
-    margin-bottom: 2.5px;
+  margin-bottom: 2.5px;
 }
 
 .rememberMe {
-    width: 80%;
-    margin-top: 8px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    display: flex;
-    flex-direction: row;
+  width: 80%;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
 }
 
 .rememberMe input {
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid grey;
-    border-radius: 3px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid grey;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.rememberMe input:hover, .rememberMe input:checked {
-    background-color: var(--main-color3);
-    border-color: var(--main-color1);
+.rememberMe input:hover,
+.rememberMe input:checked {
+  background-color: var(--main-color3);
+  border-color: var(--main-color1);
 }
 
 .rememberMe input:checked::after {
-    background-color: var(--main-color1);
-    width: 20px;
-    height: 16px;
-    border: none;
-    border-radius: 3px;
-    content: "\2713";
-    color: white;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 1px;
+  background-color: var(--main-color1);
+  width: 20px;
+  height: 16px;
+  border: none;
+  border-radius: 3px;
+  content: "\2713";
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 1px;
 }
 
 .rememberText {
-    margin-top: 3px;
-    margin-left: 6px;
+  margin-top: 3px;
+  margin-left: 6px;
 }
 
 .submit {
-    background: linear-gradient(45deg, var(--main-color1) 25%, var(--main-color2) 75%);
-    background-size: 200%;
-    background-position: 50%;
-    transition: background-position 0.3s;
-    color: white;
-    font-size: 19px;
-    font-weight: bold; 
-    margin-top: 15px;
-    margin-bottom: 20px;
-    width: calc(80% + 30px);
-    height: 40px;
-    border: none;
-    border-radius: 20px;
+  background: linear-gradient(
+    45deg,
+    var(--main-color1) 25%,
+    var(--main-color2) 75%
+  );
+  background-size: 200%;
+  background-position: 50%;
+  transition: background-position 0.3s;
+  color: white;
+  font-size: 19px;
+  font-weight: bold;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  width: calc(80% + 30px);
+  height: 40px;
+  border: none;
+  border-radius: 20px;
 }
 
 .submit:hover {
-    background-position: 100% 0;
+  background-position: 100% 0;
 }
 
-
 .signUp {
-    border: none;
-    background-color: white;
-    color: var(--main-color1);
-    font-size: 15px;
-    font-weight: bold;
-    text-decoration: underline;
+  border: none;
+  background-color: white;
+  color: var(--main-color1);
+  font-size: 15px;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .signUp:hover {
-    color: var(--main-color2);
+  color: var(--main-color2);
 }
-
-

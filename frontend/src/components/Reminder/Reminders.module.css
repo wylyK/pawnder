@@ -1,107 +1,111 @@
 .reminders {
-    background: white;
-    width: 1000;
-    height: 350px;
-    position: relative;
-    right: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    align-items: center;
-    font-size: 1.1rem;
-    margin: 0;
-    padding: 0;
+  background: white;
+  width: 1000;
+  height: 350px;
+  position: relative;
+  right: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  font-size: 1.1rem;
+  margin: 0;
+  padding: 0;
 }
 
 .addReminder {
-    background-color: rgb(251, 240, 239);
-    border-radius: 15px;
-    border: 2px dashed #ddd;
-    box-shadow: 0 8px 5px #e0dcdc;
-    color: #575252;
-    cursor: pointer;
-    width: 100px;
-    height: 60%;
-    margin: 0px 20px 0px 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 2rem;
+  background-color: rgb(251, 240, 239);
+  border-radius: 15px;
+  border: 2px dashed #ddd;
+  box-shadow: 0 8px 5px #e0dcdc;
+  color: #575252;
+  cursor: pointer;
+  width: 100px;
+  height: 60%;
+  margin: 0px 20px 0px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 2rem;
 }
 
 .addReminder:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .reminder {
-    background: linear-gradient(150deg, var(--main-color1) 0%, var(--main-color2) 80%);
-    color: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 5px #e0dcdc;
-    box-sizing: border-box;
-    overflow: hidden;
-    width: 280px;
-    height: 60%;
-    margin: 0px 20px;
-    padding: 0px 20px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  background: linear-gradient(
+    150deg,
+    var(--main-color1) 0%,
+    var(--main-color2) 80%
+  );
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 5px #e0dcdc;
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 280px;
+  height: 60%;
+  margin: 0px 20px;
+  padding: 0px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .reminderHead {
-    font-size: 135%;
-    margin-top: 15px;
-    margin-bottom: 0;
+  font-size: 135%;
+  margin-top: 15px;
+  margin-bottom: 0;
 }
 
 .reminderSubHead {
-    display: flex;
-    flex-direction: row;
-    margin-top: -13px;
-    margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  margin-top: -13px;
+  margin-bottom: 15px;
 }
 
 .reminderSubHead * {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .reminderTime {
-    font-weight: bold;
-    margin-right: 12px;
+  font-weight: bold;
+  margin-right: 12px;
 }
 
 .reminderBody {
-    margin: 0;
+  margin: 0;
 }
 
 .reminderButtons {
-    position: absolute;
-    bottom: 0;
-    align-self: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+  position: absolute;
+  bottom: 0;
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .reminderButtons Button {
-    color: var(--main-color1);
-    font-weight: bold;
-    background-color: white;
-    border: none;
-    width: 100px;
-    height: 25px;
-    border-radius: 10px;
-    margin: 20px 20px;
+  color: var(--main-color1);
+  font-weight: bold;
+  background-color: white;
+  border: none;
+  width: 100px;
+  height: 25px;
+  border-radius: 10px;
+  margin: 20px 20px;
 }
 
 .reminder .reminderButtons {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .reminder:hover .reminderButtons {
-    visibility: visible;
+  visibility: visible;
 }

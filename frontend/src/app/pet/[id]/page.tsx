@@ -1,4 +1,3 @@
-
 // app/pet/[id]/page.tsx
 "use client";
 
