@@ -1,15 +1,16 @@
 .reminders {
     background: white;
-    width: 100vw;
-    height: 35vh;
-    position: fixed;
-    right: 0;
-    bottom: 0;
+    width: 1000;
+    height: 350px;
+    position: relative;
+    right: 20px;
     display: flex;
     flex-direction: row;
     justify-content: left;
     align-items: center;
     font-size: 1.1rem;
+    margin: 0;
+    padding: 0;
 }
 
 .addReminder {
@@ -21,7 +22,7 @@
     cursor: pointer;
     width: 100px;
     height: 60%;
-    margin: 0px 20px 0px 150px;
+    margin: 0px 20px 0px 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -35,7 +36,7 @@
 }
 
 .reminder {
-    background: linear-gradient(#ef4a75, #fd5564);
+    background: linear-gradient(150deg, var(--main-color1) 0%, var(--main-color2) 80%);
     color: white;
     border-radius: 15px;
     box-shadow: 0 8px 5px #e0dcdc;
@@ -51,6 +52,7 @@
 }
 
 .reminderHead {
+    font-size: 135%;
     margin-top: 15px;
     margin-bottom: 0;
 }
@@ -58,12 +60,21 @@
 .reminderSubHead {
     display: flex;
     flex-direction: row;
-    margin-top: -15px;
+    margin-top: -13px;
+    margin-bottom: 15px;
+}
+
+.reminderSubHead * {
+    margin-bottom: 0;
 }
 
 .reminderTime {
     font-weight: bold;
-    margin-right: 10px;
+    margin-right: 12px;
+}
+
+.reminderBody {
+    margin: 0;
 }
 
 .reminderButtons {
@@ -77,7 +88,7 @@
 }
 
 .reminderButtons Button {
-    color: #fd5564;
+    color: var(--main-color1);
     font-weight: bold;
     background-color: white;
     border: none;
@@ -85,4 +96,12 @@
     height: 25px;
     border-radius: 10px;
     margin: 20px 20px;
+}
+
+.reminder .reminderButtons {
+    visibility: hidden;
+}
+
+.reminder:hover .reminderButtons {
+    visibility: visible;
 }

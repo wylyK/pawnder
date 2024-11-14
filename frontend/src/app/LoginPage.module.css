@@ -1,8 +1,13 @@
-.Login {
+.loginContainer {
+    margin: auto;
+    width:  400px;
+    height: 500px;
+}
+
+.login {
     background: white;
     border-radius: 20px;
     padding: 15px;
-    margin: auto;
     margin-top: 200px;
     width:  400px;
     height: 425px;
@@ -18,21 +23,21 @@
     font-weight: bold;
 }
 
-.Login form {
+.login form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.Login form h1 {
-    color: #ef4a75;
+.login form h1 {
+    color: var(--main-color1);
     margin-top: 10px;
     margin-bottom: 40px;
     font-weight: 800;
 }
 
-.emailField, .passwordField {
-    background: rgb(251, 240, 239);
+.textField {
+    background: var(--background-color);
     border: none;
     border-radius: 20px;
     margin-top: 10px;
@@ -47,14 +52,23 @@
     justify-content: left;
 }
 
-.emailField input, .passwordField input {
-    background: rgb(251, 240, 239);
+.textField:hover{
+    color: var(--main-color3);
+}
+
+.textField input {
+    background: none;
     border: none;
     margin-left: 15px;
     width: 280px;
+    height: 35px;
 }
 
-.userIcon, .lockIcon {
+.textField input:focus {
+    outline: none;
+}
+
+.textIcon {
     margin-bottom: 2.5px;
 }
 
@@ -68,20 +82,45 @@
 }
 
 .rememberMe input {
-    transform: scale(1.2);
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid grey;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.rememberMe input:hover {
-    transform: scale(1.25);
+.rememberMe input:hover, .rememberMe input:checked {
+    background-color: var(--main-color3);
+    border-color: var(--main-color1);
+}
+
+.rememberMe input:checked::after {
+    background-color: var(--main-color1);
+    width: 20px;
+    height: 16px;
+    border: none;
+    border-radius: 3px;
+    content: "\2713";
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 1px;
 }
 
 .rememberText {
-    margin-top: 2px;
-    margin-left: 8px;
+    margin-top: 3px;
+    margin-left: 6px;
 }
 
 .submit {
-    background: linear-gradient(90deg,#fd2b7b, #fd2b7b, #ff7158, #ff7158);
+    background: linear-gradient(45deg, var(--main-color1) 25%, var(--main-color2) 75%);
     background-size: 200%;
     background-position: 50%;
     transition: background-position 0.3s;
@@ -100,17 +139,18 @@
     background-position: 100% 0;
 }
 
+
 .signUp {
     border: none;
     background-color: white;
-    color: #fd2b7b;
+    color: var(--main-color1);
     font-size: 15px;
     font-weight: bold;
     text-decoration: underline;
 }
 
 .signUp:hover {
-    color: #ff7158;
+    color: var(--main-color2);
 }
 
 

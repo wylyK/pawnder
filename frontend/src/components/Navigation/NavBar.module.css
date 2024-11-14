@@ -2,7 +2,7 @@
 .nav {
   /* #ef4a75, */
   /* #fe3c72, */
-  background: linear-gradient(#ef4a75, #fd5564);
+  background: linear-gradient(45deg, var(--main-color1), var(--main-color2));
   height: 100vh;
   width: 80px;
   position: fixed;

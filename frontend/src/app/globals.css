@@ -1,7 +1,13 @@
 body {
-  background-color: rgb(251, 240, 239);
+  --main-color1: #fd2b7b;
+  --main-color2: #ff7158;
+  --main-color3: #fd5564;
+  --background-color: rgb(251, 240, 239);
+  --text-color: #575252;
+
+  background-color: var(--background-color);
+  color: --var(--text-color);
   font-family: 'Open Sans', sans-serif;
-  color: #575252;
 }
 html, body {
   margin: 0;
