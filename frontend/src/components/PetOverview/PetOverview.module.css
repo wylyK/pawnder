@@ -60,6 +60,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin: 5px 0 0;
+  color: var(--text-color);
 }
 
 .card-subtitle {
@@ -82,6 +83,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-right: 20px;
+  color: var(--main-color1);
 }
 /* Remove blue color and underline from links */
 .link {

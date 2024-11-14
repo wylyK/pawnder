@@ -30,6 +30,7 @@
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 25px;
+  color: var(--text-color);
 }
 
 .detailsContainer {
@@ -45,6 +46,7 @@
   flex: 1;
   font-size: 1.1rem;
   position: relative;
+  color: var(--text-color);
 }
 
 .buttonContainer {
@@ -54,7 +56,7 @@
 
 .editButton {
   padding: 10px 20px;
-  background-color: #ef4a75;
+  background-color: var(--main-color1);
   color: white;
   border: none;
   border-radius: 30px;
@@ -64,5 +66,5 @@
 }
 
 .editButton:hover {
-  background-color: #fd5564;
+  background-color: var(--main-color2);
 }
