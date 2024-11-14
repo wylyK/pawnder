@@ -1,14 +1,12 @@
 from flask import Blueprint, jsonify, request, session
-from firebase_admin import firestore, auth
-from connect_firebase import PawnderFirebase
+from firebase_admin import auth
 from dotenv import load_dotenv
 import os
 import requests
 from models.user import User
+from firestore_client import db
 
 users_api = Blueprint('users_api', __name__)
-pawnder_firebase = PawnderFirebase()
-user_db = firestore.client()
 load_dotenv()
 
 config = {
@@ -82,7 +80,7 @@ def logout():
 # GET user by ID
 @users_api.get('/users/<user_id>')
 def get_user_by_id(user_id):
-    user_ref = user_db.collection("USER").document(user_id)
+    user_ref = db.collection("USER").document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:
@@ -106,7 +104,7 @@ def create_user():
 
     # Store user profile data in Firestore
     try:
-        user_ref = user_db.collection("USER").document(user_id)
+        user_ref = db.collection("USER").document(user_id)
         create.Id = user_id
         user_profile_data = User.to_dict(create)
         user_ref.set(user_profile_data)
@@ -118,7 +116,7 @@ def create_user():
 @users_api.put('/users/<user_id>')
 def update_user_by_id(user_id):
     data = request.json
-    user_ref = user_db.collection("USER").document(user_id)
+    user_ref = db.collection("USER").document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:
@@ -140,7 +138,7 @@ def delete_user_by_id(user_id):
         return jsonify({"error": f"Error deleting user in Firebase Auth: {str(e)}"}), 500
 
     # Delete user profile data from Firestore
-    user_ref = user_db.collection("USER").document(user_id)
+    user_ref = db.collection("USER").document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:

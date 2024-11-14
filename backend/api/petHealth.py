@@ -1,11 +1,8 @@
 from flask import Blueprint, jsonify, request
-from firebase_admin import firestore
-from connect_firebase import PawnderFirebase
 from models.health import Health
+from firestore_client import db
 
 pet_health_api = Blueprint('pet_health_api', __name__)
-pawnder_firebase = PawnderFirebase()
-db = firestore.client()
 pet_db = db.collection("PET")
 
 # Get the health information of a pet
