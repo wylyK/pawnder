@@ -41,7 +41,7 @@ const NavBar: React.FC = () => {
 
         {/* User Icon */}
         <li className={styles.li}>
-          <Link href="/user" className={styles.link}>
+          <Link href="/page/userprofile" className={styles.link}>
             <FaRegUser />
           </Link>
         </li>

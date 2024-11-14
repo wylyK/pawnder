@@ -3,6 +3,8 @@
 pawnder-firebase-adminsdk.json
 
 venv
+myenv
 __pycache__/
 *.pyc
 *.pyo
+.DS_Store
