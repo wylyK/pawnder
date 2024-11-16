@@ -70,14 +70,6 @@
   height: 35px;
 }
 
-.text-field:hover .text-icon {
-  color: var(--main-color3);
-}
-
-.text-field input:focus {
-  outline: none;
-}
-
 .text-icon {
   margin-bottom: 2.5px;
 }
@@ -108,6 +100,14 @@
   position: relative;
   overflow: hidden;
   margin-top: 2px;
+}
+
+.text-field:hover .text-icon {
+  color: var(--main-color3);
+}
+
+.text-field input:focus {
+  outline: none;
 }
 
 .remember-me input:hover,

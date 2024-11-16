@@ -3,7 +3,7 @@
   display: flex;
   overflow: hidden;
   height: 500px;
-  padding: 0px;
+  padding: 0;
 }
 
 /* Grid Container */
@@ -85,6 +85,7 @@
   margin-right: 20px;
   color: var(--main-color1);
 }
+
 /* Remove blue color and underline from links */
 .link {
   color: inherit; /* Inherit color from parent, so it won't be blue */

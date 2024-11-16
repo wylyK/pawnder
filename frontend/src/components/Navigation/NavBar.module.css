@@ -1,6 +1,7 @@
 /* NavBar.module.css */
 .nav {
   /* #ef4a75, */
+
   /* #fe3c72, */
   background: linear-gradient(45deg, var(--main-color1), var(--main-color2));
   height: 100vh;
