@@ -1,7 +1,8 @@
 .reminders {
   background: white;
-  width: 1000;
-  height: 350px;
+  width: 100vw;
+  height: 360px;
+  overflow: scroll;
   position: relative;
   right: 20px;
   display: flex;
@@ -13,26 +14,36 @@
   padding: 0;
 }
 
-.addReminder {
-  background-color: rgb(251, 240, 239);
-  border-radius: 15px;
-  border: 2px dashed #ddd;
-  box-shadow: 0 8px 5px #e0dcdc;
-  color: #575252;
+.reminders::-webkit-scrollbar {
+  height: 8px;
+}
+
+.reminders::-webkit-scrollbar-track {
+  background: var(--background-color);
+  border-radius: 4px; /* Rounded edges for the track */
+}
+
+.reminders::-webkit-scrollbar-thumb {
+  background-color: #e0dcdc;;
+  border-radius: 10px;
+}
+
+.reminders::-webkit-scrollbar-thumb:hover {
+  background-color: #a0a0a0;
+}
+
+.add-delete {
+  color: var(--main-color3);
   cursor: pointer;
-  width: 100px;
+  width: 115px;
+  min-width: 50px;
   height: 60%;
-  margin: 0px 20px 0px 50px;
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-weight: bold;
-  font-size: 2rem;
-}
-
-.addReminder:hover {
-  transform: scale(1.05);
+  gap: 20px;
 }
 
 .reminder {
@@ -45,67 +56,97 @@
   border-radius: 15px;
   box-shadow: 0 8px 5px #e0dcdc;
   box-sizing: border-box;
-  overflow: hidden;
-  width: 280px;
+  width: 300px;
+  min-width: 300px;
   height: 60%;
   margin: 0px 20px;
-  padding: 0px 20px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.reminderHead {
-  font-size: 135%;
-  margin-top: 15px;
-  margin-bottom: 0;
-}
-
-.reminderSubHead {
+  padding: 0px 20px;
   display: flex;
   flex-direction: row;
-  margin-top: -13px;
-  margin-bottom: 15px;
 }
 
-.reminderSubHead * {
-  margin-bottom: 0;
+.main-content {
+  display: flex;
+  flex-direction: column;
+  display: inline-flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 300px;
 }
 
-.reminderTime {
+.heading {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 138%;
+  font-weight: bold;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.name{
+    margin-left: 12px;
+    margin-top: 1.5px;
+}
+
+.subhead {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 16px;
+}
+
+.body {
+    font-size: 112%;
+    width: 100%;
+    height: 100px;
+    overflow: hidden;
+}
+
+.time {
   font-weight: bold;
   margin-right: 12px;
 }
 
-.reminderBody {
-  margin: 0;
-}
-
-.reminderButtons {
-  position: absolute;
-  bottom: 0;
-  align-self: center;
+.edit-check {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 96px;
+  margin-top: 15px;
 }
 
-.reminderButtons Button {
-  color: var(--main-color1);
-  font-weight: bold;
-  background-color: white;
-  border: none;
-  width: 100px;
-  height: 25px;
-  border-radius: 10px;
-  margin: 20px 20px;
+.edit {
+  font-size: 150%;
+  margin-left: 15px;
 }
 
-.reminder .reminderButtons {
-  visibility: hidden;
+.check-container {
+  font-size: 225%;
 }
 
-.reminder:hover .reminderButtons {
-  visibility: visible;
+.add-delete-container {
+  font-size: 310%;
+}
+
+.dormant {
+  display: inline;
+}
+
+.hovered {
+  display: none;
+}
+
+.add-delete-container:hover,
+.check-container:hover {
+  cursor: pointer;
+}
+
+.add-delete-container:hover .dormant,
+.check-container:hover .dormant {
+    display: none;
+}
+
+.add-delete-container:hover .hovered,
+.check-container:hover .hovered {
+    display: inline;
 }
