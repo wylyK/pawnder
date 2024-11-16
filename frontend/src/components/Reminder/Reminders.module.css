@@ -36,7 +36,7 @@
   color: var(--main-color3);
   cursor: pointer;
   width: 115px;
-  min-width: 50px;
+  min-width: 115px;
   height: 60%;
   margin-left: 20px;
   display: flex;
@@ -128,6 +128,14 @@
   font-size: 310%;
 }
 
+.delete-counter {
+  position: absolute;
+  left: 95px;
+  top: 185px;
+  font-size: 110%;
+  font-weight: bold;
+}
+
 .dormant {
   display: inline;
 }
@@ -142,11 +150,23 @@
 }
 
 .add-delete-container:hover .dormant,
-.check-container:hover .dormant {
-    display: none;
+.check-container:hover .dormant,
+.check-container:checked .dormant {
+  display: none;
 }
 
 .add-delete-container:hover .hovered,
-.check-container:hover .hovered {
-    display: inline;
+.check-container:hover .hovered,
+.check-container:checked .hovered {
+  display: inline;
+}
+
+.check-container.toggled .dormant,
+.check-container.toggled:hover .dormant {
+  display: none;
+}
+
+.check-container.toggled .hovered,
+.check-container.toggled:hover .hovered {
+  display: inline;
 }

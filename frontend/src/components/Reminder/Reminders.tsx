@@ -9,19 +9,20 @@ import { FaClock,
          FaRegCheckCircle,
          FaCheckCircle} from "react-icons/fa"
 
-
 interface Reminder {
   pet: string;
   time: string;
   body: string;
   fromVet: boolean;
+  toggled: boolean;
 }
 
 const walk: Reminder = {
   pet: "Fionn",
   time: "15:10",
   body: "Go for a walk",
-  fromVet: false
+  fromVet: false,
+  toggled: false
 };
 
 const feed: Reminder = {
@@ -29,6 +30,7 @@ const feed: Reminder = {
   time: "16:30",
   body: "Feed medicine",
   fromVet: true,
+  toggled: false
 }
 
 const wash: Reminder = {
@@ -36,10 +38,22 @@ const wash: Reminder = {
   time: "17:30",
   body: "Use water and put it on Bella, make sure its warm",
   fromVet: false,
+  toggled: false
 }
 
 const Reminders = () => {
   const [reminders, updateReminders] = useState<Reminder[]>([walk, feed, wash]);
+  const [deleteCounter, updateCounter] = useState(0);
+
+  const toggle = (index: number) => {
+    updateReminders(reminders.map((reminder, i) => i === index ? {...reminder, toggled: !reminder.toggled} : reminder))
+  }
+  const trash = () => {
+    updateReminders(reminders.filter((reminder) => !reminder.toggled))
+  }
+  const increment = (step: number) => {
+    updateCounter(deleteCounter + step);
+  }
 
   return (
     <div className={styles["reminders"]}>
@@ -48,7 +62,11 @@ const Reminders = () => {
           <AiOutlinePlusCircle className={styles["dormant"]}/>
           <AiFillPlusCircle className={styles["hovered"]}/>
         </div>
-        <div className={styles["add-delete-container"]}>
+        <div className={styles["delete-counter"]}>{deleteCounter != 0 && deleteCounter}</div>
+        <div className={styles["add-delete-container"]} onClick={() => {
+                                                                         trash();
+                                                                         updateCounter(0)}
+                                                                       }>
           <PiTrash className={styles["dormant"]}/>
           <PiTrashFill className={styles["hovered"]}/>
         </div>
@@ -70,9 +88,14 @@ const Reminders = () => {
           </div>
           <div className={styles["edit-check"]}>
             <button className={styles["edit"]}><BsThreeDotsVertical/></button>
-            <div className={styles["check-container"]} onClick={() => {updateReminders(reminders.slice(index))}}>
-              <FaRegCheckCircle className={styles["dormant"]} />
-              <FaCheckCircle className={styles["hovered"]}/>
+            <div className={`${styles["check-container"]}
+                             ${reminder.toggled ? styles["toggled"] : ""}`}
+                             onClick={() => { 
+                                              increment(reminder.toggled ? -1 : 1)
+                                              toggle(index);
+                                            }}>
+              <FaRegCheckCircle className={styles["dormant"]}/>
+              <FaCheckCircle    className={styles["hovered"]}/>
             </div>
           </div>
         </div>
@@ -80,5 +103,6 @@ const Reminders = () => {
     </div>
   );
 };
+
 
 export default Reminders;
