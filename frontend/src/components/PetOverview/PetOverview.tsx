@@ -58,7 +58,7 @@ const PetOverview: React.FC = () => {
             </div>
           </div>
         ))}
-        <div className={`${styles.card} ${styles.addCard}`}>
+        <div className={`${styles.card} ${styles["add-card"]}`}>
           <AiOutlinePlus size={50} color="#555" />
           <p>Add Pet</p>
         </div>

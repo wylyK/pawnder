@@ -43,14 +43,14 @@ const VetPetOverview: React.FC = () => {
             onClick={() => handleOpenModal(pet.id)}
           >
             <img src={pet.image} alt={pet.name} />
-            <div className={styles.cardContent}>
-              <h2 className={styles.cardTitle}>{pet.name}</h2>
-              <p className={styles.cardSubtitle}>{pet.breed}</p>
-              <p className={styles.cardOwner}>Owner - {pet.owner}</p>
+            <div className={styles["card-content"]}>
+              <h2 className={styles["card-title"]}>{pet.name}</h2>
+              <p className={styles["card-subtitle"]}>{pet.breed}</p>
+              <p className={styles["card-owner"]}>Owner - {pet.owner}</p>
             </div>
           </div>
         ))}
-        <div className={`${styles.card} ${styles.addCard}`}>
+        <div className={`${styles.card} ${styles["add-card"]}`}>
           <AiOutlinePlus size={50} color="#555" />
           <p>Add Pet</p>
         </div>

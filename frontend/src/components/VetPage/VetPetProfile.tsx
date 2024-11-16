@@ -52,36 +52,36 @@ const VetPetProfile: React.FC<VetPetProfileProps> = ({ petId }) => {
   };
 
   return (
-    <div className={styles.profileContainer}>
-      <div className={styles.imageSection}>
+    <div className={styles["profile-container"]}>
+      <div className={styles["image-section"]}>
         <img src={pet.image} alt={pet.name} className={styles.image} />
       </div>
-      <div className={styles.infoSection}>
+      <div className={styles["info-section"]}>
         <h1 className={styles.title}>
           {pet.name} - {pet.breed}
         </h1>
-        <div className={styles.detailsContainer}>
-          <div className={styles.detailsBox}>
+        <div className={styles["details-container"]}>
+          <div className={styles["details-box"]}>
             <p><strong>Name:</strong> {pet.name}</p>
             <p><strong>Breed:</strong> {pet.breed}</p>
             <p><strong>Birthday:</strong> {pet.birthday}</p>
             <p><strong>Age:</strong> {pet.age}</p>
-            <button className={styles.editButton}>Edit</button>
+            <button className={styles["edit-button"]}>Edit</button>
           </div>
-          <div className={styles.detailsBox}>
+          <div className={styles["details-box"]}>
             <p><strong>Weight:</strong> {pet.weight}</p>
             <p><strong>Insurance:</strong> {pet.insurance}</p>
             <p><strong>Diet:</strong> {pet.diet}</p>
             <p><strong>Prescription:</strong> {pet.prescription}</p>
-            <button className={styles.editButton}>Edit</button>
+            <button className={styles["edit-button"]}>Edit</button>
           </div>
         </div>
         
         {/* New Horizontal Box for Description and Message */}
-        <div className={styles.messageBox}>
+        <div className={styles["message-box"]}>
           <h2>Description</h2>
           <p>{pet.description}</p>
-          <button className={styles.messageButton}>Send a Message to {pet.owner}</button>
+          <button className={styles["message-button"]}>Send a Message to {pet.owner}</button>
         </div>
       </div>
     </div>

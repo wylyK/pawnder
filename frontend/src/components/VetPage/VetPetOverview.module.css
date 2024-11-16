@@ -51,31 +51,31 @@
     object-fit: cover;
   }
   
-  .cardContent {
+  .card-content {
     padding: 15px;
   }
   
-  .cardTitle {
+  .card-title {
     font-size: 1.5rem;
     font-weight: bold;
     margin: 5px 0 0;
     color: var(--text-color);
   }
   
-  .cardSubtitle {
+  .card-subtitle {
     color: #777;
     font-style: italic;
     margin: 7.5px 0;
   }
   
-  .cardOwner {
+  .card-owner {
     color: var(--text-color);
     font-size: 1rem;
     font-weight: normal;
     margin-top: 5px;
   }
   
-  .addCard {
+  .add-card {
     display: flex;
     justify-content: center;
     align-items: center;

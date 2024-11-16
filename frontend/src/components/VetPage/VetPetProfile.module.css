@@ -1,6 +1,6 @@
 /* VetPetProfile.module.css */
 
-.profileContainer {
+.profile-container {
     display: flex;
     gap: 30px;
     padding: 0;
@@ -8,7 +8,7 @@
     width: 100%;
   }
   
-  .imageSection {
+  .image-section {
     flex: 1.5;
     display: flex;
     justify-content: center;
@@ -22,7 +22,7 @@
     border-radius: 15px;
   }
   
-  .infoSection {
+  .info-section {
     flex: 2.5;
     display: flex;
     flex-direction: column;
@@ -34,13 +34,13 @@
     margin-bottom: 25px;
   }
   
-  .detailsContainer {
+  .details-container {
     display: flex;
     gap: 30px;
     margin-bottom: 20px;
   }
   
-  .detailsBox {
+  .details-box {
     background-color: #f5f5f5;
     padding: 20px;
     border-radius: 15px;
@@ -50,7 +50,7 @@
     position: relative;
   }
   
-  .editButton {
+  .edit-button {
     padding: 10px 20px;
     background-color: #ef4a75;
     color: white;
@@ -61,12 +61,12 @@
     transition: background-color 0.2s ease;
   }
   
-  .editButton:hover {
+  .edit-button:hover {
     background-color: #fd5564;
   }
   
   /* New styles for the message box */
-  .messageBox {
+  .message-box {
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 15px;
@@ -78,7 +78,7 @@
     gap: 10px;
   }
   
-  .messageButton {
+  .message-button {
     padding: 10px 20px;
     background-color: #ef4a75;
     color: white;
@@ -90,7 +90,7 @@
     align-self: flex-start;
   }
   
-  .messageButton:hover {
+  .messageB-button:hover {
     background-color: #fd5564;
   }
   

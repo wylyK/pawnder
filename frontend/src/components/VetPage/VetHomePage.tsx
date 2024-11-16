@@ -18,7 +18,7 @@ const VetHomePage: React.FC = () => {
             <span className={styles.title}>Pawnder</span>
           </div>
         </div>
-        <div className={styles.cardContainer}>
+        <div className={styles["card-container"]}>
           <VetPetOverview />
         </div>
       </main>
