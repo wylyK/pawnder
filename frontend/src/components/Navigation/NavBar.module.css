@@ -32,12 +32,40 @@
   width: 100%;
 }
 
+.home {
+  transform: scale(1.35);
+}
+
+.paw {
+  transform: scale(1.2);
+}
+
+.calendar {
+  transform: scale(1.05);
+}
+
+.logout {
+  transform: scale(1.15);
+}
+
 .link {
   color: #fff;
   font-size: 30px;
   text-decoration: none;
 }
 
-.link:hover {
-  color: plum;
+.link .dormant {
+  display: inline;
+}
+
+.link .hovered {
+  display: none;
+}
+
+.link:hover .dormant {
+  display: none;
+}
+
+.link:hover .hovered {
+  display: inline;
 }

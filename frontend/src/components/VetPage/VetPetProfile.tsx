@@ -62,26 +62,44 @@ const VetPetProfile: React.FC<VetPetProfileProps> = ({ petId }) => {
         </h1>
         <div className={styles["details-container"]}>
           <div className={styles["details-box"]}>
-            <p><strong>Name:</strong> {pet.name}</p>
-            <p><strong>Breed:</strong> {pet.breed}</p>
-            <p><strong>Birthday:</strong> {pet.birthday}</p>
-            <p><strong>Age:</strong> {pet.age}</p>
+            <p>
+              <strong>Name:</strong> {pet.name}
+            </p>
+            <p>
+              <strong>Breed:</strong> {pet.breed}
+            </p>
+            <p>
+              <strong>Birthday:</strong> {pet.birthday}
+            </p>
+            <p>
+              <strong>Age:</strong> {pet.age}
+            </p>
             <button className={styles["edit-button"]}>Edit</button>
           </div>
           <div className={styles["details-box"]}>
-            <p><strong>Weight:</strong> {pet.weight}</p>
-            <p><strong>Insurance:</strong> {pet.insurance}</p>
-            <p><strong>Diet:</strong> {pet.diet}</p>
-            <p><strong>Prescription:</strong> {pet.prescription}</p>
+            <p>
+              <strong>Weight:</strong> {pet.weight}
+            </p>
+            <p>
+              <strong>Insurance:</strong> {pet.insurance}
+            </p>
+            <p>
+              <strong>Diet:</strong> {pet.diet}
+            </p>
+            <p>
+              <strong>Prescription:</strong> {pet.prescription}
+            </p>
             <button className={styles["edit-button"]}>Edit</button>
           </div>
         </div>
-        
+
         {/* New Horizontal Box for Description and Message */}
         <div className={styles["message-box"]}>
           <h2>Description</h2>
           <p>{pet.description}</p>
-          <button className={styles["message-button"]}>Send a Message to {pet.owner}</button>
+          <button className={styles["message-button"]}>
+            Send a Message to {pet.owner}
+          </button>
         </div>
       </div>
     </div>

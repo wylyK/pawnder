@@ -16,11 +16,15 @@ const HomePage: React.FC = () => {
         <div className={styles.header}>
           <h1 className={styles.heading}>Your Pets</h1>
           <div className={styles.logo}>
-            <FaPaw size={30} color="var(--text-color)" style={{ marginRight: "8px" }} />
+            <FaPaw
+              size={30}
+              color="var(--text-color)"
+              style={{ marginRight: "8px" }}
+            />
             <span className={styles.title}>Pawnder</span>
           </div>
         </div>
-        <div className={styles.cardContainer}>
+        <div className={styles["card-container"]}>
           <PetOverview />
         </div>
         <Reminders />

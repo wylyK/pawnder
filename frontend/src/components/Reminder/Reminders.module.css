@@ -24,7 +24,7 @@
 }
 
 .reminders::-webkit-scrollbar-thumb {
-  background-color: #e0dcdc;;
+  background-color: #e0dcdc;
   border-radius: 10px;
 }
 
@@ -84,9 +84,9 @@
   margin-bottom: 4px;
 }
 
-.name{
-    margin-left: 12px;
-    margin-top: 1.5px;
+.name {
+  margin-left: 12px;
+  margin-top: 1.5px;
 }
 
 .subhead {
@@ -96,10 +96,10 @@
 }
 
 .body {
-    font-size: 112%;
-    width: 100%;
-    height: 100px;
-    overflow: hidden;
+  font-size: 112%;
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
 }
 
 .time {

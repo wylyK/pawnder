@@ -15,11 +15,41 @@ interface Pet {
 }
 
 const pets: Pet[] = [
-  { id: "1", name: "Fionn", breed: "Irish Setter + Golden Retriever", owner: "Alice", image: "/doggo.JPG" },
-  { id: "2", name: "Spike", breed: "Maine Coon", owner: "Sowrathi", image: "/dog2.avif" },
-  { id: "3", name: "Luna", breed: "Golden Retriever", owner: "Bob", image: "/retriever.jpeg" },
-  { id: "4", name: "Max", breed: "Labrador", owner: "John", image: "/dog2.avif" },
-  { id: "5", name: "Bella", breed: "Pomeranian", owner: "Sophia", image: "/catto.jpeg" },
+  {
+    id: "1",
+    name: "Fionn",
+    breed: "Irish Setter + Golden Retriever",
+    owner: "Alice",
+    image: "/doggo.JPG",
+  },
+  {
+    id: "2",
+    name: "Spike",
+    breed: "Maine Coon",
+    owner: "Sowrathi",
+    image: "/dog2.avif",
+  },
+  {
+    id: "3",
+    name: "Luna",
+    breed: "Golden Retriever",
+    owner: "Bob",
+    image: "/retriever.jpeg",
+  },
+  {
+    id: "4",
+    name: "Max",
+    breed: "Labrador",
+    owner: "John",
+    image: "/dog2.avif",
+  },
+  {
+    id: "5",
+    name: "Bella",
+    breed: "Pomeranian",
+    owner: "Sophia",
+    image: "/catto.jpeg",
+  },
 ];
 
 const VetPetOverview: React.FC = () => {
@@ -59,9 +89,9 @@ const VetPetOverview: React.FC = () => {
       {/* Modal for displaying PetProfile */}
       {selectedPetId && (
         <Modal onClose={handleCloseModal}>
-            <VetPetProfile petId={selectedPetId} />
+          <VetPetProfile petId={selectedPetId} />
         </Modal>
-        )}
+      )}
     </div>
   );
 };

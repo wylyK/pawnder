@@ -44,16 +44,16 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
   };
 
   return (
-    <div className={styles.profileContainer}>
-      <div className={styles.imageSection}>
+    <div className={styles["profile-container"]}>
+      <div className={styles["image-section"]}>
         <img src={pet.image} alt={pet.name} className={styles.image} />
       </div>
-      <div className={styles.infoSection}>
+      <div className={styles["info-section"]}>
         <h1 className={styles.title}>
           {pet.name} - {pet.breed}
         </h1>
-        <div className={styles.detailsContainer}>
-          <div className={styles.detailsBox}>
+        <div className={styles["details-container"]}>
+          <div className={styles["details-box"]}>
             <p>
               <strong>Name:</strong> {pet.name}
             </p>
@@ -66,11 +66,11 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
             <p>
               <strong>Age:</strong> {pet.age}
             </p>
-            <div className={styles.buttonContainer}>
-              <button className={styles.editButton}>Edit</button>
+            <div className={styles["button-container"]}>
+              <button className={styles["edit-button"]}>Edit</button>
             </div>
           </div>
-          <div className={styles.detailsBox}>
+          <div className={styles["details-box"]}>
             <p>
               <strong>Weight:</strong> {pet.weight}
             </p>
@@ -83,8 +83,8 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
             <p>
               <strong>Prescription:</strong> {pet.prescription}
             </p>
-            <div className={styles.buttonContainer}>
-              <button className={styles.editButton}>Edit</button>
+            <div className={styles["button-container"]}>
+              <button className={styles["edit-button"]}>Edit</button>
             </div>
           </div>
         </div>
