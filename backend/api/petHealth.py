@@ -13,7 +13,8 @@ pet_db = db.collection("PET")
 def get_health(petId):
     try:
         pet_doc_ref = pet_db.document(petId)
-        health_doc = pet_doc_ref.get().to_dict().get("HealthRecords", [])[0]
+        health_docs = pet_doc_ref.collection("HEALTH").limit(1).get()
+        health_doc = health_docs[0].to_dict()
         health = Health.from_dict(health_doc)
         return jsonify(health.to_dict()), 200
     except Exception as e:
@@ -27,8 +28,9 @@ def create_health(petId):
     pet_doc = pet_doc_ref.get()
     if pet_doc.exists:
         try:
+            health_ref = pet_doc_ref.collection("HEALTH").document()  # Auto-generate a new document ID
             health = Health.from_dict(data)
-            pet_doc_ref.add(health.to_dict())
+            health_ref.set(health.to_dict())  # Use `set` to save the data
             return jsonify({"message": f"Health information of pet {petId} created successfully"}), 201
         except Exception as e:
             return jsonify({"error": str(e)}), 500
@@ -43,8 +45,10 @@ def update_health(petId):
     pet_doc = pet_doc_ref.get()
     if pet_doc.exists:
         try:
+            health_docs = pet_doc_ref.collection("HEALTH").limit(1).get()
+            health_doc_ref = health_docs[0].reference
             health = Health.from_dict(data)
-            pet_doc_ref.update(health.to_dict())
+            health_doc_ref.update(health.to_dict())
             return jsonify({"message": f"Health information of pet {petId} updated successfully"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500

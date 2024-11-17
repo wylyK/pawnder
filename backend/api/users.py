@@ -1,10 +1,11 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, current_app
 from firebase_admin import firestore, auth
 from connect_firebase import PawnderFirebase
 from dotenv import load_dotenv
 import os
 import requests
 from models.user import User
+from api.petHealth import get_health, create_health, update_health
 
 users_api = Blueprint('users_api', __name__)
 pawnder_firebase = PawnderFirebase()
@@ -20,6 +21,44 @@ config = {
     "appId": os.getenv("FIREBASE_APP_ID"),
     "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID")
 }
+
+@users_api.put('/connect_vet/')
+def connect_vet():
+    try:
+        data = request.json 
+        vet_id = data.get("VetId")
+        pet_id = data.get("PetId")
+        
+        vet_doc_ref = user_db.collection("USER").document(vet_id) 
+        pet_doc_ref = user_db.collection("PET").document(pet_id)
+        
+        vet_doc = vet_doc_ref.get()
+        if not vet_doc.exists:
+            return jsonify({"error": f"Vet {vet_id} not found"}), 404
+
+        vet_data = vet_doc.to_dict()
+        if vet_data.get("Role") != "Vet":
+            return jsonify({"error": "Access denied: User is not a Vet"}), 403
+        
+        health_docs = pet_doc_ref.collection("HEALTH").limit(1).get()
+        if not health_docs:
+            with current_app.test_request_context(json={"VetId": [vet_id]}):
+                create_response = create_health(pet_id)
+                if create_response[1] != 201:  # Assuming create_health returns a tuple (response, status_code)
+                    return create_response  # Return early if creation fails
+        else:
+            health_doc_ref = health_docs[0].reference
+            
+            health_doc_ref.update({
+                "VetId": firestore.ArrayUnion([vet_id])
+            })
+        vet_doc_ref.update({
+            "PetId": firestore.ArrayUnion([pet_id])
+        })
+
+        return jsonify({"message": f"Vet {vet_id} successfully connected to Pet {pet_id}"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # POST login user by email and password
 @users_api.post('/users/login')
 def login():
