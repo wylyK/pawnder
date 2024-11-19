@@ -1,11 +1,10 @@
 // HomePage.tsx
 import React from "react";
-import NavBar from "../components/Navigation/NavBar";
-import PetOverview from "../components/PetOverview/PetOverview";
+import NavBar from "../Navigation/NavBar";
+import PetOverview from "../PetOverview/PetOverview";
 import { FaPaw } from "react-icons/fa"; // Import paw icon
 import Reminders from "@/components/Reminder/Reminders";
-import styles from "./HomePage.module.css"; // Import CSS module
-import "./globals.css"; // Import global styles
+import styles from "./Home.module.css"; // Import CSS module
 
 const HomePage: React.FC = () => {
   return (

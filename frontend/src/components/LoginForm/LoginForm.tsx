@@ -1,10 +1,11 @@
 import React from "react";
-import styles from "./LoginPage.module.css";
+import Link from "next/link";
+import styles from "./LoginForm.module.css";
 import { FaUserLarge } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { FaPaw } from "react-icons/fa";
 
-const LoginPage: React.FC = () => {
+const LoginForm: React.FC = () => {
   return (
     <div className={styles["login-container"]}>
       <div className={styles["login"]}>
@@ -26,12 +27,16 @@ const LoginPage: React.FC = () => {
             <input type="checkbox" />
             <div className={styles["remember-text"]}>Remember me</div>
           </div>
-          <input className={styles["submit"]} type="submit"></input>
-          <button className={styles["sign-up"]}>Create an Account</button>
+          <Link href="/" className={styles["submit"]}>
+            <input type="submit"></input>
+          </Link>
+          <Link href="/signup">
+            <button className={styles["signup"]}>Create an Account</button>
+          </Link>
         </form>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default LoginForm;

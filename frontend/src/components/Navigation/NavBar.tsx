@@ -47,7 +47,7 @@ const NavBar: React.FC = () => {
 
         {/* User Icon */}
         <li className={styles.li}>
-          <Link href="/page/userprofile" className={styles.link}>
+          <Link href="/profile" className={styles.link}>
             <FaRegUser className={styles["dormant"]} />
             <FaUser className={styles["hovered"]} />
           </Link>
@@ -55,10 +55,7 @@ const NavBar: React.FC = () => {
 
         {/* Logout Icon */}
         <li className={styles.li}>
-          <Link
-            href="/page/userprofile"
-            className={`${styles.link} ${styles.logout}`}
-          >
+          <Link href="/login" className={`${styles.link} ${styles.logout}`}>
             <RiLogoutBoxRLine className={styles["dormant"]} />
             <RiLogoutBoxRFill className={styles["hovered"]} />
           </Link>
