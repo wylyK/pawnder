@@ -1,0 +1,152 @@
+.signup-container {
+  margin: auto;
+  width: 400px;
+  height: 600px;
+}
+
+.signup {
+  background: white;
+  border-radius: 20px;
+  padding: 15px;
+  margin-top: 200px;
+  width: 400px;
+  height: 515px;
+  box-shadow: 0 8px 5px #e0dcdc;
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  color: var(--text-color);
+  gap: 10px;
+  margin-left: 5px;
+}
+
+.logo-icon {
+  margin-top: 2px;
+  transform: scale(1.2);
+}
+
+.logo-text {
+  font-weight: bold;
+}
+
+.signup form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup form h1 {
+  color: var(--main-color1);
+  margin-top: 5px;
+  margin-bottom: 20px;
+  font-size: 200%;
+  font-weight: 800;
+}
+
+.text-field {
+  background: var(--background-color);
+  border: none;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  width: 80%;
+  height: 40px;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  font-size: 90%;
+}
+
+.full-name {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.full-name .text-field {
+  justify-content: center;
+}
+
+.text-field.email-password {
+  justify-content: left;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.text-field input {
+  background: none;
+  border: none;
+  width: 80%;
+  height: 35px;
+}
+
+.full-name .text-field input {
+  width: 75%;
+}
+
+.text-icon {
+  margin-right: 15px;
+  margin-bottom: 2.5px;
+}
+
+.text-field:hover .text-icon {
+  color: var(--main-color3);
+}
+
+.text-field input:focus {
+  outline: none;
+}
+
+.divider {
+  border-top: 1px solid #a0a4ac;
+  border-bottom: 1px solid #a0a4ac;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  width: calc(80% - 30px);
+}
+
+.submit {
+  background: linear-gradient(
+    45deg,
+    var(--main-color1) 25%,
+    var(--main-color2) 75%
+  );
+  background-size: 200%;
+  background-position: 50%;
+  transition: background-position 0.3s;
+  color: white;
+  font-size: 19px;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  width: 80%;
+  height: 40px;
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit:hover {
+  background-position: 100% 0;
+}
+
+.login {
+  border: none;
+  background-color: white;
+  color: var(--main-color1);
+  font-size: 15px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.login:hover {
+  color: var(--main-color2);
+}
