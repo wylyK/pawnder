@@ -1,10 +1,12 @@
 // components/PetOverview.tsx
 "use client";
 import React, { useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+
 import styles from "./PetOverview.module.css";
 import Modal from "./Modal";
 import PetProfile from "./PetProfile";
+import PetCard from "../PetCard/PetCard"
+import AddCard from "../PetCard/AddCard"
 
 interface Pet {
   id: string;
@@ -45,23 +47,10 @@ const PetOverview: React.FC = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid}>
-        {pets.map((pet) => (
-          <div
-            key={pet.id}
-            className={styles.card}
-            onClick={() => handleOpenModal(pet.id)}
-          >
-            <img src={pet.image} alt={pet.name} />
-            <div className={styles["card-content"]}>
-              <h2 className={styles["card-title"]}>{pet.name}</h2>
-              <p className={styles["card-subtitle"]}>{pet.breed}</p>
-            </div>
-          </div>
+        {pets.map(({id, name, breed, image}) => (
+          <PetCard key={id} id={id} name={name} breed={breed} image={image} age={-1} handlePopup={() => handleOpenModal(id)}/>  
         ))}
-        <div className={`${styles.card} ${styles["add-card"]}`}>
-          <AiOutlinePlus size={50} color="#555" />
-          <p>Add Pet</p>
-        </div>
+        <AddCard/>
       </div>
 
       {/* Modal for displaying PetProfile */}

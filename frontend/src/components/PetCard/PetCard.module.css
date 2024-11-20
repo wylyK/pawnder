@@ -1,0 +1,52 @@
+/* Regular Card */
+.card {
+background-color: #fff;
+border-radius: 15px;
+box-shadow: 0 8px 5px #e0dcdc;
+overflow: hidden;
+width: 275px;
+height: 400px;
+margin: 10px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+flex: 0 0 auto; /* Ensure cards don’t shrink */
+transition: transform 0.2s;
+}
+
+.card:hover {
+transform: scale(1.05);
+}
+
+.card img {
+width: 100%;
+height: 300px;
+object-fit: cover;
+}
+
+.card-content {
+padding: 15px 15px 22px;
+}
+
+.card-title {
+font-size: 1.5rem;
+font-weight: bold;
+/* margin: 5px 0 0; */
+color: var(--text-color);
+display: flex;
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+}
+
+.age {
+    font-size: 75%;
+    font-weight: lighter;
+    margin-top: 3px;
+}
+
+.card-subtitle {
+color: #777;
+font-style: italic;
+/* margin: 7.5px 0; */
+}
