@@ -1,24 +1,10 @@
+// app/page.tsx
 import React from "react";
-import NavBar from "../components/Navigation/NavBar";
+import HomePage from "../components/Home/Home"; // Adjust path if necessary
+import "./globals.css";
 
-export default function Home() {
-  return (
-    <div style={containerStyle}>
-      <NavBar />
-      <main style={mainStyle}>
-        <h1>Welcome to Pawnder</h1>
-      </main>
-    </div>
-  );
-}
-
-const containerStyle = {
-  display: "flex", // Flexbox to place NavBar and main content side by side
-  height: "100vh", // Full viewport height
+const Page: React.FC = () => {
+  return <HomePage />;
 };
 
-const mainStyle = {
-  marginLeft: "80px",
-  padding: "20px",
-  width: "100%",
-};
+export default Page;

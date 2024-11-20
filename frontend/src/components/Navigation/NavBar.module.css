@@ -1,6 +1,9 @@
 /* NavBar.module.css */
 .nav {
-  background-color: #ffc297;
+  /* #ef4a75, */
+
+  /* #fe3c72, */
+  background: linear-gradient(45deg, var(--main-color1), var(--main-color2));
   height: 100vh;
   width: 80px;
   position: fixed;
@@ -10,6 +13,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 1;
 }
 
 .ul {
@@ -29,12 +33,40 @@
   width: 100%;
 }
 
+.home {
+  transform: scale(1.35);
+}
+
+.paw {
+  transform: scale(1.2);
+}
+
+.calendar {
+  transform: scale(1.05);
+}
+
+.logout {
+  transform: scale(1.15);
+}
+
 .link {
-  color: #ff7578;
+  color: #fff;
   font-size: 30px;
   text-decoration: none;
 }
 
-.link:hover {
-  color: #eb4335;
+.link .dormant {
+  display: inline;
+}
+
+.link .hovered {
+  display: none;
+}
+
+.link:hover .dormant {
+  display: none;
+}
+
+.link:hover .hovered {
+  display: inline;
 }

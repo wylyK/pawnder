@@ -1,10 +1,14 @@
 import React from "react";
 import Link from "next/link";
-import { MdOutlineHome } from "react-icons/md";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import { CiCalendar } from "react-icons/ci";
-import { PiPawPrint } from "react-icons/pi";
-import { FaRegUser } from "react-icons/fa";
+import { MdOutlineHome, MdHome } from "react-icons/md";
+import {
+  PiPawPrintBold,
+  PiPawPrintFill,
+  PiCalendarBlankBold,
+  PiCalendarBlankFill,
+} from "react-icons/pi";
+import { FaRegUser, FaUser } from "react-icons/fa6";
+import { RiLogoutBoxRFill, RiLogoutBoxRLine } from "react-icons/ri";
 import styles from "./NavBar.module.css";
 
 const NavBar: React.FC = () => {
@@ -13,36 +17,47 @@ const NavBar: React.FC = () => {
       <ul className={styles.ul}>
         {/* Home Icon */}
         <li className={styles.li}>
-          <Link href="/" className={styles.link}>
-            <MdOutlineHome />
-          </Link>
-        </li>
-
-        {/* Notification Icon */}
-        <li className={styles.li}>
-          <Link href="/notification" className={styles.link}>
-            <IoMdNotificationsOutline strokeWidth={5} />
-          </Link>
-        </li>
-
-        {/* Calendar Icon */}
-        <li className={styles.li}>
-          <Link href="/calendar" className={styles.link}>
-            <CiCalendar strokeWidth={1} />
+          <Link href="/" className={`${styles.link} ${styles.home}`}>
+            <MdOutlineHome className={styles["dormant"]} />
+            <MdHome className={styles["hovered"]} />
           </Link>
         </li>
 
         {/* Paw Icon */}
         <li className={styles.li}>
-          <Link href="/pets" className={styles.link}>
-            <PiPawPrint strokeWidth={5} />
+          <Link href="/pets" className={`${styles.link} ${styles.paw}`}>
+            <PiPawPrintBold className={styles["dormant"]} />
+            <PiPawPrintFill className={styles["hovered"]} />
+          </Link>
+        </li>
+
+        {/* Calendar Icon */}
+        <li className={styles.li}>
+          <Link
+            href="/calendar"
+            className={`${styles.link} ${styles.calendar}`}
+          >
+            <PiCalendarBlankBold className={styles["dormant"]} />
+            <PiCalendarBlankFill
+              className={styles["hovered"]}
+              strokeWidth={7}
+            />
           </Link>
         </li>
 
         {/* User Icon */}
         <li className={styles.li}>
-          <Link href="/page/userprofile" className={styles.link}>
-            <FaRegUser />
+          <Link href="/profile" className={styles.link}>
+            <FaRegUser className={styles["dormant"]} />
+            <FaUser className={styles["hovered"]} />
+          </Link>
+        </li>
+
+        {/* Logout Icon */}
+        <li className={styles.li}>
+          <Link href="/login" className={`${styles.link} ${styles.logout}`}>
+            <RiLogoutBoxRLine className={styles["dormant"]} />
+            <RiLogoutBoxRFill className={styles["hovered"]} />
           </Link>
         </li>
       </ul>
