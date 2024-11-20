@@ -18,7 +18,7 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>Hello, Weeorld!</p>"
 
 if __name__ == "__main__":
     app.run(debug=True)

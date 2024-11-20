@@ -1,0 +1,19 @@
+body {
+  --main-color1: #fd2b7b;
+  --main-color2: #ff7158;
+  --main-color3: #fd5564;
+  --text-color: #575252;
+  --background-color: #fbf0ef;
+
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: "Open Sans", sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  width: 100%;
+}

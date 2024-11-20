@@ -1,16 +1,60 @@
 from flask import Blueprint, jsonify, request
-from firebase_admin import firestore
-from connect_firebase import PawnderFirebase
 from models.pet import Pet
+from firestore_client import db
 
 pets_api = Blueprint('pets_api', __name__)
-pawnder_firebase = PawnderFirebase()
-pet_db = firestore.client()
 
+# GET pets by type
+# /pets/type?type=Dog
+@pets_api.get('/pets/type')
+def get_pets_by_type():
+    pet_type = request.args.get('type')
+    pet_ref = db.collection("PET")
+    try:
+        pet_docs = (
+            pet_ref
+            .where("Type", "==", pet_type)
+            .stream()
+        )
+        pet_ids = [pet.id for pet in pet_docs]
+        return jsonify(pet_ids), 200
+    except Exception as e:
+        return jsonify({"error": f"Error getting pets: {str(e)}"}), 500
+    
+# GET pets by location
+# /pets/location?location=NY
+@pets_api.get('/pets/location')
+def get_pets_by_location():
+    location = request.args.get('location')
+    user_ref = db.collection("USER")
+    try:
+        user_docs = (
+            user_ref
+            .where("Role", "==", "Owner")
+            .where("Location", "==", location)
+            .stream()
+        )
+        user_ids = [user.id for user in user_docs]
+        pet_ref = db.collection("PET")
+        if user_ids == []:
+            return jsonify([]), 200
+        try:
+            pet_docs = (
+                pet_ref
+                .where("UserId", "in", user_ids)
+                .stream()
+            )
+            pet_ids = [pet.id for pet in pet_docs]
+            return jsonify(pet_ids), 200
+        except Exception as e:
+            return jsonify({"error": f"Error getting pets: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error getting pets: {str(e)}"}), 500
+    
 # GET all pet profiles
 @pets_api.get('/pets')
 def get_all_pets():
-    pets_ref = pet_db.collection("PET")
+    pets_ref = db.collection("PET")
     pets_docs = pets_ref.stream()
     try:
         pets = {}
@@ -33,7 +77,7 @@ def get_all_pets():
 # GET pet profile by Firestore document ID
 @pets_api.get('/pets/<pet_id>')
 def get_pet_by_id(pet_id):
-    pet_ref = pet_db.collection("PET").document(pet_id)
+    pet_ref = db.collection("PET").document(pet_id)
     pet_doc = pet_ref.get()
 
     if pet_doc.exists:
@@ -66,7 +110,7 @@ def create_pet():
             Tag=data.get('Tag', []),
             UserId=data['UserId']
         )
-        pet_ref = pet_db.collection("PET").document()
+        pet_ref = db.collection("PET").document()
         pet_ref.set(pet.to_dict())
         return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
     except Exception as e:
@@ -76,7 +120,7 @@ def create_pet():
 @pets_api.put('/pets/<pet_id>')
 def update_pet_by_id(pet_id):
     data = request.json
-    pet_ref = pet_db.collection("PET").document(pet_id)
+    pet_ref = db.collection("PET").document(pet_id)
     pet_doc = pet_ref.get()
 
     if pet_doc.exists:
@@ -101,7 +145,7 @@ def update_pet_by_id(pet_id):
 # DELETE pet profile by Firestore document ID
 @pets_api.delete('/pets/<pet_id>')
 def delete_pet_by_id(pet_id):
-    pet_ref = pet_db.collection("PET").document(pet_id)
+    pet_ref = db.collection("PET").document(pet_id)
     pet_doc = pet_ref.get()
 
     if pet_doc.exists:

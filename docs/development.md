@@ -72,6 +72,12 @@ npm run dev
 flask run
 ```
 
+If live reloading isn’t working
+
+```sh
+flask --app app run --debug
+```
+
 ## Development workflow
 
 Before starting your work, create a new branch (or an issue, then create a branch for it). Run:
