@@ -1,5 +1,29 @@
 # Collection
 
+## Pet Collection
+
+### What
+
+- **GET**
+  - `/pets/type?type={Typy}`
+  - `/pets/location?location={location}`
+  - `/pets`
+  - `/pets/<pet_id>`
+- **POST** `/pets/create`
+- **PUT** `/pets/<petId>`
+- **DELETE** `/pets/<petId>`
+
+### Details
+
+- **GET**
+  - - `/pets/type?type={Type}`: Retrieves list of pet ids of type {Type}
+    - `/pets/location?location={Location}`: Retrieves list of pet ids of location {Location}
+    - `/pets`: Retrieves all the pets
+    - `/pets/<pet_id>`: Retrieves pet by doc Id
+- **POST** `/pets/create`: Adds a new pet profile with basic information
+- **PUT** `/pets/<petId>`: Updates pet profile
+- **DELETE** `/pets/<petId>`: Deletes pet profile
+
 ## Match Collection
 
 ### What

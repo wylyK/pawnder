@@ -1,12 +1,9 @@
 from flask import Blueprint, jsonify, request
-from firebase_admin import firestore
-from connect_firebase import PawnderFirebase
 from models.match import Match
 from models.match import Status
+from firestore_client import db
 
 pet_match_api = Blueprint('pet_match_api', __name__)
-pawnder_firebase = PawnderFirebase()
-db = firestore.client()
 pet_db = db.collection("PET")
 
 # Send a match request to a pet

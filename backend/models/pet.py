@@ -1,6 +1,6 @@
-from backend.models.health import Health
-from backend.models.match import Match
-from backend.models.event import Event
+from .health import Health
+from .match import Match
+from .event import Event
 class Pet:
     def __init__(self, Name, Age, Breed, Type, Avatar, UserId, Description="", Tag=[], HealthRecords=[], MatchRecords=[], EventRecords=[]):
         self.Name = Name
