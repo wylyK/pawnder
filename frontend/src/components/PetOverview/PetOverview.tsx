@@ -5,8 +5,8 @@ import React, { useState } from "react";
 import styles from "./PetOverview.module.css";
 import Modal from "./Modal";
 import PetProfile from "./PetProfile";
-import PetCard from "../PetCard/PetCard"
-import AddCard from "../PetCard/AddCard"
+import PetCard from "../PetCard/PetCard";
+import AddCard from "../PetCard/AddCard";
 
 interface Pet {
   id: string;
@@ -47,10 +47,18 @@ const PetOverview: React.FC = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid}>
-        {pets.map(({id, name, breed, image}) => (
-          <PetCard key={id} id={id} name={name} breed={breed} image={image} age={-1} handlePopup={() => handleOpenModal(id)}/>  
+        {pets.map(({ id, name, breed, image }) => (
+          <PetCard
+            key={id}
+            id={id}
+            name={name}
+            breed={breed}
+            image={image}
+            age={-1}
+            handlePopup={() => handleOpenModal(id)}
+          />
         ))}
-        <AddCard/>
+        <AddCard />
       </div>
 
       {/* Modal for displaying PetProfile */}
