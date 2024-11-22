@@ -203,9 +203,13 @@ def create_user():
         create.Id = user_id
         user_profile_data = User.to_dict(create)
         user_ref.set(user_profile_data)
-        return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    # Call PUT endpoint if user upload an avatar when creating the account
+    update_user_by_id(user_id)
+
+    return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     
 # PUT update user profile data by ID
 @users_api.put('/users/<user_id>')

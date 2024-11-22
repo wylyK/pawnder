@@ -117,9 +117,14 @@ def create_pet():
         )
         pet_ref = db.collection("PET").document()
         pet_ref.set(pet.to_dict())
-        return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    # Call PUT endpoint to add the pet avatar if the user include it
+    if 'Avatar' in request.files:
+        update_pet_by_id(pet_ref.id)
+
+    return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
 
 # PUT update pet profile data by Firestore document ID
 @pets_api.put('/pets/<pet_id>')
