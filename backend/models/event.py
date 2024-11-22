@@ -1,15 +1,15 @@
 from enum import Enum
 class Type(Enum):
     APPOINTMENT = "appointment"
-    ROUTINE_CHECKUP = "routine checkup"
+    ROUTINE_CHECKUP = "routine_checkup"
     SURGERY = "surgery"
     VACCINATION = "vaccination"
-    EMERGENCY_VISIT = "emergency visit"
+    EMERGENCY_VISIT = "emergency_visit"
     OTHER = "other"
 
 class Status(Enum):
     SCHEDULED = "scheduled"
-    IN_PROGRESS = "in progress"
+    IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     CANCELED = "canceled"
 

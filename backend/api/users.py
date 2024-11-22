@@ -8,6 +8,8 @@ from api.petHealth import get_health, create_health, update_health
 from firestore_client import db
 
 users_api = Blueprint('users_api', __name__)
+user_db = db.collection("USER")
+pet_db = db.collection("PET")
 load_dotenv()
 
 config = {
@@ -27,8 +29,8 @@ def connect_vet():
         vet_id = data.get("VetId")
         pet_id = data.get("PetId")
         
-        vet_doc_ref = db.collection("USER").document(vet_id) 
-        pet_doc_ref = db.collection("PET").document(pet_id)
+        vet_doc_ref = user_db.document(vet_id) 
+        pet_doc_ref = pet_db.document(pet_id)
         
         vet_doc = vet_doc_ref.get()
         if not vet_doc.exists:
@@ -114,16 +116,76 @@ def logout():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-
 # GET user by ID
 @users_api.get('/users/<user_id>')
 def get_user_by_id(user_id):
-    user_ref = db.collection("USER").document(user_id)
+    user_ref = user_db.document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:
         return jsonify({user_doc.id: user_doc.to_dict()}), 200  
+    else:
+        return jsonify({"error": "User not found"}), 404
+    
+# Get all events by userId
+@users_api.get('/users/<user_id>/events')
+def get_events_by_user_id(user_id):
+    user_ref = user_db.document(user_id)
+    user_doc = user_ref.get()
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+        if user_data.get('Role') == 'Owner':
+            try:
+                pet_docs = pet_db.where("UserId", "==", user_id).stream()
+                pet_ids = [pet.id for pet in pet_docs]
+                event_docs = []
+                for pet_id in pet_ids:
+                    pet_doc_ref = pet_db.document(pet_id)
+                    event_docs.extend(pet_doc_ref.collection("EVENT").stream())
+                events = [event.to_dict() for event in event_docs]
+                return jsonify(events), 200
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        else:
+            pet_ids = user_data.get('PetId')
+            event_docs = []
+            for pet_id in pet_ids:
+                pet_doc_ref = pet_db.document(pet_id)
+                event_docs.extend(pet_doc_ref.collection("EVENT").stream())
+            events = [event.to_dict() for event in event_docs]
+            return jsonify(events), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+    
+# Get all events by userId and status
+# /users/<userId>/events/status?status=scheduled
+@users_api.get('/users/<user_id>/events/status')
+def get_events_by_user_id_and_status(user_id):
+    status = request.args.get('status')
+    user_ref = user_db.document(user_id)
+    user_doc = user_ref.get()
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+        if user_data.get('Role') == 'Owner':
+            try:
+                pet_docs = pet_db.where("UserId", "==", user_id).stream()
+                pet_ids = [pet.id for pet in pet_docs]
+                event_docs = []
+                for pet_id in pet_ids:
+                    pet_doc_ref = pet_db.document(pet_id)
+                    event_docs.extend(pet_doc_ref.collection("EVENT").where("Status", "==", status).stream())
+                events = [event.to_dict() for event in event_docs]
+                return jsonify(events), 200
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        else:
+            pet_ids = user_data.get('PetId')
+            event_docs = []
+            for pet_id in pet_ids:
+                pet_doc_ref = pet_db.document(pet_id)
+                event_docs.extend(pet_doc_ref.collection("EVENT").where("Status", "==", status).stream())
+            events = [event.to_dict() for event in event_docs]
+            return jsonify(events), 200
     else:
         return jsonify({"error": "User not found"}), 404
     
@@ -143,7 +205,7 @@ def create_user():
 
     # Store user profile data in Firestore
     try:
-        user_ref = db.collection("USER").document(user_id)
+        user_ref = user_db.document(user_id)
         create.Id = user_id
         user_profile_data = User.to_dict(create)
         user_ref.set(user_profile_data)
@@ -155,7 +217,7 @@ def create_user():
 @users_api.put('/users/<user_id>')
 def update_user_by_id(user_id):
     data = request.json
-    user_ref = db.collection("USER").document(user_id)
+    user_ref = user_db.document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:
@@ -177,7 +239,7 @@ def delete_user_by_id(user_id):
         return jsonify({"error": f"Error deleting user in Firebase Auth: {str(e)}"}), 500
 
     # Delete user profile data from Firestore
-    user_ref = db.collection("USER").document(user_id)
+    user_ref = user_db.document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:
