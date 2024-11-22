@@ -6,11 +6,13 @@
 
 - **GET**
   - `/users/<user_id>`
-- **POST** 
+  - `/users/<user_id>/events`
+  - `/users/<user_id>/events/status?status=<status>`
+- **POST**
   - `/users/login`
   - `/users/logout`
   - `/users`
-- **PUT** 
+- **PUT**
   - `/connect_vet/`
   - `/users/<user_id>`
 - **DELETE** `/users/<user_id>`
@@ -19,10 +21,12 @@
 
 - **GET**
   - `/users/<user_id>`: Retrieves the info of user using user_id (return type is dict)
-- **POST** 
+  - `/users/<user_id>/events`: Fetches all events associated with the user, either owner or vet
+  - `/users/<user_id>/events/status?status=<status>`: Fetches events by status (e.g., `scheduled`) for the user.
+- **POST**
   - `/users/login`: Sending in a request (with 'Username' and 'Password') to login
   - `/users/logout`: Logout by clearing the current session
-- **PUT** 
+- **PUT**
   - `/connect_vet/`: With request ("PetId" and "VetId"), add in the VetId into health table of the pet, and add in the PetId into the User's PetId field. Only the Role "Vet" can perform this action
   - `/users/<user_id>`: Update the user's info
 - **DELETE** `/pets/<petId>`: Deletes user profile
@@ -93,6 +97,18 @@
 - **POST** `/pets/<petId>/health`: Adds a new health record to the pet’s collection.
 - **PUT** `/pets/<petId>/health`: Updates existing health information for the pet.
 - **DELETE** `/pets/<petId>/health`: Deletes all health records for the pet.
+
+## Event Collection
+
+### Details
+
+- **GET**
+  - `/pets/<petId>/events`: Fetches all documents from the EVENT subcollection of the specified pet.
+  - `/pets/<petId>/events/status?status={status}`: Filters events in the EVENT subcollection of the pet based on the Status field.
+  - `/pets/<petId>/events/type?type={type}`: Filters events in the EVENT subcollection of the pet based on the Type field.
+- **POST** `/pets/<petId>/events`: Adds a document to the EVENT subcollection of the specified pet with fields like CreatedAt (timestamp), Name, Type, and Status
+- **PUT** `/pets/<petId>/events/<eventId>`: Modifies fields in an event document identified by eventId in the EVENT subcollection
+- **DELETE** `/pets/<petId>/events/<eventId>`: Removes a document identified by eventId from the EVENT subcollection
 
 # Testing
 
