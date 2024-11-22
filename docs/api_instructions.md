@@ -1,5 +1,32 @@
 # Collection
 
+## User Collection
+
+### What
+
+- **GET**
+  - `/users/<user_id>`
+- **POST** 
+  - `/users/login`
+  - `/users/logout`
+  - `/users`
+- **PUT** 
+  - `/connect_vet/`
+  - `/users/<user_id>`
+- **DELETE** `/users/<user_id>`
+
+### Details
+
+- **GET**
+  - `/users/<user_id>`: Retrieves the info of user using user_id (return type is dict)
+- **POST** 
+  - `/users/login`: Sending in a request (with 'Username' and 'Password') to login
+  - `/users/logout`: Logout by clearing the current session
+- **PUT** 
+  - `/connect_vet/`: With request ("PetId" and "VetId"), add in the VetId into health table of the pet, and add in the PetId into the User's PetId field. Only the Role "Vet" can perform this action
+  - `/users/<user_id>`: Update the user's info
+- **DELETE** `/pets/<petId>`: Deletes user profile
+
 ## Pet Collection
 
 ### What
