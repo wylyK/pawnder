@@ -207,7 +207,8 @@ def create_user():
         return jsonify({"error": str(e)}), 500
     
     # Call PUT endpoint if user upload an avatar when creating the account
-    update_user_by_id(user_id)
+    if 'Avatar' in request.files:
+        update_user_by_id(user_id)
 
     return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     
