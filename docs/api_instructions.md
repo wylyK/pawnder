@@ -6,11 +6,13 @@
 
 - **GET**
   - `/users/<user_id>`
-- **POST** 
+  - `/users/<user_id>/events`
+  - `/users/<user_id>/events/status?status=<status>`
+- **POST**
   - `/users/login`
   - `/users/logout`
   - `/users`
-- **PUT** 
+- **PUT**
   - `/connect_vet/`
   - `/users/<user_id>`
 - **DELETE** `/users/<user_id>`
@@ -19,10 +21,12 @@
 
 - **GET**
   - `/users/<user_id>`: Retrieves the info of user using user_id (return type is dict)
-- **POST** 
+  - `/users/<user_id>/events`: Fetches all events associated with the user, either owner or vet
+  - `/users/<user_id>/events/status?status=<status>`: Fetches events by status (e.g., `scheduled`) for the user.
+- **POST**
   - `/users/login`: Sending in a request (with 'Username' and 'Password') to login
   - `/users/logout`: Logout by clearing the current session
-- **PUT** 
+- **PUT**
   - `/connect_vet/`: With request ("PetId" and "VetId"), add in the VetId into health table of the pet, and add in the PetId into the User's PetId field. Only the Role "Vet" can perform this action
   - `/users/<user_id>`: Update the user's info
 - **DELETE** `/pets/<petId>`: Deletes user profile
@@ -105,82 +109,6 @@
 - **POST** `/pets/<petId>/events`: Adds a document to the EVENT subcollection of the specified pet with fields like CreatedAt (timestamp), Name, Type, and Status
 - **PUT** `/pets/<petId>/events/<eventId>`: Modifies fields in an event document identified by eventId in the EVENT subcollection
 - **DELETE** `/pets/<petId>/events/<eventId>`: Removes a document identified by eventId from the EVENT subcollection
-
-## User Collection
-
-### API Endpoints
-
-#### **User Management**
-
-1. **POST** `/users`
-
-   - **What**: Creates a new user through Firebase Authentication and stores profile data in Firestore.
-   - **Request Body**:
-     ```json
-     {
-       "Email": "user@example.com",
-       "Password": "securepassword",
-       "Role": "Owner"
-     }
-     ```
-   - **Response**: User created with Firebase Auth and Firestore.
-
-2. **POST** `/users/login`
-
-   - **What**: Logs in a user using email and password through Firebase Authentication.
-   - **Request Body**:
-     ```json
-     {
-       "Username": "user@example.com",
-       "Password": "securepassword"
-     }
-     ```
-   - **Response**: Returns tokens (`idToken`, `refreshToken`) and login status.
-
-3. **POST** `/users/logout`
-
-   - **What**: Logs out a user by clearing the session.
-   - **Response**: Logout successful.
-
-4. **GET** `/users/<user_id>`
-
-   - **What**: Retrieves user profile data by user ID.
-   - **Response**: Returns user details.
-
-5. **PUT** `/users/<user_id>`
-
-   - **What**: Updates user profile data.
-   - **Request Body**: Fields to update.
-   - **Response**: User profile updated successfully.
-
-6. **DELETE** `/users/<user_id>`
-   - **What**: Deletes a user from Firebase Authentication and Firestore.
-   - **Response**: User deleted successfully.
-
-#### **Event Management**
-
-1. **GET** `/users/<user_id>/events`
-
-   - **What**: Fetches all events associated with the user, either directly or through their pets.
-   - **Response**: List of events.
-
-2. **GET** `/users/<user_id>/events/status?status=<status>`
-   - **What**: Fetches events by status (e.g., `scheduled`) for the user or their pets.
-   - **Query Param**: `status`
-   - **Response**: List of filtered events.
-
-#### **Vet-Pet Connection**
-
-1. **PUT** `/connect_vet/`
-   - **What**: Connects a vet to a pet, updates the vet's `PetId` and the pet's `VetId` fields.
-   - **Request Body**:
-     ```json
-     {
-       "VetId": "vet123",
-       "PetId": "pet456"
-     }
-     ```
-   - **Response**: Vet connected to pet successfully.
 
 # Testing
 
