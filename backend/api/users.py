@@ -63,11 +63,11 @@ def connect_vet():
 @users_api.post('/users/login')
 def login():
     data = request.json
-    email = data.get('Username')
+    email = data.get('Email')
     password = data.get('Password')
     
     if not email or not password: 
-        return jsonify({"error": "Username and Password are required"}), 400
+        return jsonify({"error": "Email and Password are required"}), 400
     
     firebase_api_key = os.getenv('FIREBASE_API_KEY')
     
