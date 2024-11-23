@@ -1,7 +1,8 @@
 "use client"
 
-import React from "react";
+import React, {useState, useContext} from "react";
 import { useRouter } from "next/navigation";
+import UserContext from "@/context/UserContext";
 import styles from "./LoginForm.module.css";
 import { FaUserLarge } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
@@ -10,9 +11,10 @@ import { FaPaw } from "react-icons/fa";
 const LoginForm: React.FC = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
+  const { setUser } = useContext(UserContext);
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -26,6 +28,7 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
 
     try {
+      console.log("send POST login request")
       const response = await fetch(`${baseUrl}/users/login`, {
         method: "POST",
         headers: {
@@ -38,6 +41,10 @@ const LoginForm: React.FC = () => {
       });
 
       if (response.ok) {
+        console.log("response ok")
+        const data = await response.json();
+        console.log(data.user);
+        setUser(data.user);
         router.push("/");
       } else {
         const errorData = await response.json();
