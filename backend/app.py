@@ -8,8 +8,10 @@ from api.pets import pets_api
 from api.petMatch import pet_match_api
 from api.petHealth import pet_health_api
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.register_blueprint(users_api)
 app.register_blueprint(pets_api)
 app.register_blueprint(pet_match_api)
