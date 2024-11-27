@@ -9,8 +9,15 @@ import styles from "./CalendarPage.module.css";
 
 const localizer = momentLocalizer(moment);
 
+interface Event {
+  title: string;
+  start: Date;
+  end: Date;
+  isEditing?: boolean;
+}
+
 const CalendarPage: React.FC = () => {
-  const [events, setEvents] = useState([
+  const [events, setEvents] = useState<Event[]>([
     {
       title: "Vet Appointment - Annual check-up",
       start: new Date(2024, 10, 3, 10, 0), // November 3rd, 2024
@@ -27,7 +34,7 @@ const CalendarPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>("month");
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [newEventTitle, setNewEventTitle] = useState("");
   const [newEventDate, setNewEventDate] = useState(moment(new Date()).format("YYYY-MM-DD"));
   const [newEventStartTime, setNewEventStartTime] = useState("");
@@ -55,7 +62,7 @@ const CalendarPage: React.FC = () => {
     setCurrentView("day"); // Switch to day view
   };
 
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
     setNewEventTitle(event.title); // Pre-fill the title in the modal
     setNewEventDate(moment(event.start).format("YYYY-MM-DD"));
