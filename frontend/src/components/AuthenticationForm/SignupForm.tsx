@@ -33,7 +33,7 @@ const SignupForm: React.FC = () => {
     setEmail(e.target.value);
   };
 
-  const handleRoleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRole(e.target.value);
   };
 
@@ -123,14 +123,18 @@ const SignupForm: React.FC = () => {
             />
           </div>
 
-          <div className={`${styles["text-field"]} ${styles["email-password"]}`}>
+          <div className={styles["select-field"]}>
             <FaUserLarge className={styles["text-icon"]} />
-            <input 
-              type="text" 
-              placeholder="Role"
+            <select
               value={role}
               onChange={handleRoleChange}
-            />
+            >
+              <option value="" disabled hidden>
+                Select Role
+              </option>
+              <option value="Owner">Pet Owner</option>
+              <option value="Vet">Veterinarian</option>
+            </select>
           </div>
 
           <div className={styles["divider"]} />

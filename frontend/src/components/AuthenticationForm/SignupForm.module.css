@@ -1,16 +1,16 @@
 .signup-container {
-  margin: auto;
-  width: 400px;
-  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .signup {
   background: white;
   border-radius: 20px;
   padding: 15px;
-  margin-top: 200px;
   width: 400px;
-  height: 515px;
+  height: 565px;
   box-shadow: 0 8px 5px #e0dcdc;
 }
 
@@ -149,4 +149,58 @@
 
 .login:hover {
   color: var(--main-color2);
+}
+
+/* Container for the select field */
+.select-field {
+  background: var(--background-color);
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  width: 80%;
+  height: 40px;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Icon inside the select field */
+.select-field .text-icon {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+/* Styling the select element */
+.select-field select {
+  background: none;
+  border: none;
+  width: calc(100% - 60px); /* Adjust width considering padding and icon */
+  height: 35px;
+  color: var(--text-color);
+  font-size: 90%;
+  padding-left: 5px;
+  /* Remove default arrow in select */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Remove outline on focus */
+.select-field select:focus {
+  outline: none;
+}
+
+/* Custom arrow for the select */
+.select-field::after {
+  content: '\25BC'; /* Unicode character for down arrow */
+  position: absolute;
+  right: 20px;
+  pointer-events: none;
+  color: var(--text-color);
+}
+
+/* Hover effect for the icon */
+.select-field:hover .text-icon {
+  color: var(--main-color3);
 }
