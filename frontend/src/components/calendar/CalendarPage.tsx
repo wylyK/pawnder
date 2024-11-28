@@ -9,6 +9,13 @@ import styles from "./CalendarPage.module.css";
 
 const localizer = momentLocalizer(moment);
 
+interface Event {
+  title: string;
+  start: Date;
+  end: Date;
+  isEditing?: boolean;
+}
+
 const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState([
     {
@@ -27,7 +34,7 @@ const CalendarPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>("month");
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [newEventTitle, setNewEventTitle] = useState("");
   const [newEventDate, setNewEventDate] = useState(
     moment(new Date()).format("YYYY-MM-DD"),
@@ -57,7 +64,7 @@ const CalendarPage: React.FC = () => {
     setCurrentView("day"); // Switch to day view
   };
 
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
     setNewEventTitle(event.title); // Pre-fill the title in the modal
     setNewEventDate(moment(event.start).format("YYYY-MM-DD"));
@@ -131,17 +138,17 @@ const CalendarPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles["container"]}>
       {/* Navigation Bar */}
-      <div className={styles.navContainer}>
+      <div className={styles["nav-container"]}>
         <NavBar />
       </div>
 
       {/* Main Content */}
-      <div className={styles.content}>
+      <div className={styles["content"]}>
         {/* Calendar Section */}
-        <div className={styles.calendarSection}>
-          <h1 className={styles.header}>My Calendar</h1>
+        <div className={styles["calendar-section"]}>
+          <h1 className={styles["header"]}>My Calendar</h1>
           <Calendar
             localizer={localizer}
             events={events}
@@ -157,16 +164,16 @@ const CalendarPage: React.FC = () => {
             view={currentView}
             onNavigate={handleNavigate}
             onView={handleViewChange}
-            className={styles.calendar}
+            className={styles["calendar"]}
           />
         </div>
 
         {/* Checklist Section */}
-        <div className={styles.checklistSection}>
-          <h3 className={styles.checklistHeader}>Monthly Checklist</h3>
-          <ul className={styles.checklist}>
+        <div className={styles["checklist-section"]}>
+          <h3 className={styles["checklist-header"]}>Monthly Checklist</h3>
+          <ul className={styles["checklist"]}>
             {events.map((event, index) => (
-              <li key={index} className={styles.checklistItem}>
+              <li key={index} className={styles["checklist-item"]}>
                 <strong>
                   {moment(event.start).format("YYYY-MM-DD HH:mm")}
                 </strong>
@@ -176,7 +183,7 @@ const CalendarPage: React.FC = () => {
           </ul>
           <button
             onClick={() => setModalOpen(true)}
-            className={styles.addButton}
+            className={styles["add-button"]}
           >
             Add Event
           </button>
@@ -185,22 +192,22 @@ const CalendarPage: React.FC = () => {
 
       {/* Modal for Adding New Event */}
       {modalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
+        <div className={styles["modal-overlay"]}>
+          <div className={styles["modal"]}>
             <button
-              className={styles.closeButton}
+              className={styles["close-button"]}
               onClick={() => setModalOpen(false)}
             >
               ✖
             </button>
-            <h2 className={styles.modalHeading}>Add Event</h2>
+            <h2 className={styles["modal-heading"]}>Add Event</h2>
             <label>
               Event Name:
               <input
                 type="text"
                 value={newEventTitle}
                 onChange={(e) => setNewEventTitle(e.target.value)}
-                className={styles.input}
+                className={styles["input"]}
               />
             </label>
             <label>
@@ -209,7 +216,7 @@ const CalendarPage: React.FC = () => {
                 type="date"
                 value={newEventDate}
                 onChange={(e) => setNewEventDate(e.target.value)}
-                className={styles.input}
+                className={styles["input"]}
               />
             </label>
             <label>
@@ -218,7 +225,7 @@ const CalendarPage: React.FC = () => {
                 type="time"
                 value={newEventStartTime}
                 onChange={(e) => setNewEventStartTime(e.target.value)}
-                className={styles.input}
+                className={styles["input"]}
               />
             </label>
             <label>
@@ -227,17 +234,20 @@ const CalendarPage: React.FC = () => {
                 type="time"
                 value={newEventEndTime}
                 onChange={(e) => setNewEventEndTime(e.target.value)}
-                className={styles.input}
+                className={styles["input"]}
               />
             </label>
-            <div className={styles.modalButtons}>
+            <div className={styles["modal-buttons"]}>
               <button
                 onClick={() => setModalOpen(false)}
-                className={styles.cancelButton}
+                className={styles["cancel-button"]}
               >
                 Cancel
               </button>
-              <button onClick={handleSaveEvent} className={styles.saveButton}>
+              <button
+                onClick={handleSaveEvent}
+                className={styles["save-button"]}
+              >
                 Save
               </button>
             </div>
@@ -247,15 +257,15 @@ const CalendarPage: React.FC = () => {
 
       {/* Modal for Viewing/Editing Event */}
       {editModalOpen && selectedEvent && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
+        <div className={styles["modal-overlay"]}>
+          <div className={styles["modal"]}>
             <button
-              className={styles.closeButton}
+              className={styles["close-button"]}
               onClick={() => setEditModalOpen(false)}
             >
               ✖
             </button>
-            <h2 className={styles.modalHeading}>Event Details</h2>
+            <h2 className={styles["modal-heading"]}>Event Details</h2>
             {selectedEvent.isEditing ? (
               <>
                 <label>
@@ -264,7 +274,7 @@ const CalendarPage: React.FC = () => {
                     type="text"
                     value={newEventTitle}
                     onChange={(e) => setNewEventTitle(e.target.value)}
-                    className={styles.input}
+                    className={styles["input"]}
                   />
                 </label>
                 <label>
@@ -273,7 +283,7 @@ const CalendarPage: React.FC = () => {
                     type="date"
                     value={newEventDate}
                     onChange={(e) => setNewEventDate(e.target.value)}
-                    className={styles.input}
+                    className={styles["input"]}
                   />
                 </label>
                 <label>
@@ -292,7 +302,7 @@ const CalendarPage: React.FC = () => {
                         start: newStart,
                       });
                     }}
-                    className={styles.input}
+                    className={styles["input"]}
                   />
                 </label>
                 <label>
@@ -311,21 +321,21 @@ const CalendarPage: React.FC = () => {
                         end: newEnd,
                       });
                     }}
-                    className={styles.input}
+                    className={styles["input"]}
                   />
                 </label>
-                <div className={styles.modalButtons}>
+                <div className={styles["modal-buttons"]}>
                   <button
                     onClick={() =>
                       setSelectedEvent({ ...selectedEvent, isEditing: false })
                     }
-                    className={styles.cancelButton}
+                    className={styles["cancel-button"]}
                   >
                     Cancel Edit
                   </button>
                   <button
                     onClick={handleEditEvent}
-                    className={styles.saveButton}
+                    className={styles["save-button"]}
                   >
                     Save Changes
                   </button>
@@ -345,18 +355,18 @@ const CalendarPage: React.FC = () => {
                   {moment(selectedEvent.start).format("HH:mm")} -{" "}
                   {moment(selectedEvent.end).format("HH:mm")}
                 </p>
-                <div className={styles.modalButtons}>
+                <div className={styles["modal-buttons"]}>
                   <button
                     onClick={() =>
                       setSelectedEvent({ ...selectedEvent, isEditing: true })
                     }
-                    className={styles.editButton}
+                    className={styles["edit-button"]}
                   >
                     Edit
                   </button>
                   <button
                     onClick={handleDeleteEvent}
-                    className={styles.deleteButton}
+                    className={styles["delete-button"]}
                   >
                     Delete
                   </button>
