@@ -1,0 +1,191 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #fff7f7;
+}
+
+.nav-container {
+  width: 80px; /* Adjust this width to match the NavBar */
+  background: linear-gradient(
+    180deg,
+    #ff6b6b,
+    #ff8787
+  ); /* Your NavBar gradient */
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  padding: 20px;
+}
+
+.calendar-section {
+  flex: 3;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.checklist-section {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
+}
+
+.checklist-header {
+  font-size: 1.5rem;
+  color: #ff6b6b;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.checklist-item {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.add-button {
+  width: 100%;
+  padding: 10px 20px;
+  background: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-button:hover {
+  background: #e55c5c;
+}
+
+/* Modal Overlay */
+
+.input {
+  display: block;
+  width: 100%;
+  margin: 10px 0 5px;
+  padding: 8px 5px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Modal Styling */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+  z-index: 1000;
+}
+
+.modal-heading {
+  font-size: 1.5rem; /* Larger font size */
+  font-weight: 500; /* Bold for prominence */
+  color: black; /* Match the color theme */
+  text-align: left; /* Center-align */
+  margin-bottom: 10px; /* Space below the heading */
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.modal-header {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.edit-button,
+.delete-button,
+.save-button,
+.cancel-button {
+  flex: 1;
+  margin: 0 10px; /* Add spacing between buttons */
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #ffeb3b;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.edit-button:hover {
+  background: #e6b800;
+}
+
+.save-button:hover {
+  background: #45a049;
+}
+
+.delete-button:hover {
+  background: #d32f2f;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
