@@ -10,6 +10,7 @@ from api.petMatch import pet_match_api
 from api.petHealth import pet_health_api
 from api.petEvent import pet_event_api
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)

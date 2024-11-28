@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import React, { createContext, useState, ReactNode } from 'react';
-import { User} from '../share/type'
+import React, { createContext, useState, ReactNode } from "react";
+import { User } from "../share/type";
 
 interface UserContextType {
   user: User | null;
@@ -9,8 +9,8 @@ interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType>({
-    user: null,
-    setUser: () => {}, 
+  user: null,
+  setUser: () => {},
 });
 
 interface UserProviderProps {

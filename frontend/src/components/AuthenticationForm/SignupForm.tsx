@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -10,15 +10,15 @@ import { FaPaw } from "react-icons/fa";
 const SignupForm: React.FC = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
-  const [fname, setFname] = React.useState('');
-  const [lname, setLname] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [role, setRole] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [fname, setFname] = React.useState("");
+  const [lname, setLname] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [role, setRole] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
 
   const handleLoginRedirect = () => {
-    router.push("/login"); 
+    router.push("/login");
   };
 
   const handleFnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,11 +38,11 @@ const SignupForm: React.FC = () => {
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value); 
+    setPassword(e.target.value);
   };
 
   const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setConfirmPassword(e.target.value);
   };
@@ -51,7 +51,7 @@ const SignupForm: React.FC = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      alert("Passwords do not match");
       return;
     }
 
@@ -66,7 +66,7 @@ const SignupForm: React.FC = () => {
           FName: fname,
           Email: email,
           Password: password,
-          Role: role
+          Role: role,
         }),
       });
 
@@ -95,8 +95,8 @@ const SignupForm: React.FC = () => {
 
           <div className={styles["full-name"]}>
             <div className={styles["text-field"]}>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="First Name"
                 value={fname}
                 onChange={handleFnameChange}
@@ -104,8 +104,8 @@ const SignupForm: React.FC = () => {
             </div>
 
             <div className={styles["text-field"]}>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Last Name"
                 value={lname}
                 onChange={handleLnameChange}
@@ -113,10 +113,12 @@ const SignupForm: React.FC = () => {
             </div>
           </div>
 
-          <div className={`${styles["text-field"]} ${styles["email-password"]}`}>
+          <div
+            className={`${styles["text-field"]} ${styles["email-password"]}`}
+          >
             <FaUserLarge className={styles["text-icon"]} />
-            <input 
-              type="email" 
+            <input
+              type="email"
               placeholder="Email"
               value={email}
               onChange={handleEmailChange}
@@ -125,10 +127,7 @@ const SignupForm: React.FC = () => {
 
           <div className={styles["select-field"]}>
             <FaUserLarge className={styles["text-icon"]} />
-            <select
-              value={role}
-              onChange={handleRoleChange}
-            >
+            <select value={role} onChange={handleRoleChange}>
               <option value="" disabled hidden>
                 Select Role
               </option>
@@ -143,8 +142,8 @@ const SignupForm: React.FC = () => {
             className={`${styles["text-field"]} ${styles["email-password"]}`}
           >
             <FaLock className={styles["text-icon"]} />
-            <input 
-              type="password"  
+            <input
+              type="password"
               placeholder="New Password"
               value={password}
               onChange={handlePasswordChange}
@@ -155,8 +154,8 @@ const SignupForm: React.FC = () => {
             className={`${styles["text-field"]} ${styles["email-password"]}`}
           >
             <FaLock className={styles["text-icon"]} />
-            <input 
-              type="password" 
+            <input
+              type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
@@ -167,10 +166,13 @@ const SignupForm: React.FC = () => {
             Submit
           </button>
 
-          <button type="button" className={styles["login"]} onClick={handleLoginRedirect}>
+          <button
+            type="button"
+            className={styles["login"]}
+            onClick={handleLoginRedirect}
+          >
             Already Have an Account? Login
           </button>
-
         </form>
       </div>
     </div>

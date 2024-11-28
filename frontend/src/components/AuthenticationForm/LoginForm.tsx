@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, {useState, useContext} from "react";
+import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import UserContext from "@/context/UserContext";
 import styles from "./LoginForm.module.css";
@@ -13,22 +13,22 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
   const { setUser } = useContext(UserContext);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value); 
+    setPassword(e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      console.log("send POST login request")
+      console.log("send POST login request");
       const response = await fetch(`${baseUrl}/users/login`, {
         method: "POST",
         headers: {
@@ -36,12 +36,12 @@ const LoginForm: React.FC = () => {
         },
         body: JSON.stringify({
           Email: email,
-          Password: password,       
+          Password: password,
         }),
       });
 
       if (response.ok) {
-        console.log("response ok")
+        console.log("response ok");
         const data = await response.json();
         console.log(data.user);
         setUser(data.user);
@@ -67,23 +67,40 @@ const LoginForm: React.FC = () => {
 
           <div className={styles["text-field"]}>
             <FaUserLarge className={styles["text-icon"]} />
-            <input type="email" placeholder="Email" value={email} onChange={handleEmailChange}/>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={handleEmailChange}
+            />
           </div>
 
           <div className={styles["text-field"]}>
             <FaLock className={styles["text-icon"]} />
-            <input type="password" placeholder="Password" value={password} onChange={handlePasswordChange}/>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={handlePasswordChange}
+            />
           </div>
 
           <div className={styles["remember-me"]}>
             <input type="checkbox" />
             <div className={styles["remember-text"]}>Remember me</div>
           </div>
-          
-          <button type="submit" className={styles["submit"]}> Submit </button>
-          
-          <button className={styles["signup"]} onClick={() => router.push("/signup")}>Create an Account</button>
 
+          <button type="submit" className={styles["submit"]}>
+            {" "}
+            Submit{" "}
+          </button>
+
+          <button
+            className={styles["signup"]}
+            onClick={() => router.push("/signup")}
+          >
+            Create an Account
+          </button>
         </form>
       </div>
     </div>

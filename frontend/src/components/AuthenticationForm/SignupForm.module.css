@@ -193,7 +193,7 @@
 
 /* Custom arrow for the select */
 .select-field::after {
-  content: '\25BC'; /* Unicode character for down arrow */
+  content: "\25BC"; /* Unicode character for down arrow */
   position: absolute;
   right: 20px;
   pointer-events: none;

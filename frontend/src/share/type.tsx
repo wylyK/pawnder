@@ -1,6 +1,6 @@
 export enum Role {
-  Owner = 'owner',
-  Vet = 'vet',
+  Owner = "owner",
+  Vet = "vet",
 }
 
 export interface CountryOption {
@@ -9,12 +9,12 @@ export interface CountryOption {
 }
 
 export interface User {
-  Id: string
-  FName: string
-  LName: string
-  Email: string
-  Location: string
-  Role: Role
-  PetId: string[]
-  Avatar: string
+  Id: string;
+  FName: string;
+  LName: string;
+  Email: string;
+  Location: string;
+  Role: Role;
+  PetId: string[];
+  Avatar: string;
 }
