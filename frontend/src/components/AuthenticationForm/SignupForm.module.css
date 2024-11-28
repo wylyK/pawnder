@@ -1,16 +1,16 @@
-.login-container {
-  margin: auto;
-  width: 400px;
-  height: 500px;
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.login {
+.signup {
   background: white;
   border-radius: 20px;
   padding: 15px;
-  margin-top: 200px;
   width: 400px;
-  height: 425px;
+  height: 565px;
   box-shadow: 0 8px 5px #e0dcdc;
 }
 
@@ -31,13 +31,13 @@
   font-weight: bold;
 }
 
-.login form {
+.signup form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.login form h1 {
+.signup form h1 {
   color: var(--main-color1);
   margin-top: 5px;
   margin-bottom: 20px;
@@ -51,16 +51,32 @@
   border-radius: 20px;
   margin-top: 10px;
   margin-bottom: 5px;
-  padding-left: 15px;
-  padding-right: 15px;
   width: 80%;
   height: 40px;
+  color: var(--text-color);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: left;
-  color: var(--text-color);
   font-size: 90%;
+}
+
+.full-name {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.full-name .text-field {
+  justify-content: center;
+}
+
+.text-field.email-password {
+  justify-content: left;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .text-field input {
@@ -70,37 +86,18 @@
   height: 35px;
 }
 
+.full-name .text-field input {
+  width: 75%;
+}
+
 .text-icon {
   margin-right: 15px;
   margin-bottom: 2.5px;
 }
 
-.remember-me {
-  width: 80%;
-  margin-top: 5px;
-  margin-bottom: 20px;
-  margin-left: 25px;
-  font-size: 14px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  color: var(--text-color);
-  font-weight: bold;
-  gap: 2px;
-}
-
-.remember-me input {
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border: 1.5px solid grey;
-  border-radius: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  margin-top: 2px;
+.select-field .text-icon {
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 .text-field:hover .text-icon {
@@ -111,30 +108,12 @@
   outline: none;
 }
 
-.remember-me input:hover,
-.remember-me input:checked {
-  background-color: var(--main-color3);
-  border-color: var(--main-color1);
-}
-
-.remember-me input:checked::after {
-  background-color: var(--main-color1);
-  width: 20px;
-  height: 16px;
-  border: none;
-  border-radius: 3px;
-  content: "\2713";
-  color: white;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 1px;
-}
-
-.remember-text {
-  margin-top: 3px;
-  margin-left: 6px;
+.divider {
+  border-top: 1px solid #a0a4ac;
+  border-bottom: 1px solid #a0a4ac;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  width: calc(80% - 30px);
 }
 
 .submit {
@@ -149,7 +128,7 @@
   color: white;
   font-size: 19px;
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 30px;
   margin-bottom: 20px;
   width: 80%;
   height: 40px;
@@ -164,7 +143,7 @@
   background-position: 100% 0;
 }
 
-.signup {
+.login {
   border: none;
   background-color: white;
   color: var(--main-color1);
@@ -173,6 +152,46 @@
   text-decoration: underline;
 }
 
-.signup:hover {
+.login:hover {
   color: var(--main-color2);
+}
+
+.select-field {
+  background: var(--background-color);
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  width: 80%;
+  height: 40px;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.select-field select {
+  background: none;
+  border: none;
+  width: calc(100% - 60px);
+  height: 35px;
+  color: var(--text-color);
+  font-size: 90%;
+  padding-left: 5px;
+  appearance: none;
+}
+
+.select-field select:focus {
+  outline: none;
+}
+
+.select-field::after {
+  content: "\25BC";
+  position: absolute;
+  right: 20px;
+  pointer-events: none;
+  color: var(--text-color);
+}
+
+.select-field:hover .text-icon {
+  color: var(--main-color3);
 }

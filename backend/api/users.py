@@ -63,11 +63,11 @@ def connect_vet():
 @users_api.post('/users/login')
 def login():
     data = request.json
-    email = data.get('Username')
+    email = data.get('Email')
     password = data.get('Password')
     
     if not email or not password: 
-        return jsonify({"error": "Username and Password are required"}), 400
+        return jsonify({"error": "Email and Password are required"}), 400
     
     firebase_api_key = os.getenv('FIREBASE_API_KEY')
     
@@ -90,6 +90,15 @@ def login():
             refresh_token = response_data.get('refreshToken')
             expires_in = response_data.get('expiresIn')
             local_id = response_data.get('localId')
+
+            # Retrieve user details from Firestore
+            user_ref = user_db.document(local_id)
+            user_doc = user_ref.get()
+
+            if not user_doc.exists:
+                return jsonify({"error": "User record not found"}), 404
+            
+            user_data = user_doc.to_dict()
             
             # Store user info in session
             session['user_id'] = local_id
@@ -97,6 +106,16 @@ def login():
 
             return jsonify({
                 "message": "Login successful",
+                "user": {
+                    "Id": local_id,
+                    "FName": user_data.get('FName'),
+                    "LName": user_data.get('LName'),
+                    "Email": email,
+                    "Location": user_data.get('Location', ""),
+                    "Role": user_data.get('Role'),
+                    "PetId": user_data.get('PetId', []),
+                    "Avatar": user_data.get('Avatar', ""),
+                },
                 "idToken": id_token,
                 "refreshToken": refresh_token,
                 "expiresIn": expires_in

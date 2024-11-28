@@ -1,5 +1,5 @@
 import React from "react";
-import SignupForm from "@/components/LoginForm/SignupForm";
+import SignupForm from "@/components/AuthenticationForm/SignupForm";
 import "../globals.css";
 
 function SignupPage() {
