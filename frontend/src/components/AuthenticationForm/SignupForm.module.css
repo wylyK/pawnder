@@ -95,6 +95,11 @@
   margin-bottom: 2.5px;
 }
 
+.select-field .text-icon {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
 .text-field:hover .text-icon {
   color: var(--main-color3);
 }
@@ -162,11 +167,6 @@
   display: flex;
   align-items: center;
   position: relative;
-}
-
-.select-field .text-icon {
-  margin-left: 15px;
-  margin-right: 15px;
 }
 
 .select-field select {
