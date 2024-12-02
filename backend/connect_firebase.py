@@ -18,4 +18,6 @@ class PawnderFirebase:
         cred = credentials.Certificate(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
 
         if not firebase_admin._apps:
-            firebase_admin.initialize_app(cred)
+            firebase_admin.initialize_app(cred, {
+                "storageBucket": self.firebaseConfig["storageBucket"]
+            })

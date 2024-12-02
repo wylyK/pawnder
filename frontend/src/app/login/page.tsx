@@ -1,5 +1,5 @@
 import React from "react";
-import LoginForm from "@/components/LoginForm/LoginForm";
+import LoginForm from "@/components/AuthenticationForm/LoginForm";
 import "../globals.css";
 
 function LoginPage() {
