@@ -59,6 +59,7 @@ def connect_vet():
         return jsonify({"message": f"Vet {vet_id} successfully connected to Pet {pet_id}"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 # POST login user by email and password
 @users_api.post('/users/login')
 def login():
