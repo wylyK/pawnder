@@ -1,6 +1,11 @@
 from flask import Blueprint, jsonify, request
+from firebase_admin import storage, auth
 from models.pet import Pet
 from firestore_client import db
+from urllib.parse import quote
+
+# Bucket to store data in Firebase storage
+bucket = storage.bucket()
 
 pets_api = Blueprint('pets_api', __name__)
 
@@ -112,14 +117,19 @@ def create_pet():
         )
         pet_ref = db.collection("PET").document()
         pet_ref.set(pet.to_dict())
-        return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    # Call PUT endpoint to add the pet avatar if the user include it
+    if 'Avatar' in request.files:
+        update_pet_by_id(pet_ref.id)
+
+    return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
 
 # PUT update pet profile data by Firestore document ID
 @pets_api.put('/pets/<pet_id>')
 def update_pet_by_id(pet_id):
-    data = request.json
+    data = request.form
     pet_ref = db.collection("PET").document(pet_id)
     pet_doc = pet_ref.get()
 
@@ -133,6 +143,27 @@ def update_pet_by_id(pet_id):
         pet.Description = data.get('Description', pet.Description)
         pet.Tag = data.get('Tag', pet.Tag)
         pet.UserId = data.get('UserId', pet.UserId)
+        
+        # request.files handle all the files sent along in the HTTP request
+        if 'Avatar' in request.files:
+            image_file = request.files['Avatar']
+            #If user upload a file
+            if image_file.filename != '':
+                try:
+                    file_extension = image_file.filename.rsplit('.', 1)[-1].lower()
+                    file_path = f"petImages/{pet_id}.{file_extension}"
+
+                    # Define the path for the image in Firebase Storage
+                    blob = bucket.blob(file_path)
+
+                    # Upload the file with the pet_id as the filename
+                    blob.upload_from_file(image_file)
+
+                    encoded_file_path = quote(file_path, safe='')
+                    download_url = f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/{encoded_file_path}?alt=media"
+                    pet.Avatar = download_url        
+                except Exception as e:
+                    return jsonify({"error": f"Image upload failed: {str(e)}"}), 500
 
         try:
             pet_ref.set(pet.to_dict())

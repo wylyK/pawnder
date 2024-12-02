@@ -1,3 +1,9 @@
+from enum import Enum
+
+class Role(Enum):
+    OWNER= "owner"
+    VET = "vet"
+
 class User:
     def __init__(self, FName, LName, Email, Location, Role, PetId = [], Avatar = "", Id=""):
         self.Id = Id
@@ -14,8 +20,8 @@ class User:
             source['FName'], 
             source['LName'], 
             source['Email'], 
-            source['Location'], 
-            source['Role'],
+            source.get('Location', ""), 
+            source.get('Role', Role.OWNER.value),
             source.get('PetId', []),
             source.get('Avatar', ""),
             source.get('Id', "")
@@ -28,7 +34,6 @@ class User:
             'FName': self.FName,
             'LName': self.LName,
             'Email': self.Email,
-            'Location': self.Location,
             'Role': self.Role
         }
         if self.Id:
@@ -37,6 +42,8 @@ class User:
             user['PetId'] = self.PetId
         if self.Avatar:
             user['Avatar'] = self.Avatar
+        if self.Location:
+            user['Location'] = self.Location
         return user
     
     def __repr__(self):
