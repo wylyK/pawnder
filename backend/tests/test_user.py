@@ -1,9 +1,10 @@
 from api.users import users_api
 import pytest
-from unittest.mock import patch, MagicMock 
+from unittest.mock import MagicMock 
 from flask import Flask
 import os
 from firebase_admin import firestore
+from io import BytesIO
 
 @pytest.fixture
 def client():
@@ -43,7 +44,7 @@ def test_create_user_firebase_error(client, mocker):
         "Role": "Owner"
     }
     mock_create_user = mocker.patch("firebase_admin.auth.create_user")
-    mock_create_user.side_effect = Exception("Invalid email")
+    mock_create_user.side_effect = Exception("Invalid email") 
 
     response = client.post('/users', json=user_data)
     assert response.status_code == 400
@@ -63,14 +64,11 @@ def test_create_user_email_duplication(client, mocker):
         "Avatar": ""
     }
 
-    # Mock Firebase Auth to raise an email duplication error
     mock_create_user = mocker.patch("firebase_admin.auth.create_user")
     mock_create_user.side_effect = Exception("auth/email-already-exists")
 
-    # Test the API
     response = client.post('/users', json=user_data)
 
-    # Assertions
     assert response.status_code == 400
     assert "auth/email-already-exists" in response.get_json()["error"]
 
@@ -81,22 +79,59 @@ def test_create_user_email_duplication(client, mocker):
 # Test 4: update user with sucess ------------------------------------------------------------
 def test_update_user_success(client, mocker):
     user_id = "12345"
-    update_data = {"FName": "Jane", "Location": "Boston"}
+    update_data = {
+        "FName": "Jane",
+        "Location": "Boston",
+        "Avatar": (BytesIO(b"fake image data"), "avatar.png")  # File upload simulated here
+    }
 
-    # Mock Firestore
     mock_user_ref = mocker.patch("api.users.user_db.document")
     mock_document = MagicMock()
     mock_user_ref.return_value = mock_document
-    mock_document.get.return_value.exists = True  # Simulate user existence
-    mock_document.update.return_value = None      # Simulate update success
+    mock_document.get.return_value.exists = True  # Simulate user exists
+    mock_document.get.return_value.to_dict.return_value = {
+        "FName": "John",
+        "LName": "Doe",
+        "Email": "jdoe@gmail.com",
+        "Location": "New York",
+        "PetId": "pet456",
+        "Avatar": "old_avatar_url"
+    }
+    mock_document.update.return_value = None  # Simulate successful update
+    
+    mock_bucket = mocker.patch("api.users.bucket")
+    mock_blob = MagicMock()
+    mock_bucket.blob.return_value = mock_blob
+    mock_blob.upload_from_file.return_value = None
+    mock_blob.name = "test_bucket"
 
-    response = client.put(f'/users/{user_id}', json=update_data)
+    # Mock URL encoding
+    mock_quote = mocker.patch("api.users.quote")
+    mock_quote.return_value = "userImages%2F12345.png"
 
-    # Assertions
+    # Make the request
+    response = client.put(
+        f'/users/{user_id}',
+        data={
+            "FName": update_data["FName"],
+            "Location": update_data["Location"],
+            "Avatar": update_data["Avatar"]  # Flask's test client processes this as a file
+        },
+        content_type="multipart/form-data"  # Ensure correct content type for file upload
+    )
+
     assert response.status_code == 200
     assert f"User {user_id} updated successfully" in response.get_json()["message"]
+
+    # Check Firestore interactions
     mock_user_ref.assert_called_once_with(user_id)
-    mock_document.update.assert_called_once_with(update_data)
+    mock_document.update.assert_called_once()
+
+    # Check Firebase Storage interactions
+    mock_bucket.blob.assert_called_once_with("userImages/12345.png")
+    mock_blob.upload_from_file.assert_called_once()
+    mock_quote.assert_called_once_with("userImages/12345.png", safe="")
+
     
 
 # Test 5: update user with error ------------------------------------------------------------
@@ -104,7 +139,6 @@ def test_update_user_not_found(client, mocker):
     user_id = "12345"
     update_data = {"FName": "Jane", "Location": "Boston"}
 
-    # Mock Firestore
     mock_user_ref = mocker.patch("api.users.user_db.document")
     mock_document = MagicMock()
     mock_user_ref.return_value = mock_document
@@ -112,7 +146,6 @@ def test_update_user_not_found(client, mocker):
 
     response = client.put(f'/users/{user_id}', json=update_data)
 
-    # Assertions
     assert response.status_code == 404
     assert "User not found" in response.get_json()["error"]
     mock_user_ref.assert_called_once_with(user_id)
@@ -123,11 +156,9 @@ def test_update_user_not_found(client, mocker):
 def test_delete_user_success(client, mocker):
     user_id = "12345"
 
-    # Mock Firebase Auth
     mock_delete_auth = mocker.patch("firebase_admin.auth.delete_user")
     mock_delete_auth.return_value = None  # Simulate successful Firebase deletion
 
-    # Mock Firestore
     mock_user_ref = mocker.patch("api.users.user_db.document")
     mock_document = MagicMock()
     mock_user_ref.return_value = mock_document
@@ -136,7 +167,6 @@ def test_delete_user_success(client, mocker):
 
     response = client.delete(f'/users/{user_id}')
 
-    # Assertions
     assert response.status_code == 200
     assert f"User {user_id} deleted successfully" in response.get_json()["message"]
     mock_delete_auth.assert_called_once_with(user_id)
@@ -148,11 +178,9 @@ def test_delete_user_success(client, mocker):
 def test_delete_user_not_found(client, mocker):
     user_id = "12345"
 
-    # Mock Firebase Auth
     mock_delete_auth = mocker.patch("firebase_admin.auth.delete_user")
     mock_delete_auth.return_value = None  # Simulate successful Firebase deletion
 
-    # Mock Firestore
     mock_user_ref = mocker.patch("api.users.user_db.document")
     mock_document = MagicMock()
     mock_user_ref.return_value = mock_document
@@ -160,7 +188,6 @@ def test_delete_user_not_found(client, mocker):
 
     response = client.delete(f'/users/{user_id}')
 
-    # Assertions
     assert response.status_code == 404
     assert "User not found" in response.get_json()["error"]
     mock_delete_auth.assert_called_once_with(user_id)
@@ -171,7 +198,7 @@ def test_delete_user_not_found(client, mocker):
 # Test 8: Login with sucess ------------------------------------------------------------
 def test_login_success(client, mocker):
     login_data = {
-        "Username": "john.doe@example.com",
+        "Email": "john.doe@example.com",
         "Password": "securepassword123"
     }
 
@@ -197,7 +224,6 @@ def test_login_success(client, mocker):
 
     response = client.post('/users/login', json=login_data)
 
-    # Assertions
     assert response.status_code == 200
     response_data = response.get_json()
     assert response_data["message"] == "Login successful"
@@ -208,14 +234,12 @@ def test_login_success(client, mocker):
 # Test 9: Login with error (no user) ------------------------------------------------------------
 def test_login_no_user(client, mocker):
     login_data = {
-        "Username": "nonexistent@example.com",
+        "Email": "nonexistent@example.com",
         "Password": "password123"
     }
 
-    # Mock Firebase API key
     mocker.patch.dict(os.environ, {"FIREBASE_API_KEY": "mock_api_key"})
 
-    # Mock `requests.post` to simulate no user in Firebase
     mock_post = mocker.patch("api.users.requests.post")
     mock_post.return_value = MagicMock(
         status_code=400,
@@ -224,7 +248,6 @@ def test_login_no_user(client, mocker):
 
     response = client.post('/users/login', json=login_data)
 
-    # Assertions
     assert response.status_code == 400
     assert "EMAIL_NOT_FOUND" in response.get_json()["error"]
 
@@ -232,14 +255,12 @@ def test_login_no_user(client, mocker):
 # Test 10: Login with error (wrong password) ------------------------------------------------------------
 def test_login_invalid_credentials(client, mocker):
     login_data = {
-        "Username": "john.doe@example.com",
+        "Email": "john.doe@example.com",
         "Password": "wrongpassword"
     }
 
-    # Mock Firebase API key
     mocker.patch.dict(os.environ, {"FIREBASE_API_KEY": "mock_api_key"})
 
-    # Mock `requests.post` to simulate invalid credentials
     mock_post = mocker.patch("api.users.requests.post")
     mock_post.return_value = MagicMock(
         status_code=400,
@@ -248,21 +269,18 @@ def test_login_invalid_credentials(client, mocker):
 
     response = client.post('/users/login', json=login_data)
 
-    # Assertions
     assert response.status_code == 400
     assert "INVALID_PASSWORD" in response.get_json()["error"]
     
 
 # Test 11: Logout with success ------------------------------------------------------------
 def test_logout_success(client):
-    # Simulate an active session
     with client.session_transaction() as session:
         session['user_id'] = "12345"
         session['email'] = "john.doe@example.com"
 
     response = client.post('/users/logout')
 
-    # Assertions
     assert response.status_code == 200
     assert response.get_json()["message"] == "Logout successful."
     with client.session_transaction() as session:
@@ -274,7 +292,6 @@ def test_logout_success(client):
 def test_connect_vet_not_found(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
-    # Mock Firestore for vet
     mock_vet_ref = mocker.patch("api.users.user_db.document")
     mock_vet_doc = MagicMock()
     mock_vet_ref.return_value = mock_vet_doc
@@ -282,7 +299,6 @@ def test_connect_vet_not_found(client, mocker):
 
     response = client.put('/connect_vet/', json=data)
 
-    # Assertions
     assert response.status_code == 404
     assert "Vet vet123 not found" in response.get_json()["error"]
     mock_vet_ref.assert_called_once_with("vet123")
@@ -292,7 +308,6 @@ def test_connect_vet_not_found(client, mocker):
 def test_connect_vet_not_a_vet(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
-    # Mock Firestore for vet
     mock_vet_ref = mocker.patch("api.users.user_db.document")
     mock_vet_doc = MagicMock()
     mock_vet_ref.return_value = mock_vet_doc
@@ -301,7 +316,6 @@ def test_connect_vet_not_a_vet(client, mocker):
 
     response = client.put('/connect_vet/', json=data)
 
-    # Assertions
     assert response.status_code == 403
     assert "Access denied: User is not a Vet" in response.get_json()["error"]
     mock_vet_ref.assert_called_once_with("vet123")
@@ -311,12 +325,11 @@ def test_connect_vet_not_a_vet(client, mocker):
 def test_connect_vet_create_health_success(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
-    # Mock Firestore for vet
     mock_vet_ref = mocker.patch("api.users.user_db.document")
     mock_vet_doc = MagicMock()
     mock_vet_ref.return_value = mock_vet_doc
-    mock_vet_doc.get.return_value.exists = True  # Simulate vet exists
-    mock_vet_doc.get.return_value.to_dict.return_value = {"Role": "Vet"}  # Simulate Vet role
+    mock_vet_doc.get.return_value.exists = True  
+    mock_vet_doc.get.return_value.to_dict.return_value = {"Role": "Vet"}  
 
     # Mock Firestore for pet
     mock_pet_ref = mocker.patch("api.users.pet_db.document")
@@ -324,13 +337,11 @@ def test_connect_vet_create_health_success(client, mocker):
     mock_pet_ref.return_value = mock_pet_doc
     mock_pet_doc.collection.return_value.limit.return_value.get.return_value = []  # No health docs
 
-    # Mock `create_health` to succeed
     mock_create_health = mocker.patch("api.users.create_health")
     mock_create_health.return_value = ({"message": "Health document created"}, 201)
 
     response = client.put('/connect_vet/', json=data)
 
-    # Assertions
     assert response.status_code == 200
     assert "Vet vet123 successfully connected to Pet pet456" in response.get_json()["message"]
     mock_vet_ref.assert_called_once_with("vet123")
@@ -341,26 +352,22 @@ def test_connect_vet_create_health_success(client, mocker):
 def test_connect_vet_create_health_failure(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
-    # Mock Firestore for vet
     mock_vet_ref = mocker.patch("api.users.user_db.document")
     mock_vet_doc = MagicMock()
     mock_vet_ref.return_value = mock_vet_doc
     mock_vet_doc.get.return_value.exists = True  # Simulate vet exists
     mock_vet_doc.get.return_value.to_dict.return_value = {"Role": "Vet"}  # Simulate Vet role
 
-    # Mock Firestore for pet
     mock_pet_ref = mocker.patch("api.users.pet_db.document")
     mock_pet_doc = MagicMock()
     mock_pet_ref.return_value = mock_pet_doc
     mock_pet_doc.collection.return_value.limit.return_value.get.return_value = []  # No health docs
 
-    # Mock `create_health` to fail
     mock_create_health = mocker.patch("api.users.create_health")
     mock_create_health.return_value = ({"error": "Failed to create health document"}, 500)
 
     response = client.put('/connect_vet/', json=data)
 
-    # Assertions
     assert response.status_code == 500
     assert "Failed to create health document" in response.get_json()["error"]
     mock_create_health.assert_called_once_with("pet456")
@@ -370,27 +377,23 @@ def test_connect_vet_create_health_failure(client, mocker):
 def test_connect_vet_success(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
-    # Mock Firestore for vet
     mock_vet_ref = mocker.patch("api.users.user_db.document")
     mock_vet_doc = MagicMock()
     mock_vet_ref.return_value = mock_vet_doc
     mock_vet_doc.get.return_value.exists = True  # Simulate vet exists
     mock_vet_doc.get.return_value.to_dict.return_value = {"Role": "Vet"}  # Simulate Vet role
 
-    # Mock Firestore for pet
     mock_pet_ref = mocker.patch("api.users.pet_db.document")
     mock_pet_doc = MagicMock()
     mock_pet_ref.return_value = mock_pet_doc
     mock_health_doc = MagicMock()
     mock_pet_doc.collection.return_value.limit.return_value.get.return_value = [mock_health_doc]  # Health doc exists
 
-    # Mock Firestore updates
     mock_health_doc.reference.update.return_value = None
     mock_vet_ref.return_value.update.return_value = None
 
     response = client.put('/connect_vet/', json=data)
 
-    # Assertions
     assert response.status_code == 200
     assert "Vet vet123 successfully connected to Pet pet456" in response.get_json()["message"]
     mock_health_doc.reference.update.assert_called_once_with({
