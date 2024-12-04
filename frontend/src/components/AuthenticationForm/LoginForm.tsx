@@ -9,26 +9,24 @@ import { FaLock } from "react-icons/fa";
 import { FaPaw } from "react-icons/fa";
 
 const LoginForm: React.FC = () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
   const router = useRouter();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      return;
+    }
 
     try {
-      console.log("send POST login request");
       const response = await fetch(`${baseUrl}/users/login`, {
         method: "POST",
         headers: {
@@ -41,17 +39,16 @@ const LoginForm: React.FC = () => {
       });
 
       if (response.ok) {
-        console.log("response ok");
         const data = await response.json();
-        console.log(data.user);
         setUser(data.user);
         router.push("/");
       } else {
         const errorData = await response.json();
-        console.log(errorData);
+        setError(errorData.error || "Login failed. Please try again.");
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error during login:", err);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -65,13 +62,17 @@ const LoginForm: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <h1>Login</h1>
 
+          {error && <p className={styles["error-message"]}>{error}</p>}
+
           <div className={styles["text-field"]}>
             <FaUserLarge className={styles["text-icon"]} />
             <input
               type="email"
               placeholder="Email"
               value={email}
-              onChange={handleEmailChange}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              aria-label="Email"
             />
           </div>
 
@@ -81,21 +82,25 @@ const LoginForm: React.FC = () => {
               type="password"
               placeholder="Password"
               value={password}
-              onChange={handlePasswordChange}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              aria-label="Password"
             />
           </div>
 
           <div className={styles["remember-me"]}>
-            <input type="checkbox" />
-            <div className={styles["remember-text"]}>Remember me</div>
+            <input type="checkbox" id="remember-me" />
+            <label htmlFor="remember-me" className={styles["remember-text"]}>
+              Remember me
+            </label>
           </div>
 
           <button type="submit" className={styles["submit"]}>
-            {" "}
-            Submit{" "}
+            Submit
           </button>
 
           <button
+            type="button"
             className={styles["signup"]}
             onClick={() => router.push("/signup")}
           >
