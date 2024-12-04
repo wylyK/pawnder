@@ -2,7 +2,8 @@
 Entrypoint to Flask backend server
 """
 
-from flask import Flask
+from flask import Flask, session
+from flask_cors import CORS
 from api.users import users_api
 from api.pets import pets_api
 from api.petMatch import pet_match_api
@@ -12,13 +13,13 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 app.register_blueprint(users_api)
 app.register_blueprint(pets_api)
 app.register_blueprint(pet_match_api)
 app.register_blueprint(pet_health_api)
 app.register_blueprint(pet_event_api)
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = os.urandom(24)
 
 @app.route("/")
 def hello_world():

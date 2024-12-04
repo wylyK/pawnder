@@ -1,26 +1,19 @@
 from flask import Blueprint, jsonify, request, session, current_app
-from firebase_admin import firestore, auth
+from firebase_admin import firestore, auth, storage
 from dotenv import load_dotenv
 import os
 import requests
 from models.user import User
 from api.petHealth import get_health, create_health, update_health
 from firestore_client import db
+from urllib.parse import quote
 
 users_api = Blueprint('users_api', __name__)
 user_db = db.collection("USER")
 pet_db = db.collection("PET")
+# Bucket to store data in Firebase storage
+bucket = storage.bucket()
 load_dotenv()
-
-config = {
-    "apiKey": os.getenv("FIREBASE_API_KEY"),
-    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
-    "projectId": os.getenv("FIREBASE_PROJECT_ID"),
-    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
-    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
-    "appId": os.getenv("FIREBASE_APP_ID"),
-    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID")
-}
 
 @users_api.put('/connect_vet/')
 def connect_vet():
@@ -59,15 +52,16 @@ def connect_vet():
         return jsonify({"message": f"Vet {vet_id} successfully connected to Pet {pet_id}"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 # POST login user by email and password
 @users_api.post('/users/login')
 def login():
     data = request.json
-    email = data.get('Username')
+    email = data.get('Email')
     password = data.get('Password')
     
     if not email or not password: 
-        return jsonify({"error": "Username and Password are required"}), 400
+        return jsonify({"error": "Email and Password are required"}), 400
     
     firebase_api_key = os.getenv('FIREBASE_API_KEY')
     
@@ -90,6 +84,15 @@ def login():
             refresh_token = response_data.get('refreshToken')
             expires_in = response_data.get('expiresIn')
             local_id = response_data.get('localId')
+
+            # Retrieve user details from Firestore
+            user_ref = user_db.document(local_id)
+            user_doc = user_ref.get()
+
+            if not user_doc.exists:
+                return jsonify({"error": "User record not found"}), 404
+            
+            user_data = user_doc.to_dict()
             
             # Store user info in session
             session['user_id'] = local_id
@@ -97,6 +100,16 @@ def login():
 
             return jsonify({
                 "message": "Login successful",
+                "user": {
+                    "Id": local_id,
+                    "FName": user_data.get('FName'),
+                    "LName": user_data.get('LName'),
+                    "Email": email,
+                    "Location": user_data.get('Location', ""),
+                    "Role": user_data.get('Role'),
+                    "PetId": user_data.get('PetId', []),
+                    "Avatar": user_data.get('Avatar', ""),
+                },
                 "idToken": id_token,
                 "refreshToken": refresh_token,
                 "expiresIn": expires_in
@@ -107,7 +120,7 @@ def login():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+ 
 @users_api.post('/users/logout')
 def logout():
     try:
@@ -209,20 +222,48 @@ def create_user():
         create.Id = user_id
         user_profile_data = User.to_dict(create)
         user_ref.set(user_profile_data)
-        return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+    return jsonify({"message": f"User {user_id} created successfully with Firebase Auth and Firestore"}), 201
     
 # PUT update user profile data by ID
 @users_api.put('/users/<user_id>')
 def update_user_by_id(user_id):
-    data = request.json
+    data = request.form
+    
     user_ref = user_db.document(user_id)
     user_doc = user_ref.get()
 
     if user_doc.exists:
+        user = User.from_dict(user_doc.to_dict())
+        user.FName = data.get('FName', user.FName)
+        user.LName = data.get('LName', user.LName)
+        user.Location = data.get('Location', user.Location)
+        user.PetId = data.get('PetId', user.PetId)
+        
+        if 'Avatar' in request.files:
+            image_file = request.files['Avatar']
+            #If user upload a file
+            if image_file.filename != '':
+                try:
+                    file_extension = image_file.filename.rsplit('.', 1)[-1].lower()
+                    file_path = f"userImages/{user_id}.{file_extension}"
+
+                    # Define the path for the image in Firebase Storage
+                    blob = bucket.blob(file_path)
+
+                    # Upload the file with the pet_id as the filename
+                    blob.upload_from_file(image_file)
+
+                    encoded_file_path = quote(file_path, safe='')
+                    download_url = f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/{encoded_file_path}?alt=media"
+                    user.Avatar = download_url 
+                except Exception as e:
+                    return jsonify({"error": f"Image upload failed: {str(e)}"}), 500
+
         try:
-            user_ref.update(data)
+            user_ref.update(user.to_dict())
             return jsonify({"message": f"User {user_id} updated successfully"}), 200
         except Exception as e:
             return jsonify({"error": f"Error updating user: {str(e)}"}), 500
