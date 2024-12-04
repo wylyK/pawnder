@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MdOutlineHome, MdHome } from "react-icons/md";
 import {
   PiPawPrintBold,
@@ -10,8 +11,17 @@ import {
 import { FaRegUser, FaUser } from "react-icons/fa6";
 import { RiLogoutBoxRFill, RiLogoutBoxRLine } from "react-icons/ri";
 import styles from "./NavBar.module.css";
+import UserContext from "@/context/UserContext";
 
 const NavBar: React.FC = () => {
+  const { setUser } = useContext(UserContext);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    setUser(null);
+    router.push("/login");
+  };
+
   return (
     <nav className={styles.nav}>
       <ul className={styles.ul}>
@@ -55,10 +65,13 @@ const NavBar: React.FC = () => {
 
         {/* Logout Icon */}
         <li className={styles.li}>
-          <Link href="/login" className={`${styles.link} ${styles.logout}`}>
+          <button
+            onClick={handleLogout}
+            className={`${styles.link} ${styles.logout} ${styles.button}`}
+          >
             <RiLogoutBoxRLine className={styles["dormant"]} />
             <RiLogoutBoxRFill className={styles["hovered"]} />
-          </Link>
+          </button>
         </li>
       </ul>
     </nav>
