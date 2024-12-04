@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import UserContext from "@/context/UserContext";
 import styles from "./LoginForm.module.css";
 import { FaUserLarge } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { FaPaw } from "react-icons/fa";
+import { useAuth } from "@/context/UserContext";
 
 const LoginForm: React.FC = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
   const router = useRouter();
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

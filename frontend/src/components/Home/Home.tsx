@@ -19,6 +19,8 @@ const HomePage: React.FC = () => {
     router.push("/login");
   }, [user, router]);
 
+  console.log(user);
+
   return (
     <div className={styles.container}>
       <NavBar />
