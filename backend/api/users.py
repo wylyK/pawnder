@@ -140,6 +140,26 @@ def get_user_by_id(user_id):
     else:
         return jsonify({"error": "User not found"}), 404
     
+from flask import request, jsonify
+
+@users_api.get('/users')
+def get_users_by_ids():
+    user_ids = request.args.get('ids')
+    if not user_ids:
+        return jsonify({"error": "No user IDs provided"}), 400
+    user_ids_list = user_ids.split(',')
+    users = {}
+    for user_id in user_ids_list:
+        user_ref = user_db.document(user_id)
+        user_doc = user_ref.get()
+
+        if user_doc.exists:
+            users[user_id] = user_doc.to_dict()
+        else:
+            users[user_id] = {"error": "User not found"}
+
+    return jsonify(users), 200
+    
 # Get all events by userId
 @users_api.get('/users/<user_id>/events')
 def get_events_by_user_id(user_id):

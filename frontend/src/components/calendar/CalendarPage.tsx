@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import NavBar from "../Navigation/NavBar"; // Adjust path as needed
 import styles from "./CalendarPage.module.css";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/UserContext";
+import { useAllEvents } from "@/hooks/use-all-events";
+// import { useUserByUserId } from "@/hooks/use-user-by-userid";
+import { useUsersByUserIds } from "@/hooks/use-users-by-user-ids";
 
 const localizer = momentLocalizer(moment);
 
@@ -13,22 +18,77 @@ interface Event {
   title: string;
   start: Date;
   end: Date;
+  duration?: number;
+  location?: string;
+  createdBy?: string;
+  vetAssigned?: string;
+  type?: string;
+  status?: string;
+  description?: string;
+  followUp?: string;
   isEditing?: boolean;
 }
 
 const CalendarPage: React.FC = () => {
-  const [events, setEvents] = useState<Event[]>([
-    {
-      title: "Vet Appointment - Annual check-up",
-      start: new Date(2024, 10, 3, 10, 0), // November 3rd, 2024
-      end: new Date(2024, 10, 3, 11, 0),
-    },
-    {
-      title: "Grooming - Full grooming session",
-      start: new Date(2024, 10, 5, 14, 0), // November 5th, 2024
-      end: new Date(2024, 10, 5, 15, 0),
-    },
-  ]);
+  const router = useRouter();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user !== null) {
+      return;
+    }
+    router.push("/login");
+  }, [user, router]);
+
+  const { allEvents, status: eventsStatus } = useAllEvents();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [userIds, setUserIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (allEvents) {
+      const ids = Array.from(
+        new Set(
+          allEvents.flatMap((event) =>
+            [event.CreatedBy, event.VetAssigned].filter(Boolean),
+          ),
+        ),
+      );
+      const uniqueIds = Array.from(new Set(ids));
+      setUserIds(uniqueIds);
+    }
+  }, [allEvents]);
+
+  const { users, status: usersStatus } = useUsersByUserIds(userIds);
+
+  console.log(users["cRZjl1iAb6vU1GTYSNuK"]);
+
+  const memoizedEvents = useMemo(() => {
+    if (!allEvents || usersStatus !== "success" || eventsStatus !== "success") {
+      return [];
+    }
+
+    return allEvents.map((event) => ({
+      title: event.Name,
+      start: new Date(event.DateTime),
+      end: new Date(
+        new Date(event.DateTime).getTime() + event.Duration * 60 * 1000,
+      ),
+      duration: event.Duration,
+      location: event.Location,
+      createdBy:
+        users[event.CreatedBy]?.FName + " " + users[event.CreatedBy]?.LName,
+      vetAssigned:
+        users[event.VetAssigned]?.FName + " " + users[event.VetAssigned]?.LName,
+      type: event.Type,
+      status: event.Status,
+      description: event.Description,
+      followUp: event.FollowUp,
+    }));
+  }, [allEvents, usersStatus, users, eventsStatus]);
+
+  useEffect(() => {
+    setEvents(memoizedEvents);
+  }, [memoizedEvents]);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<View>("month");
@@ -41,6 +101,9 @@ const CalendarPage: React.FC = () => {
   );
   const [newEventStartTime, setNewEventStartTime] = useState("");
   const [newEventEndTime, setNewEventEndTime] = useState("");
+  const [selectedChecklistEvent, setSelectedChecklistEvent] =
+    useState<Event | null>(null);
+  const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
 
   // Automatically update the date field in the modal based on the current view
   useEffect(() => {
@@ -62,6 +125,16 @@ const CalendarPage: React.FC = () => {
   const handleSelectSlot = ({ start }: { start: Date }) => {
     setCurrentDate(start); // Navigate to the clicked date
     setCurrentView("day"); // Switch to day view
+  };
+
+  const handleCardClick = (event: Event) => {
+    setSelectedChecklistEvent(event);
+    setIsChecklistModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsChecklistModalOpen(false);
+    setSelectedChecklistEvent(null);
   };
 
   const handleEventClick = (event: Event) => {
@@ -171,22 +244,92 @@ const CalendarPage: React.FC = () => {
         {/* Checklist Section */}
         <div className={styles["checklist-section"]}>
           <h3 className={styles["checklist-header"]}>Monthly Checklist</h3>
-          <ul className={styles["checklist"]}>
+          <div className={styles["checklist"]}>
             {events.map((event, index) => (
-              <li key={index} className={styles["checklist-item"]}>
-                <strong>
+              <div
+                key={index}
+                className={styles["card"]}
+                onClick={() => handleCardClick(event)}
+              >
+                <h4 className={styles["card-title"]}>{event.title}</h4>
+                <p className={styles["card-date"]}>
                   {moment(event.start).format("YYYY-MM-DD HH:mm")}
-                </strong>
-                : {event.title}
-              </li>
+                </p>
+                <p className={styles["card-location"]}>{event.location}</p>
+              </div>
             ))}
-          </ul>
+          </div>
           <button
             onClick={() => setModalOpen(true)}
             className={styles["add-button"]}
           >
             Add Event
           </button>
+
+          {isChecklistModalOpen && selectedChecklistEvent && (
+            <div className={styles["modal-overlay"]} onClick={closeModal}>
+              <div
+                className={styles["modal"]}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className={styles["close-button"]} onClick={closeModal}>
+                  ✖
+                </button>
+                <h2 className={styles["modal-heading"]}>
+                  {selectedChecklistEvent.title}
+                </h2>
+                <div className={styles["modal-content"]}>
+                  <p>
+                    <strong>Start:</strong>{" "}
+                    {moment(selectedChecklistEvent.start).format(
+                      "YYYY-MM-DD HH:mm",
+                    )}
+                  </p>
+                  {/* <p>
+                <strong>End:</strong>{' '}
+                {moment(selectedChecklistEvent.end).format('YYYY-MM-DD HH:mm')}
+              </p> */}
+                  <p>
+                    <strong>Duration:</strong> {selectedChecklistEvent.duration}{" "}
+                    minutes
+                  </p>
+                  <p>
+                    <strong>Location:</strong> {selectedChecklistEvent.location}
+                  </p>
+                  <p>
+                    <strong>Created By:</strong>{" "}
+                    {selectedChecklistEvent.createdBy}
+                  </p>
+                  <p>
+                    <strong>Vet Assigned:</strong>{" "}
+                    {selectedChecklistEvent.vetAssigned}
+                  </p>
+                  {selectedChecklistEvent.type && (
+                    <p>
+                      <strong>Type:</strong> {selectedChecklistEvent.type}
+                    </p>
+                  )}
+                  {selectedChecklistEvent.status && (
+                    <p>
+                      <strong>Status:</strong> {selectedChecklistEvent.status}
+                    </p>
+                  )}
+                  {selectedChecklistEvent.description && (
+                    <p>
+                      <strong>Description:</strong>{" "}
+                      {selectedChecklistEvent.description}
+                    </p>
+                  )}
+                  {selectedChecklistEvent.followUp && (
+                    <p>
+                      <strong>Follow Up:</strong>{" "}
+                      {selectedChecklistEvent.followUp}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
