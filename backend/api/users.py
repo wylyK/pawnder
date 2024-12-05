@@ -142,7 +142,9 @@ def get_user_by_id(user_id):
     
 from flask import request, jsonify
 
-@users_api.get('/users')
+# GET users by IDs
+# /users/ids?ids=userId1,userId2
+@users_api.get('/users/ids')
 def get_users_by_ids():
     user_ids = request.args.get('ids')
     if not user_ids:
@@ -159,6 +161,17 @@ def get_users_by_ids():
             users[user_id] = {"error": "User not found"}
 
     return jsonify(users), 200
+
+# GET users (vet) by PetId
+# /users/petId/<petId> 
+@users_api.get('/users/petId/<petId>')
+def get_users_by_pet_id(petId):
+    user_refs = user_db.where("Role", "==", "Vet").where("PetId", "array_contains", petId).stream()
+    users = {user.id: user.to_dict() for user in user_refs}
+    if not users:
+        return jsonify({"message": "No users found for this petId"}), 404
+    return jsonify(users), 200
+
     
 # Get all events by userId
 @users_api.get('/users/<user_id>/events')

@@ -1,14 +1,21 @@
-import { useAuth } from "@/context/UserContext";
 import { useMutation } from "@tanstack/react-query";
-import { PetEvent } from "@/share/type";
+import { useAuth } from "@/context/UserContext";
+import { PetEvent, Role } from "@/share/type";
 
-export const useCreateNewEvent = (petId: string) => {
-  const user = useAuth();
-  const useCreateNewEvent = useMutation({
-    mutationFn: async (newEvent: PetEvent) => {
-      if (!user || !user.user) throw new Error("User not authenticated");
+export const useCreateNewEvent = () => {
+  const { user } = useAuth();
+  const mutation = useMutation({
+    mutationFn: async ({
+      petId,
+      newEvent,
+    }: {
+      petId: string;
+      newEvent: PetEvent;
+    }) => {
+      if (!user) throw new Error("User not authenticated");
       if (!petId) throw new Error("Pet ID is required");
-      if (user.user.Role !== "vet") return null;
+      if (user.Role !== Role.Vet)
+        throw new Error("User does not have permission to create events");
       const baseUrl =
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
       const response = await fetch(`${baseUrl}/pets/${petId}/events`, {
@@ -18,14 +25,11 @@ export const useCreateNewEvent = (petId: string) => {
         },
         body: JSON.stringify(newEvent),
       });
-
       if (!response.ok) {
         throw new Error(`Error creating event: ${response.statusText}`);
       }
-
       return response.json();
     },
   });
-
-  return useCreateNewEvent;
+  return mutation;
 };

@@ -1,6 +1,6 @@
 export enum Role {
-  Owner = "owner",
-  Vet = "vet",
+  Owner = "Owner",
+  Vet = "Vet",
 }
 
 export interface CountryOption {
@@ -20,7 +20,7 @@ export interface User {
 }
 
 export interface PetEvent {
-  Id: string;
+  Id?: string;
   Name: string;
   DateTime: string;
   Duration: number;
@@ -32,4 +32,16 @@ export interface PetEvent {
   Status?: string;
   Description?: string;
   FollowUp?: string;
+}
+
+export interface Pet {
+  Id: string;
+  Name: string;
+  Breed: string;
+  Type: string;
+  Age: number;
+  Avatar?: string;
+  Description?: string;
+  Tag?: string;
+  UserId: string;
 }
