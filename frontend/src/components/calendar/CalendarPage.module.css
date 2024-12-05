@@ -39,6 +39,7 @@
   margin-bottom: 15px;
 }
 
+/* Checklist Section */
 .checklist-section {
   flex: 1;
   border: 1px solid #ddd;
@@ -46,19 +47,69 @@
   background: #fff;
   padding: 20px;
   box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
+  display: flex;
+  flex-direction: column;
+}
+
+.checklist {
+  max-height: 450px;
+  overflow-y: auto;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.checklist::-webkit-scrollbar {
+  width: 8px;
+}
+
+.checklist::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.checklist::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.checklist::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
 }
 
 .checklist-header {
   font-size: 1.5rem;
   color: #ff6b6b;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-.checklist {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 20px;
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+}
+
+.card-title {
+  font-size: 1.4rem;
+  color: #ff6b6b;
+  margin-bottom: 8px;
+}
+
+.card-date,
+.card-location {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 5px;
 }
 
 .checklist-item {
@@ -85,103 +136,149 @@
 }
 
 /* Modal Overlay */
-
-.input {
-  display: block;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin: 10px 0 5px;
-  padding: 8px 5px;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  height: 100%;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
 /* Modal Styling */
 .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
-  z-index: 1000;
-}
-
-.modal-heading {
-  font-size: 1.5rem; /* Larger font size */
-  font-weight: 500; /* Bold for prominence */
-  color: black; /* Match the color theme */
-  text-align: left; /* Center-align */
-  margin-bottom: 10px; /* Space below the heading */
+  background: #fff;
+  padding: 30px;
+  width: 900px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 4px 15px rgb(0 0 0 / 20%);
 }
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 
-.modal-header {
-  font-size: 1.5rem;
+.close-button:hover {
+  color: #ff6b6b;
+}
+
+.modal-heading {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  margin-bottom: 20px;
+}
+
+/* Form Layout */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-sections {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.vertical-divider {
+  width: 1px;
+  background-color: #ddd;
+  margin: 0 20px;
+}
+
+.form-group {
   margin-bottom: 15px;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  max-height: 70px;
+}
+
+.input:focus {
+  border-color: #ff6b6b;
+  outline: none;
+}
+
+textarea.input {
+  height: 100px;
+  resize: vertical;
+}
+
+/* Arrange Vet Assigned and Type of Event in the same row */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
 }
 
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 20px;
 }
 
-.edit-button,
-.delete-button,
+.cancel-button,
 .save-button,
-.cancel-button {
-  flex: 1;
-  margin: 0 10px; /* Add spacing between buttons */
-  padding: 10px;
-  font-size: 16px;
+.edit-button,
+.delete-button {
+  padding: 10px 20px;
+  font-size: 1rem;
   font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
+.cancel-button,
 .edit-button {
-  background-color: #ffeb3b;
-}
-
-.delete-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.save-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.cancel-button {
   background-color: #9e9e9e;
-  color: white;
+  color: #fff;
+  margin-right: 10px;
 }
 
-.edit-button:hover {
-  background: #e6b800;
+.save-button,
+.delete-button {
+  background-color: #ff6b6b;
+  color: #fff;
 }
 
-.save-button:hover {
-  background: #45a049;
+.cancel-button:hover .edit-button:hover {
+  background-color: #7e7e7e;
 }
 
-.delete-button:hover {
-  background: #d32f2f;
+.save-button:hover .delete-button:hover {
+  background-color: #e55c5c;
 }
 
 .label {

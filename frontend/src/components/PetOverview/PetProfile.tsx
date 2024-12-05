@@ -31,7 +31,6 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-
   // Fetch pet details on component mount
   useEffect(() => {
     const fetchPet = async () => {
@@ -49,7 +48,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
   }, [petId]);
 
   // Handle input changes in the edit mode
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -86,7 +85,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
               ...prev,
               ...formData,
             }
-          : null
+          : null,
       );
       setIsEditing(false); // Switch back to the view mode
     } catch (error) {
@@ -121,7 +120,6 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
       setIsSaving(false);
     }
   };
-  
 
   if (!pet) {
     return <div>Loading...</div>;
@@ -210,18 +208,18 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
                   />
                 </label>
               </div>
-            <div className={styles["input-container"]}>
-              <label className={styles["input-label"]}>
-                Description:
-              <input
-                type="text"
-                name="Description"
-                value={formData.Description || ""}
-                onChange={handleInputChange}
-                className={styles["input-field"]}
-              />
-            </label>
-          </div>
+              <div className={styles["input-container"]}>
+                <label className={styles["input-label"]}>
+                  Description:
+                  <input
+                    type="text"
+                    name="Description"
+                    value={formData.Description || ""}
+                    onChange={handleInputChange}
+                    className={styles["input-field"]}
+                  />
+                </label>
+              </div>
               <div className={styles["action-buttons"]}>
                 <button
                   className={styles["cancel-button"]}
@@ -229,10 +227,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
                 >
                   Cancel
                 </button>
-                <button
-                  className={styles["save-button"]}
-                  onClick={handleSave}
-                >
+                <button className={styles["save-button"]} onClick={handleSave}>
                   Save
                 </button>
               </div>

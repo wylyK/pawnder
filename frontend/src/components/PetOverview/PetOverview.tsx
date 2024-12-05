@@ -21,7 +21,9 @@ const PetOverview: React.FC = () => {
     const fetchPets = async () => {
       try {
         // Explicitly type the response as a dictionary-like object
-        const response = await api.get<{ [key: string]: Omit<Pet, "id"> }>("/pets");
+        const response = await api.get<{ [key: string]: Omit<Pet, "id"> }>(
+          "/pets",
+        );
         // Ensure data is correctly mapped and id is added
         const petsData = Object.entries(response.data).map(([id, pet]) => ({
           id,
@@ -77,7 +79,6 @@ const PetOverview: React.FC = () => {
 
 export default PetOverview;
 
-
 // // components/PetOverview.tsx
 // "use client";
 // import React, { useState } from "react";
@@ -85,7 +86,6 @@ export default PetOverview;
 // import styles from "./PetOverview.module.css";
 // import Modal from "./Modal";
 // import PetProfile from "./PetProfile";
-
 
 // interface Pet {
 //   id: string;
