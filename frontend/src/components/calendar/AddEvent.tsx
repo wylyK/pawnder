@@ -15,12 +15,11 @@ const AddEvent: React.FC<AddEventProps> = ({
   setNewEventPetAssigned,
 }) => {
   const { user } = useAuth();
-  if (!user || !user.PetId) return null;
 
   const [petIds, setPetIds] = useState<string[]>([]);
 
   useEffect(() => {
-    if (user.PetId) {
+    if (user && user.PetId) {
       const ids = Array.from(new Set(user.PetId));
       const uniqueIds = Array.from(new Set(ids));
       setPetIds(uniqueIds);
@@ -28,6 +27,7 @@ const AddEvent: React.FC<AddEventProps> = ({
   }, [user]);
 
   const { pets, status: petsStatus } = usePetsByPetIds(petIds);
+  if (!user || !user.PetId) return null;
 
   return (
     <div className={styles["form-group"]}>

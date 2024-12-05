@@ -38,6 +38,7 @@
   font-weight: 600;
   text-transform: capitalize;
 }
+
 .remove-tag-button {
   background: none;
   border: none;
@@ -49,13 +50,11 @@
 
 .add-tag-button {
   display: inline-block;
-  /*background-color: #ff6b6b;*/
   color: black;
   font-size: 1rem;
   cursor: pointer;
   font-weight: 600;
   font-style: italic;
-  margin-top: 0px;
 }
 
 .info-card {

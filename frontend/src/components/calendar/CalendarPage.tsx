@@ -200,7 +200,7 @@ const CalendarPage: React.FC = () => {
           resetForm();
           setModalOpen(false);
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
           alert(`Error creating event: ${error.message}`);
         },
       },
