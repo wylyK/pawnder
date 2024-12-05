@@ -161,55 +161,6 @@ const CalendarPage: React.FC = () => {
     setNewEventEndTime(moment(event.end).format("HH:mm"));
     setEditModalOpen(true); // Open the modal for event details
   };
-
-  // const handleSaveEvent = () => {
-  //   if (
-  //     !newEventTitle ||
-  //     !newEventStartTime ||
-  //     !newEventEndTime ||
-  //     !newEventDate
-  //   ) {
-  //     alert("Please fill in all fields.");
-  //     return;
-  //   }
-
-  //   const [startHour, startMinute] = newEventStartTime.split(":").map(Number);
-  //   const [endHour, endMinute] = newEventEndTime.split(":").map(Number);
-  //   const startDate = new Date(newEventDate);
-  //   const endDate = new Date(newEventDate);
-
-  //   startDate.setHours(startHour, startMinute);
-  //   endDate.setHours(endHour, endMinute);
-
-  //   if (endDate <= startDate) {
-  //     alert("End time must be after start time.");
-  //     return;
-  //   }
-
-  //   setEvents([
-  //     ...events,
-  //     {
-  //       title: newEventTitle,
-  //       start: startDate,
-  //       end: endDate,
-  //     },
-  //   ]);
-
-  //   // Reset the form and close the modal
-  //   setNewEventTitle("");
-  //   setNewEventDate(moment(new Date()).format("YYYY-MM-DD"));
-  //   setNewEventStartTime("");
-  //   setNewEventEndTime("");
-  //   setNewEventDuration(0);
-  //   setNewEventLocation("");
-  //   setNewEventPetAssigned("");
-  //   setNewEventVetAssigned("");
-  //   setNewEventType("");
-  //   setNewEventDescription("");
-  //   setNewEventFollowUp("");
-  //   setModalOpen(false);
-  // };
-
   const createNewEventMutation = useCreateNewEvent();
 
   const handleSaveEvent = (e: React.FormEvent) => {
