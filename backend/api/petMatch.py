@@ -33,7 +33,11 @@ def get_all_matched(petId):
             match_collection = pet_doc_ref.collection("MATCH")
 
             matched_docs = match_collection.where("Status", "==", Status.MATCHED.value).get()
-            matched_pet_ids = [match.PetId for doc in matched_docs if (match := Match.from_dict(doc.to_dict()))]
+            matched_pet_ids = []
+            for doc in matched_docs:
+                match = Match.from_dict(doc.to_dict())
+                if match:
+                    matched_pet_ids.append(match.PetId)
 
             return jsonify(matched_pet_ids if matched_pet_ids else None), 200
         except Exception as e:
@@ -44,7 +48,11 @@ def get_all_matched(petId):
             match_collection = pet_doc_ref.collection("MATCH")
 
             pending_docs = match_collection.where("Status", "==", Status.PENDING.value).get()
-            pending_pet_ids = [match.PetId for doc in pending_docs if (match := Match.from_dict(doc.to_dict()))]
+            pending_pet_ids = []
+            for doc in pending_docs:
+                match = Match.from_dict(doc.to_dict())
+                if match:
+                    pending_pet_ids.append(match.PetId)
 
             return jsonify(pending_pet_ids if pending_pet_ids else None), 200
         except Exception as e:

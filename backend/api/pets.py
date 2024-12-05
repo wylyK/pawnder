@@ -26,6 +26,25 @@ def get_pets_by_type():
     except Exception as e:
         return jsonify({"error": f"Error getting pets: {str(e)}"}), 500
     
+# GET pets by IDs
+# /pets/ids?ids=pet1,pet2
+@pets_api.get('/pets/ids')
+def get_pets_by_ids():
+    pet_ids = request.args.get('ids')
+    if not pet_ids:
+        return jsonify({"error": "No pet IDs provided"}), 400
+    pet_ids_list = pet_ids.split(',')
+    pets = {}
+    for pet_id in pet_ids_list:
+        pet_ref = db.collection("PET").document(pet_id)
+        pet_doc = pet_ref.get()
+        if pet_doc.exists:
+            pet_data = pet_doc.to_dict()
+            pets[pet_id] = pet_data
+        else:
+            pets[pet_id] = {"error": "Pet not found"}
+    return jsonify(pets), 200
+    
 # GET pets by location
 # /pets/location?location=NY
 @pets_api.get('/pets/location')

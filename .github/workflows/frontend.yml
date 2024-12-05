@@ -50,3 +50,4 @@ jobs:
           VALIDATE_TSX: false
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_PYTHON_RUFF: false
+          VALIDATE_JAVASCRIPT_ES: false

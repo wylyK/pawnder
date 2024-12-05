@@ -28,3 +28,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 };
 
 export default UserContext;
+
+type UseAuth = () => UserContextType;
+export const useAuth: UseAuth = () => React.useContext(UserContext);

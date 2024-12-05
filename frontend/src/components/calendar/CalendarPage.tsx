@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import NavBar from "../Navigation/NavBar"; // Adjust path as needed
+import NavBar from "../Navigation/NavBar";
 import styles from "./CalendarPage.module.css";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/UserContext";
+import { useAllEvents } from "@/hooks/use-all-events";
+import { useUsersByUserIds } from "@/hooks/use-users-by-user-ids";
+import AddEvent from "./AddEvent";
+import { PetEvent, User } from "@/share/type";
+import { useGetAllVetsOfAPetByPetId } from "@/hooks/use-get-all-vets-of-a-pet-by-pet-id";
+import { useCreateNewEvent } from "@/hooks/use-create-new-event";
 
 const localizer = momentLocalizer(moment);
 
@@ -13,23 +21,77 @@ interface Event {
   title: string;
   start: Date;
   end: Date;
+  duration?: number;
+  location?: string;
+  createdBy?: string;
+  vetAssigned?: string;
+  type?: string;
+  status?: string;
+  description?: string;
+  followUp?: string;
   isEditing?: boolean;
 }
 
 const CalendarPage: React.FC = () => {
-  const [events, setEvents] = useState([
-    {
-      title: "Vet Appointment - Annual check-up",
-      start: new Date(2024, 10, 3, 10, 0), // November 3rd, 2024
-      end: new Date(2024, 10, 3, 11, 0),
-    },
-    {
-      title: "Grooming - Full grooming session",
-      start: new Date(2024, 10, 5, 14, 0), // November 5th, 2024
-      end: new Date(2024, 10, 5, 15, 0),
-    },
-  ]);
+  const router = useRouter();
+  const { user } = useAuth();
 
+  useEffect(() => {
+    if (user !== null) {
+      return;
+    }
+    router.push("/login");
+  }, [user, router]);
+
+  const { allEvents, status: eventsStatus } = useAllEvents();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [userIds, setUserIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (allEvents) {
+      const ids = Array.from(
+        new Set(
+          allEvents.flatMap((event) =>
+            [event.CreatedBy, event.VetAssigned].filter(Boolean),
+          ),
+        ),
+      );
+      const uniqueIds = Array.from(new Set(ids));
+      setUserIds(uniqueIds);
+    }
+  }, [allEvents]);
+
+  const { users, status: usersStatus } = useUsersByUserIds(userIds);
+
+  const memoizedEvents = useMemo(() => {
+    if (!allEvents || usersStatus !== "success" || eventsStatus !== "success") {
+      return [];
+    }
+
+    return allEvents.map((event) => ({
+      title: event.Name,
+      start: new Date(event.DateTime),
+      end: new Date(
+        new Date(event.DateTime).getTime() + event.Duration * 60 * 1000,
+      ),
+      duration: event.Duration,
+      location: event.Location,
+      createdBy:
+        users[event.CreatedBy]?.FName + " " + users[event.CreatedBy]?.LName,
+      vetAssigned:
+        users[event.VetAssigned]?.FName + " " + users[event.VetAssigned]?.LName,
+      type: event.Type,
+      status: event.Status,
+      description: event.Description,
+      followUp: event.FollowUp,
+    }));
+  }, [allEvents, usersStatus, eventsStatus]);
+
+  useEffect(() => {
+    setEvents(memoizedEvents);
+  }, [memoizedEvents]);
+
+  const [possibleVets, setPossibleVets] = useState<Record<string, User>>({});
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<View>("month");
   const [modalOpen, setModalOpen] = useState(false);
@@ -41,8 +103,17 @@ const CalendarPage: React.FC = () => {
   );
   const [newEventStartTime, setNewEventStartTime] = useState("");
   const [newEventEndTime, setNewEventEndTime] = useState("");
+  const [newEventDuration, setNewEventDuration] = useState(0);
+  const [newEventLocation, setNewEventLocation] = useState("");
+  const [newEventPetAssigned, setNewEventPetAssigned] = useState("");
+  const [newEventVetAssigned, setNewEventVetAssigned] = useState("");
+  const [newEventType, setNewEventType] = useState("");
+  const [newEventDescription, setNewEventDescription] = useState("");
+  const [newEventFollowUp, setNewEventFollowUp] = useState("");
+  const [selectedChecklistEvent, setSelectedChecklistEvent] =
+    useState<Event | null>(null);
+  const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
 
-  // Automatically update the date field in the modal based on the current view
   useEffect(() => {
     if (currentView === "day") {
       setNewEventDate(moment(currentDate).format("YYYY-MM-DD"));
@@ -50,6 +121,14 @@ const CalendarPage: React.FC = () => {
       setNewEventDate(moment(new Date()).format("YYYY-MM-DD")); // Default to today
     }
   }, [currentView, currentDate]);
+
+  const { vetAssigneds, status } =
+    useGetAllVetsOfAPetByPetId(newEventPetAssigned);
+  useEffect(() => {
+    if (status === "success") {
+      setPossibleVets(vetAssigneds);
+    }
+  }, [status, vetAssigneds]);
 
   const handleNavigate = (date: Date) => {
     setCurrentDate(date);
@@ -64,6 +143,16 @@ const CalendarPage: React.FC = () => {
     setCurrentView("day"); // Switch to day view
   };
 
+  const handleCardClick = (event: Event) => {
+    setSelectedChecklistEvent(event);
+    setIsChecklistModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsChecklistModalOpen(false);
+    setSelectedChecklistEvent(null);
+  };
+
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
     setNewEventTitle(event.title); // Pre-fill the title in the modal
@@ -72,46 +161,62 @@ const CalendarPage: React.FC = () => {
     setNewEventEndTime(moment(event.end).format("HH:mm"));
     setEditModalOpen(true); // Open the modal for event details
   };
+  const createNewEventMutation = useCreateNewEvent();
 
-  const handleSaveEvent = () => {
+  const handleSaveEvent = (e: React.FormEvent) => {
+    e.preventDefault();
     if (
       !newEventTitle ||
-      !newEventStartTime ||
-      !newEventEndTime ||
-      !newEventDate
+      !newEventDate ||
+      !newEventDuration ||
+      !newEventLocation ||
+      !newEventVetAssigned ||
+      !newEventType ||
+      !newEventDescription ||
+      !newEventFollowUp ||
+      !newEventPetAssigned
     ) {
       alert("Please fill in all fields.");
       return;
     }
-
-    const [startHour, startMinute] = newEventStartTime.split(":").map(Number);
-    const [endHour, endMinute] = newEventEndTime.split(":").map(Number);
     const startDate = new Date(newEventDate);
-    const endDate = new Date(newEventDate);
+    const newEvent: PetEvent = {
+      Name: newEventTitle,
+      DateTime: startDate.toISOString(),
+      Duration: newEventDuration,
+      Location: newEventLocation,
+      CreatedAt: new Date().toISOString(),
+      CreatedBy: user?.Id || "",
+      VetAssigned: newEventVetAssigned,
+      Type: newEventType,
+      Description: newEventDescription,
+      FollowUp: newEventFollowUp,
+    };
 
-    startDate.setHours(startHour, startMinute);
-    endDate.setHours(endHour, endMinute);
-
-    if (endDate <= startDate) {
-      alert("End time must be after start time.");
-      return;
-    }
-
-    setEvents([
-      ...events,
+    createNewEventMutation.mutate(
+      { petId: newEventPetAssigned, newEvent },
       {
-        title: newEventTitle,
-        start: startDate,
-        end: endDate,
+        onSuccess: () => {
+          resetForm();
+          setModalOpen(false);
+        },
+        onError: (error: Error) => {
+          alert(`Error creating event: ${error.message}`);
+        },
       },
-    ]);
+    );
+  };
 
-    // Reset the form and close the modal
+  const resetForm = () => {
     setNewEventTitle("");
-    setNewEventDate(moment(new Date()).format("YYYY-MM-DD"));
-    setNewEventStartTime("");
-    setNewEventEndTime("");
-    setModalOpen(false);
+    setNewEventDate(moment(new Date()).format("YYYY-MM-DDTHH:mm"));
+    setNewEventDuration(0);
+    setNewEventLocation("");
+    setNewEventPetAssigned("");
+    setNewEventVetAssigned("");
+    setNewEventType("");
+    setNewEventDescription("");
+    setNewEventFollowUp("");
   };
 
   const handleDeleteEvent = () => {
@@ -133,8 +238,8 @@ const CalendarPage: React.FC = () => {
         : event,
     );
 
-    setEvents(updatedEvents); // Update the events array
-    setEditModalOpen(false); // Close the modal
+    setEvents(updatedEvents);
+    setEditModalOpen(false);
   };
 
   return (
@@ -171,22 +276,95 @@ const CalendarPage: React.FC = () => {
         {/* Checklist Section */}
         <div className={styles["checklist-section"]}>
           <h3 className={styles["checklist-header"]}>Monthly Checklist</h3>
-          <ul className={styles["checklist"]}>
+          <div className={styles["checklist"]}>
             {events.map((event, index) => (
-              <li key={index} className={styles["checklist-item"]}>
-                <strong>
+              <div
+                key={index}
+                className={styles["card"]}
+                onClick={() => handleCardClick(event)}
+              >
+                <h4 className={styles["card-title"]}>{event.title}</h4>
+                <p className={styles["card-date"]}>
                   {moment(event.start).format("YYYY-MM-DD HH:mm")}
-                </strong>
-                : {event.title}
-              </li>
+                </p>
+                <p className={styles["card-location"]}>{event.location}</p>
+              </div>
             ))}
-          </ul>
-          <button
-            onClick={() => setModalOpen(true)}
-            className={styles["add-button"]}
-          >
-            Add Event
-          </button>
+          </div>
+          {user && user.Role === "Vet" && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className={styles["add-button"]}
+            >
+              Add Event
+            </button>
+          )}
+          {isChecklistModalOpen && selectedChecklistEvent && (
+            <div className={styles["modal-overlay"]} onClick={closeModal}>
+              <div
+                className={styles["modal"]}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className={styles["close-button"]} onClick={closeModal}>
+                  ✖
+                </button>
+                <h2 className={styles["modal-heading"]}>
+                  {selectedChecklistEvent.title}
+                </h2>
+                <div className={styles["modal-content"]}>
+                  <p>
+                    <strong>Start:</strong>{" "}
+                    {moment(selectedChecklistEvent.start).format(
+                      "YYYY-MM-DD HH:mm",
+                    )}
+                  </p>
+                  <p>
+                    <strong>End:</strong>{" "}
+                    {moment(selectedChecklistEvent.end).format(
+                      "YYYY-MM-DD HH:mm",
+                    )}
+                  </p>
+                  <p>
+                    <strong>Duration:</strong> {selectedChecklistEvent.duration}{" "}
+                    minutes
+                  </p>
+                  <p>
+                    <strong>Location:</strong> {selectedChecklistEvent.location}
+                  </p>
+                  <p>
+                    <strong>Created By:</strong>{" "}
+                    {selectedChecklistEvent.createdBy}
+                  </p>
+                  <p>
+                    <strong>Vet Assigned:</strong>{" "}
+                    {selectedChecklistEvent.vetAssigned}
+                  </p>
+                  {selectedChecklistEvent.type && (
+                    <p>
+                      <strong>Type:</strong> {selectedChecklistEvent.type}
+                    </p>
+                  )}
+                  {selectedChecklistEvent.status && (
+                    <p>
+                      <strong>Status:</strong> {selectedChecklistEvent.status}
+                    </p>
+                  )}
+                  {selectedChecklistEvent.description && (
+                    <p>
+                      <strong>Description:</strong>{" "}
+                      {selectedChecklistEvent.description}
+                    </p>
+                  )}
+                  {selectedChecklistEvent.followUp && (
+                    <p>
+                      <strong>Follow Up:</strong>{" "}
+                      {selectedChecklistEvent.followUp}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -201,56 +379,146 @@ const CalendarPage: React.FC = () => {
               ✖
             </button>
             <h2 className={styles["modal-heading"]}>Add Event</h2>
-            <label>
-              Event Name:
-              <input
-                type="text"
-                value={newEventTitle}
-                onChange={(e) => setNewEventTitle(e.target.value)}
-                className={styles["input"]}
-              />
-            </label>
-            <label>
-              Date:
-              <input
-                type="date"
-                value={newEventDate}
-                onChange={(e) => setNewEventDate(e.target.value)}
-                className={styles["input"]}
-              />
-            </label>
-            <label>
-              Start Time:
-              <input
-                type="time"
-                value={newEventStartTime}
-                onChange={(e) => setNewEventStartTime(e.target.value)}
-                className={styles["input"]}
-              />
-            </label>
-            <label>
-              End Time:
-              <input
-                type="time"
-                value={newEventEndTime}
-                onChange={(e) => setNewEventEndTime(e.target.value)}
-                className={styles["input"]}
-              />
-            </label>
-            <div className={styles["modal-buttons"]}>
-              <button
-                onClick={() => setModalOpen(false)}
-                className={styles["cancel-button"]}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveEvent}
-                className={styles["save-button"]}
-              >
-                Save
-              </button>
-            </div>
+            <form className={styles["modal-form"]}>
+              <div className={styles["form-sections"]}>
+                <div className={styles["form-section"]}>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="eventName">Event Name:</label>
+                    <input
+                      id="eventName"
+                      type="text"
+                      value={newEventTitle}
+                      onChange={(e) => setNewEventTitle(e.target.value)}
+                      className={styles["input"]}
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="eventDate">Date:</label>
+                    <input
+                      id="eventDate"
+                      type="datetime-local"
+                      value={newEventDate}
+                      onChange={(e) => setNewEventDate(e.target.value)}
+                      className={styles["input"]}
+                    />
+                  </div>
+                  <AddEvent
+                    newEventPetAssigned={newEventPetAssigned}
+                    setNewEventPetAssigned={setNewEventPetAssigned}
+                  />
+                </div>
+
+                <div className={styles["vertical-divider"]}></div>
+
+                <div className={styles["form-section"]}>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="duration">Duration (minutes):</label>
+                    <input
+                      id="duration"
+                      type="number"
+                      value={newEventDuration}
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        if (value > 0) {
+                          setNewEventDuration(value);
+                        }
+                      }}
+                      className={styles["input"]}
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="location">Location:</label>
+                    <input
+                      id="location"
+                      type="text"
+                      value={newEventLocation}
+                      onChange={(e) => setNewEventLocation(e.target.value)}
+                      className={styles["input"]}
+                    />
+                  </div>
+                  <div className={styles["form-row"]}>
+                    <div className={styles["form-group"]}>
+                      <label htmlFor="vetSelect">Vet Assignment:</label>
+                      <select
+                        id="vetSelect"
+                        className={styles["input"]}
+                        value={newEventVetAssigned}
+                        onChange={(e) => setNewEventVetAssigned(e.target.value)}
+                      >
+                        <option value="" disabled hidden>
+                          Select Vet
+                        </option>
+                        {possibleVets &&
+                          Object.keys(possibleVets).length > 0 &&
+                          Object.entries(possibleVets).map(
+                            ([vetId, vetRecord]) => (
+                              <option key={vetId} value={vetId}>
+                                {vetRecord.FName} {vetRecord.LName}
+                              </option>
+                            ),
+                          )}
+                      </select>
+                    </div>
+                    <div className={styles["form-group"]}>
+                      <label htmlFor="eventType">Type of Event:</label>
+                      <select
+                        id="eventType"
+                        value={newEventType}
+                        onChange={(e) => setNewEventType(e.target.value)}
+                        className={styles["input"]}
+                      >
+                        <option value="" disabled hidden>
+                          Select Type of Event
+                        </option>
+                        <option value="appointment">Appointment</option>
+                        <option value="routine_checkup">Routine Checkup</option>
+                        <option value="surgery">Surgery</option>
+                        <option value="vaccination">Vaccination</option>
+                        <option value="emergency_visit">Emergency Visit</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="description">Description:</label>
+                    <textarea
+                      id="description"
+                      value={newEventDescription}
+                      onChange={(e) => setNewEventDescription(e.target.value)}
+                      className={styles["input"]}
+                      rows={2}
+                    ></textarea>
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label htmlFor="followUp">Follow Up:</label>
+                    <input
+                      id="followUp"
+                      type="text"
+                      value={newEventFollowUp}
+                      onChange={(e) => setNewEventFollowUp(e.target.value)}
+                      className={styles["input"]}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles["modal-buttons"]}>
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className={styles["cancel-button"]}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  onClick={handleSaveEvent}
+                  className={styles["save-button"]}
+                >
+                  Save
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
