@@ -14,8 +14,13 @@ def get_events_by_petid(petId):
     if pet_doc.exists:
         try:
             event_docs = pet_doc_ref.collection("EVENT").stream()
-            events = [Event.from_dict(event.to_dict()) for event in event_docs]
-            return jsonify([event.to_dict() for event in events]), 200
+            # events = [Event.from_dict(event.to_dict()) for event in event_docs]
+            events = []
+            for event_doc in event_docs:
+                event_data = event_doc.to_dict()
+                event_data['Id'] = event_doc.id
+                events.append(event_data)
+            return jsonify(events), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     else:
@@ -106,20 +111,17 @@ def update_event_by_id(petId, eventId):
         return jsonify({"error": "Pet not found"}), 404
 
 # Delete an event by ID
-@pet_event_api.delete('/pets/<petId>/events/<eventId>')
-def delete_event_by_id(petId, eventId):
-    pet_doc_ref = pet_db.document(petId)
-    pet_doc = pet_doc_ref.get()
-    if pet_doc.exists:
-        event_ref = pet_doc_ref.collection("EVENT").document(eventId)
-        event_doc = event_ref.get()
-        if event_doc.exists:
-            try:
+@pet_event_api.delete('/pets/events/<eventId>')
+def delete_event_by_id(eventId):
+    pet_doc_ref = pet_db.stream()
+    try:
+        for pet in pet_doc_ref:
+            pet_ref = pet_db.document(pet.id)
+            event_ref = pet_ref.collection("EVENT").document(eventId)
+            event_doc = event_ref.get()
+            if event_doc.exists:
                 event_ref.delete()
                 return jsonify({"message": f"Event {eventId} deleted successfully"}), 200
-            except Exception as e:
-                return jsonify({"error": str(e)}), 500
-        else:
-            return jsonify({"error": "Event not found"}), 404
-    else:
-        return jsonify({"error": "Pet not found"}), 404
+        return jsonify({"error": "Event not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

@@ -20,7 +20,7 @@ export interface User {
 }
 
 export interface PetEvent {
-  Id?: string;
+  Id: string;
   Name: string;
   DateTime: string;
   Duration: number;

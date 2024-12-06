@@ -1,26 +1,23 @@
-import { useAuth } from "@/context/UserContext";
 import { PetEvent } from "@/share/type";
 import { useQuery } from "@tanstack/react-query";
 
-export const useAllEvents = () => {
-  const { user } = useAuth();
+export const useGetAllEventsOfAPetByPetId = (petId: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
   const { data, status, error } = useQuery({
-    queryKey: ["events", user?.Id],
+    queryKey: ["eventsOfPet", petId],
     queryFn: async () => {
-      if (!user) throw new Error("User not authenticated");
-      const response = await fetch(`${baseUrl}/users/${user.Id}/events`);
+      if (!petId) return [];
+      const response = await fetch(`${baseUrl}/pets/${petId}/events`);
       if (!response.ok) {
         throw new Error(`Error fetching events: ${response.statusText}`);
       }
       const data = (await response.json()) as PetEvent[];
       return data || [];
     },
-    enabled: !!user,
+    enabled: !!petId,
   });
-
   return {
-    allEvents: data,
+    eventsOfPet: data,
     status,
     error,
   };
