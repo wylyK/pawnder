@@ -101,12 +101,10 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
   const handleSave = async () => {
     try {
       const data = new FormData();
-      data.append("id", formData.id || "");
       data.append("Name", formData.Name || "");
       data.append("Breed", formData.Breed || "");
       data.append("Description", formData.Description || "");
       data.append("Age", formData.Age || "");
-      data.append("Tag", JSON.stringify(formData.Tag || []));
 
       if (formData.Avatar) {
         data.append("Avatar", formData.Avatar); 
@@ -126,6 +124,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
               Breed: updatedPet["Breed"],
               Avatar: updatedPet["Avatar"],
               Description: updatedPet["Description"],
+              Tag: [...(prev.Tag || [])]
             }
           : null,
       );
