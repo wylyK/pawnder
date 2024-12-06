@@ -172,7 +172,6 @@ def get_users_by_pet_id(petId):
         return jsonify({"message": "No users found for this petId"}), 404
     return jsonify(users), 200
 
-    
 # Get all events by userId
 @users_api.get('/users/<user_id>/events')
 def get_events_by_user_id(user_id):
@@ -188,7 +187,13 @@ def get_events_by_user_id(user_id):
                 for pet_id in pet_ids:
                     pet_doc_ref = pet_db.document(pet_id)
                     event_docs.extend(pet_doc_ref.collection("EVENT").stream())
-                events = [event.to_dict() for event in event_docs]
+                
+                events = []
+                for event_doc in event_docs:
+                    event_data = event_doc.to_dict()
+                    event_data['Id'] = event_doc.id
+                    events.append(event_data)
+                
                 return jsonify(events), 200
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
@@ -198,11 +203,36 @@ def get_events_by_user_id(user_id):
             for pet_id in pet_ids:
                 pet_doc_ref = pet_db.document(pet_id)
                 event_docs.extend(pet_doc_ref.collection("EVENT").stream())
-            events = [event.to_dict() for event in event_docs]
+            
+            events = []
+            for event_doc in event_docs:
+                event_data = event_doc.to_dict()
+                event_data['Id'] = event_doc.id
+                events.append(event_data)
+
             return jsonify(events), 200
     else:
         return jsonify({"error": "User not found"}), 404
-    
+
+# GET all petids by userId
+@users_api.get('/users/<user_id>/pets')
+def get_pets_by_user_id(user_id):
+    user_ref = user_db.document(user_id)
+    user_doc = user_ref.get()
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+        if user_data.get('Role') == 'Owner':
+            try:
+                pet_docs = pet_db.where("UserId", "==", user_id).stream()
+                pet_ids = [pet.id for pet in pet_docs]
+                return jsonify(pet_ids), 200
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        else:
+            return jsonify(user_data.get('PetId')), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
 # Get all events by userId and status
 # /users/<userId>/events/status?status=scheduled
 @users_api.get('/users/<user_id>/events/status')

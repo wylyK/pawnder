@@ -2,15 +2,13 @@
   display: flex;
   height: 100vh;
   background-color: #fff7f7;
+  gap: 20px;
+  padding: 20px;
 }
 
 .nav-container {
-  width: 80px; /* Adjust this width to match the NavBar */
-  background: linear-gradient(
-    180deg,
-    #ff6b6b,
-    #ff8787
-  ); /* Your NavBar gradient */
+  width: 80px;
+  background: linear-gradient(180deg, #ff6b6b, #ff8787);
 }
 
 .content {
@@ -20,8 +18,9 @@
   padding: 20px;
 }
 
+/* Calendar Section */
 .calendar-section {
-  flex: 3;
+  flex: 2;
   border: 1px solid #ddd;
   border-radius: 12px;
   background: #fff;
@@ -29,6 +28,14 @@
   box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
   display: flex;
   flex-direction: column;
+}
+
+/* Right Column */
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .header {
@@ -46,13 +53,12 @@
   border-radius: 12px;
   background: #fff;
   padding: 20px;
+  height: 60%;
   box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
-  display: flex;
-  flex-direction: column;
 }
 
 .checklist {
-  max-height: 450px;
+  max-height: 60%;
   overflow-y: auto;
   padding-right: 10px;
   display: flex;
@@ -232,7 +238,6 @@ textarea.input {
   resize: vertical;
 }
 
-/* Arrange Vet Assigned and Type of Event in the same row */
 .form-row {
   display: flex;
   gap: 20px;
@@ -285,4 +290,69 @@ textarea.input {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
+}
+
+/* Pet Section */
+.pet-section {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  height: 40%;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
+}
+
+.pet-header {
+  font-size: 1.5rem;
+  color: #ff6b6b;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.pet-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-height: 75%;
+  overflow-y: auto;
+}
+
+.pet-cards::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pet-cards::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.pet-cards::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.pet-cards::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+}
+
+.pet-card {
+  flex: 1 1 calc(100% - 10px);
+  padding: 15px;
+  border-radius: 8px;
+  background: #ffd;
+  color: #333;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+}
+
+.pet-card:hover {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.selected-pet-card {
+  background: #ff6b6b;
+  color: #fff;
 }
