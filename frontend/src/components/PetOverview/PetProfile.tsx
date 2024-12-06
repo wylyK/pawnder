@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import api from "../../../api";
 import styles from "./PetProfile.module.css";
 import { v4 as uuidv4 } from "uuid";
@@ -17,14 +18,24 @@ interface Pet {
   Tag: string[];
 }
 
+interface PetForm {
+  id: string;
+  Name: string;
+  Breed: string;
+  Avatar: File;
+  Description: string;
+  Age: string;
+  Tag: string[];
+}
+
 const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
   const [pet, setPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<Partial<Pet>>({
-    id: uuidv4(),
+  const [formData, setFormData] = useState<Partial<PetForm>>({
+    id: petId,
     Name: "",
     Breed: "",
-    Avatar: "",
+    Avatar: undefined,
     Description: "",
     Age: "",
     Tag: [],
@@ -74,16 +85,47 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
       Tag: (prev.Tag || []).filter((_, i) => i !== index),
     }));
   };
+  
+  //Handle image file uploaded by user
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setFormData((prev) => ({
+        ...prev,
+        Avatar: file,
+      }));
+    }
+  };
 
   // Save changes and update the backend
   const handleSave = async () => {
     try {
-      await api.put(`/pets/${petId}`, formData); // Update the backend
+      const data = new FormData();
+      data.append("id", formData.id || "");
+      data.append("Name", formData.Name || "");
+      data.append("Breed", formData.Breed || "");
+      data.append("Description", formData.Description || "");
+      data.append("Age", formData.Age || "");
+      data.append("Tag", JSON.stringify(formData.Tag || []));
+
+      if (formData.Avatar) {
+        data.append("Avatar", formData.Avatar); 
+      }
+      const response = await api.put(`/pets/${petId}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }); 
+      const updatedPet = response.data;
       setPet((prev) =>
         prev
           ? {
               ...prev,
-              ...formData,
+              Name: updatedPet["Name"],
+              Age: updatedPet["Age"],
+              Breed: updatedPet["Breed"],
+              Avatar: updatedPet["Avatar"],
+              Description: updatedPet["Description"],
             }
           : null,
       );
@@ -95,7 +137,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
 
   // Cancel editing and return to the view mode
   const handleCancel = () => {
-    setFormData(pet || {}); // Reset form data
+    setFormData({}); // Reset form data
     setIsEditing(false); // Switch back to view mode
   };
 
@@ -108,7 +150,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
         id: uuidv4(),
         Name: "",
         Breed: "",
-        Avatar: "",
+        Avatar: undefined,
         Description: "",
         Age: "",
         Tag: [],
@@ -130,9 +172,12 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
       <div className={styles.content}>
         {/* Left Section: Image and Tags */}
         <div className={styles["image-card"]}>
-          <img
-            src={pet.Avatar || "/placeholder-image.png"}
+          <Image
+            src={pet.Avatar || "/default_user.jpg"}
             alt={pet.Name}
+            width={0} 
+            height={0} 
+            sizes="100vw"
             className={styles.image}
           />
           <div className={styles["tags-container"]}>
@@ -220,6 +265,19 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
                   />
                 </label>
               </div>
+              <div className={styles["input-container"]}>
+                <label className={styles["input-label"]}>
+                  Upload Avatar:
+                  <input
+                    type="file"
+                    name="Avatar"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className={styles["input-field"]}
+                  />
+                </label>
+              </div>
+              
               <div className={styles["action-buttons"]}>
                 <button
                   className={styles["cancel-button"]}
