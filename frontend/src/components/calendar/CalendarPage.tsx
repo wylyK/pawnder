@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, use } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/UserContext";
 import { useAllEvents } from "@/hooks/use-all-events";
 import { useUsersByUserIds } from "@/hooks/use-users-by-user-ids";
-import AddEvent from "./AddEvent";
+import PetSelectField from "./PetSelectField";
 import { PetEvent, User } from "@/share/type";
 import { useGetAllVetsOfAPetByPetId } from "@/hooks/use-get-all-vets-of-a-pet-by-pet-id";
 import { useEvent } from "@/hooks/use-event";
@@ -47,9 +47,7 @@ const CalendarPage: React.FC = () => {
     router.push("/login");
   }, [user, router]);
 
-  // const { allEvents, status: eventsStatus } = useAllEvents();
   const { petIds, status: petIdsStatus } = useGetAllPetIdsByUserId();
-  console.log("petIds", petIds);
   const [events, setEvents] = useState<Event[]>([]);
   const [userIds, setUserIds] = useState<string[]>([]);
   const [selectedPet, setSelectedPet] = useState<string>("");
@@ -138,8 +136,6 @@ const CalendarPage: React.FC = () => {
   const [selectedChecklistEvent, setSelectedChecklistEvent] =
     useState<Event | null>(null);
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
-
-  console.log("selectedPet", selectedPet);
 
   useEffect(() => {
     if (currentView === "day") {
@@ -535,9 +531,10 @@ const CalendarPage: React.FC = () => {
                       className={styles["input"]}
                     />
                   </div>
-                  <AddEvent
+                  <PetSelectField
                     newEventPetAssigned={newEventPetAssigned}
                     setNewEventPetAssigned={setNewEventPetAssigned}
+                    petIds={petIds}
                   />
                 </div>
 
@@ -691,9 +688,10 @@ const CalendarPage: React.FC = () => {
                         className={styles["input"]}
                       />
                     </div>
-                    <AddEvent
+                    <PetSelectField
                       newEventPetAssigned={newEventPetAssigned}
                       setNewEventPetAssigned={setNewEventPetAssigned}
+                      petIds={petIds}
                     />
                   </div>
 

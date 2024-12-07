@@ -10,7 +10,7 @@
 .main {
   margin-left: 80px;
   padding: 20px;
-  width: calc(100% - 80px);
+  width: calc(100% - 40px);
 }
 
 .header {

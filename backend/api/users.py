@@ -177,42 +177,84 @@ def get_users_by_pet_id(petId):
 def get_events_by_user_id(user_id):
     user_ref = user_db.document(user_id)
     user_doc = user_ref.get()
-    if user_doc.exists:
-        user_data = user_doc.to_dict()
-        if user_data.get('Role') == 'Owner':
-            try:
-                pet_docs = pet_db.where("UserId", "==", user_id).stream()
-                pet_ids = [pet.id for pet in pet_docs]
-                event_docs = []
-                for pet_id in pet_ids:
-                    pet_doc_ref = pet_db.document(pet_id)
-                    event_docs.extend(pet_doc_ref.collection("EVENT").stream())
-                
-                events = []
-                for event_doc in event_docs:
-                    event_data = event_doc.to_dict()
-                    event_data['Id'] = event_doc.id
-                    events.append(event_data)
-                
-                return jsonify(events), 200
-            except Exception as e:
-                return jsonify({"error": str(e)}), 500
-        else:
-            pet_ids = user_data.get('PetId')
-            event_docs = []
-            for pet_id in pet_ids:
-                pet_doc_ref = pet_db.document(pet_id)
-                event_docs.extend(pet_doc_ref.collection("EVENT").stream())
-            
+    
+    if not user_doc.exists:
+        return jsonify({"error": "User not found"}), 404
+    
+    user_data = user_doc.to_dict()
+    user_role = user_data.get('Role', '')
+
+    if user_role == 'Owner':
+        try:
+            pet_docs = pet_db.where("UserId", "==", user_id).stream()
             events = []
+            for pet_doc in pet_docs:
+                pet_id = pet_doc.id
+                event_docs = pet_doc.reference.collection("EVENT").stream()
+                for event_doc in event_docs:
+                    event_data = event_doc.to_dict() or {}
+                    event_data['Id'] = event_doc.id
+                    event_data['PetId'] = pet_id
+                    events.append(event_data)
+            
+            return jsonify(events), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        pet_ids = user_data.get('PetId', [])
+        events = []
+        for pet_id in pet_ids:
+            pet_doc_ref = pet_db.document(pet_id)
+            event_docs = pet_doc_ref.collection("EVENT").stream()
             for event_doc in event_docs:
-                event_data = event_doc.to_dict()
+                event_data = event_doc.to_dict() or {}
                 event_data['Id'] = event_doc.id
+                event_data['PetId'] = pet_id
                 events.append(event_data)
 
-            return jsonify(events), 200
-    else:
+        return jsonify(events), 200
+    
+# GET all reminders by userId
+@users_api.get('/users/<user_id>/reminders')
+def get_reminders_by_user_id(user_id):
+    user_ref = user_db.document(user_id)
+    user_doc = user_ref.get()
+
+    if not user_doc.exists:
         return jsonify({"error": "User not found"}), 404
+    
+    user_data = user_doc.to_dict()
+    user_role = user_data.get('Role', '')
+
+    if user_role == 'Owner':
+        try:
+            pet_docs = pet_db.where("UserId", "==", user_id).stream()
+            reminders = []
+            for pet_doc in pet_docs:
+                pet_id = pet_doc.id
+                reminder_docs = pet_doc.reference.collection("REMINDER").stream()
+                for reminder_doc in reminder_docs:
+                    reminder_data = reminder_doc.to_dict() or {}
+                    reminder_data['Id'] = reminder_doc.id
+                    reminder_data['PetId'] = pet_id
+                    reminders.append(reminder_data)
+            
+            return jsonify(reminders), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        pet_ids = user_data.get('PetId', [])
+        reminders = []
+        for pet_id in pet_ids:
+            pet_doc_ref = pet_db.document(pet_id)
+            reminder_docs = pet_doc_ref.collection("REMINDER").stream()
+            for reminder_doc in reminder_docs:
+                reminder_data = reminder_doc.to_dict() or {}
+                reminder_data['Id'] = reminder_doc.id
+                reminder_data['PetId'] = pet_id
+                reminders.append(reminder_data)
+
+        return jsonify(reminders),
 
 # GET all petids by userId
 @users_api.get('/users/<user_id>/pets')
