@@ -22,6 +22,7 @@ export interface User {
 export interface PetEvent {
   Id: string;
   Name: string;
+  PetId?: string;
   DateTime: string;
   Duration: number;
   Location: string;
@@ -44,4 +45,14 @@ export interface Pet {
   Description?: string;
   Tag?: string;
   UserId: string;
+}
+
+export interface PetReminder {
+  Id: string;
+  PetId?: string;
+  Name: string;
+  DateTime: string;
+  Description: string;
+  FromVet?: boolean;
+  Toggled?: boolean;
 }

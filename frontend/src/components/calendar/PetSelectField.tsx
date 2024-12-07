@@ -3,31 +3,21 @@
 import { useAuth } from "@/context/UserContext";
 import { usePetsByPetIds } from "@/hooks/use-pets-by-pet-ids";
 import styles from "./CalendarPage.module.css";
-import { useEffect, useState } from "react";
 
-type AddEventProps = {
+type PetSelectFieldProps = {
   newEventPetAssigned: string;
   setNewEventPetAssigned: React.Dispatch<React.SetStateAction<string>>;
+  petIds: string[] | undefined;
 };
 
-const AddEvent: React.FC<AddEventProps> = ({
+const PetSelectField: React.FC<PetSelectFieldProps> = ({
   newEventPetAssigned,
   setNewEventPetAssigned,
+  petIds,
 }) => {
   const { user } = useAuth();
-
-  const [petIds, setPetIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (user && user.PetId) {
-      const ids = Array.from(new Set(user.PetId));
-      const uniqueIds = Array.from(new Set(ids));
-      setPetIds(uniqueIds);
-    }
-  }, [user]);
-
+  if (!user || !user.PetId || !petIds) return null;
   const { pets, status: petsStatus } = usePetsByPetIds(petIds);
-  if (!user || !user.PetId) return null;
 
   return (
     <div className={styles["form-group"]}>
@@ -54,4 +44,4 @@ const AddEvent: React.FC<AddEventProps> = ({
   );
 };
 
-export default AddEvent;
+export default PetSelectField;
