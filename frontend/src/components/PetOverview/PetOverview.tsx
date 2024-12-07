@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { AiOutlinePlus } from "react-icons/ai";
 import api from "../../../api"; // Adjust the path if needed
 import styles from "./PetOverview.module.css";
@@ -55,7 +56,7 @@ const PetOverview: React.FC = () => {
             className={styles.card}
             onClick={() => handleOpenModal(pet.id)}
           >
-            <img src={pet.Avatar} alt={pet.Name} />
+            <Image src={pet.Avatar || "/default_user.jpg"} width={0} height={0} sizes="100vw" alt={pet.Name} />
             <div className={styles["card-content"]}>
               <h2 className={styles["card-title"]}>{pet.Name}</h2>
               <p className={styles["card-subtitle"]}>{pet.Breed}</p>
