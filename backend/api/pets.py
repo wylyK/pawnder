@@ -186,7 +186,8 @@ def update_pet_by_id(pet_id):
 
         try:
             pet_ref.set(pet.to_dict())
-            return jsonify({"message": f"Pet {pet_id} updated successfully"}), 200
+            return jsonify(pet_ref.get().to_dict())
+            # return jsonify({"message": f"Pet {pet_id} updated successfully"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     else:
