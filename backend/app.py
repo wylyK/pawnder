@@ -9,6 +9,7 @@ from api.pets import pets_api
 from api.petMatch import pet_match_api
 from api.petHealth import pet_health_api
 from api.petEvent import pet_event_api
+from api.petReminder import pet_reminder_api
 import os
 from flask_cors import CORS
 
@@ -19,6 +20,7 @@ app.register_blueprint(pets_api)
 app.register_blueprint(pet_match_api)
 app.register_blueprint(pet_health_api)
 app.register_blueprint(pet_event_api)
+app.register_blueprint(pet_reminder_api)
 app.secret_key = os.urandom(24)
 
 @app.route("/")

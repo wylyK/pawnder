@@ -38,7 +38,10 @@ const HomePage: React.FC = () => {
         <div className={styles["card-container"]}>
           <PetOverview />
         </div>
-        <Reminders />
+        {
+          // Reminders component for Owner only
+          user?.Role === "Owner" && <Reminders />
+        }
       </main>
     </div>
   );

@@ -75,7 +75,6 @@ const SignupForm: React.FC = () => {
         router.push("/login");
       } else {
         const errorData = await response.json();
-        console.log(errorData);
       }
     } catch (err) {
       console.error("Error:", err);

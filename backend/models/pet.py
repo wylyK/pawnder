@@ -22,7 +22,7 @@ class Pet:
             source['Age'],
             source['Breed'],
             source['Type'],
-            source['Avatar'],
+            source.get('Avatar', ""),
             source.get('UserId', ""),
             source.get('Description', ""),
             source.get('Tag', []),
