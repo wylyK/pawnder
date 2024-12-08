@@ -45,6 +45,8 @@ class Event:
             raise ValueError("VetAssigned is missing in the provided data.")
         if 'Type' not in source:
             raise ValueError("Type is missing in the provided data.")
+        if source['Duration'] <= 0:
+            raise ValueError("Duration must be more than 0")
         event = Event(
             source['Name'],
             source['DateTime'],
