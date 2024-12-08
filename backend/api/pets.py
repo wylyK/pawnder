@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, jsonify, request
 from firebase_admin import storage, auth
 from models.pet import Pet
@@ -122,14 +123,14 @@ def get_pet_by_id(pet_id):
 # POST create new pet profile with basic information
 @pets_api.post('/pets/create')
 def create_pet():
-    data = request.json
+    data = request.form
     try: 
         pet = Pet(
-            Name=data['Name'],
-            Age=data['Age'],
-            Breed=data['Breed'],
-            Type=data['Type'],
-            Avatar=data['Avatar'],
+            Name=data.get('Name'),
+            Age=data.get('Age'),
+            Breed=data.get('Breed'),
+            Type=data.get('Type'),
+            Avatar="",
             Description=data.get('Description', ""),
             Tag=data.get('Tag', []),
             UserId=data['UserId']
@@ -143,7 +144,9 @@ def create_pet():
     if 'Avatar' in request.files:
         update_pet_by_id(pet_ref.id)
 
-    return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
+    created_pet = pet_ref.get().to_dict()
+
+    return jsonify({"message": f"Pet {pet_ref.id} created successfully", "pet": created_pet}), 201
 
 # PUT update pet profile data by Firestore document ID
 @pets_api.put('/pets/<pet_id>')
