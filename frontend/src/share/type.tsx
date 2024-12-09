@@ -16,7 +16,7 @@ export interface User {
   Location?: string;
   Role: Role;
   PetId?: string[];
-  Avatar?: string;
+  Avatar?: File | undefined;
 }
 
 export interface PetEvent {

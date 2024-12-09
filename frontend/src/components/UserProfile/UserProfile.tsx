@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import ProfileTextBox from "../ProfileTexBox";
+import ProfileTextBox from "../ProfileTextBox";
 import { useAuth } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import ProfileSelectBox from "../ProfileSelectBox";
@@ -16,6 +16,7 @@ export default function UserProfile() {
   const [emailValue, setEmailValue] = useState("");
   const [roleValue, setRoleValue] = useState<Role>(Role.Owner);
   const [locationValue, setLocationValue] = useState("");
+  const [avatarValue, setAvatarValue] = useState<File | undefined>(undefined);
   const { updateUser } = useUser();
 
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function UserProfile() {
       setEmailValue(user.Email);
       setRoleValue(user.Role);
       setLocationValue(user.Location || "");
+      setAvatarValue(user.Avatar || undefined);
     }
   }, [user]);
 
@@ -46,7 +48,8 @@ export default function UserProfile() {
       Email: emailValue,
       Role: roleValue,
       Location: locationValue,
-    }
+      Avatar: avatarValue,
+    };
     updateUser(
       {
         updatedUser,
@@ -59,7 +62,7 @@ export default function UserProfile() {
         onError: (error) => {
           console.error("Error updating user", error);
         },
-      }
+      },
     );
   };
 
@@ -83,28 +86,45 @@ export default function UserProfile() {
     setRoleValue(e.target.value as Role);
   };
 
-  const handleLocationValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLocationValueChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setLocationValue(e.target.value);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setAvatarValue(file);
+    }
   };
 
   return (
     <div className="flex pb-10">
-      <div className="flex pl-36 pt-12">
+      <div className="flex pl-24 pt-12">
         <h1 className="text-5xl text-pink-rose font-bold">Pet</h1>
         <h1 className="text-5xl ml-2 text-brown-red font-semibold">life</h1>
       </div>
       <div className="flex flex-col">
         <div className="flex bg-white mt-12 py-6 p-8 m-6 mx-64 rounded-3xl">
           <div className="rounded-full overflow-hidden w-[150px] h-[150px] mr-8 border-4 border-pink-rose shadow-lg">
-            <Image 
-              src={user?.Avatar || "/frontend/public/Catto2.webp"} 
-              alt="Avatar" 
-              width={150} 
-              height={150} 
+            <Image
+              src={
+                typeof avatarValue === "string"
+                  ? avatarValue
+                  : avatarValue
+                    ? URL.createObjectURL(avatarValue)
+                    : "/frontend/public/default_user.jpg"
+              }
+              alt="Avatar"
+              width={150}
+              height={150}
             />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Hi, {fnameValue} {lnameValue}</h1>
+            <h1 className="text-3xl font-bold">
+              Hi, {fnameValue} {lnameValue}
+            </h1>
             <ProfileTextBox
               label="First Name"
               type="text"
@@ -139,25 +159,30 @@ export default function UserProfile() {
               onChange={handleLocationValueChange}
               disabled={!isEditing}
             />
+            <ProfileTextBox
+              label="Upload Avatar"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={!isEditing}
+            />
           </div>
         </div>
-        <div className="ml-64 flex gap-4"> 
+        <div className="ml-64 flex gap-4">
           <button
             className="bg-pink-rose text-white text-xl font-semibold p-2 px-10 rounded-md"
             onClick={handleEditClick}
           >
             Edit
           </button>
-          {
-            isEditing && (
-              <button
-                className="bg-pink-rose text-white text-xl font-semibold p-2 px-10 rounded-md"
-                onClick={handleUpdateUser}
-              >
-                Save
-              </button>
-            )
-          }
+          {isEditing && (
+            <button
+              className="bg-pink-rose text-white text-xl font-semibold p-2 px-10 rounded-md"
+              onClick={handleUpdateUser}
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
     </div>

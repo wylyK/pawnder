@@ -20,7 +20,7 @@ export const useConnectVet = () => {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.error || `Error connecting vet: ${response.statusText}`
+          errorData.error || `Error connecting vet: ${response.statusText}`,
         );
       }
 

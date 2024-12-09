@@ -138,7 +138,9 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
                 type="text"
                 name={field}
                 className={styles["input-box"]}
-                value={(formData[field as keyof typeof formData] as string) || ""}
+                value={
+                  (formData[field as keyof typeof formData] as string) || ""
+                }
                 onChange={handleInputChange}
               />
             </div>
