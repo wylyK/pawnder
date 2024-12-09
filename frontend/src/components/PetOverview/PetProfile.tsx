@@ -113,17 +113,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId, onClose }) => {
       }));
     }
   };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target?.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        Avatar: file,
-      }));
-    }
-  };
-
+ 
   const handleAddTag = () => {
     const newTag = prompt("Enter a new tag:");
     if (newTag && newTag.trim()) {
@@ -139,6 +129,17 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId, onClose }) => {
       ...prev,
       Tag: (prev.Tag || []).filter((_, i) => i !== index),
     }));
+  };
+
+  //Handle image file uploaded by user
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setFormData((prev) => ({
+        ...prev,
+        Avatar: file,
+      }));
+    }
   };
 
   const handleSave = async () => {

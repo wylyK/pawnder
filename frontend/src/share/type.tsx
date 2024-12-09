@@ -13,10 +13,10 @@ export interface User {
   FName: string;
   LName: string;
   Email: string;
-  Location: string;
+  Location?: string;
   Role: Role;
   PetId?: string[];
-  Avatar?: string;
+  Avatar?: File | undefined;
 }
 
 export interface PetEvent {

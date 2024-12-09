@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, jsonify, request
 from firebase_admin import storage, auth
 from models.pet import Pet
@@ -123,7 +124,6 @@ def get_pet_by_id(pet_id):
 @pets_api.post('/pets/create')
 def create_pet():
     data = request.form
-    print(data)
     try: 
         pet = Pet(
             Name=data.get('Name'),
