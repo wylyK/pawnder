@@ -14,15 +14,72 @@
 .content {
   background: white;
   border-radius: 20px;
-  padding: 30px;
+  padding: 20px;
   max-width: 800px;
   width: 90%;
+  height: 90%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  font-size: 1.1rem;
-  font-weight: 400;
+  flex-direction: column;
+  gap: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: auto; 
+  overflow-y: scroll;
+}
+
+.content::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+  visibility: visible; /* Ensure scrollbar is always visible */
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #ccc; /* Default thumb color */
+  border-radius: 10px; /* Rounded scrollbar thumb */
+}
+
+.content::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Default track color */
+  border-radius: 10px; /* Rounded scrollbar track */
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+  overflow-y: hidden; 
+}
+
+.image-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.form-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: scroll;
+}
+
+.header {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+
+.scrollable {
+  flex: 1;
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .image-card {

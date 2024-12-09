@@ -159,9 +159,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId, onClose }) => {
       }
 
       await api.put(`/pets/${petId}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        
       });
 
       await api.put(`/pets/${petId}/health`, healthData);
@@ -216,15 +214,15 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId, onClose }) => {
             className={styles.image}
           />
           <div className={styles["tags-container"]}>
-  {isEditing ? (
-    <>
-      {(formData.Tag || []).map((tag, index) => (
-        <span key={index} className={styles.tag}>
-          {tag}
-          <button
-            onClick={() => handleRemoveTag(index)}
-            className={styles["remove-tag-button"]}
-          >
+          {isEditing ? (
+          <>
+          {(formData.Tag || []).map((tag, index) => (
+            <span key={index} className={styles.tag}>
+              {tag}
+              <button
+                onClick={() => handleRemoveTag(index)}
+                className={styles["remove-tag-button"]}
+              >
             ✖
           </button>
         </span>
@@ -245,26 +243,26 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId, onClose }) => {
   ) : (
     <span className={styles.tag}>No Tags</span>
   )}
-</div>
+      </div>
         </div>
 
         <div className={styles["info-card"]}>
           {isEditing ? (
             <>
               {["Name", "Breed", "Age", "Description"].map((field) => (
-  <div key={field} className={styles["input-container"]}>
-    <label className={styles["input-label"]}>
-      {field}:
-      <input
-        type="text"
-        name={field}
-        value={String(formData[field as keyof PetForm] || "")}
-        onChange={handleInputChange}
-        className={styles["input-field"]}
-      />
-    </label>
-  </div>
-))}
+        <div key={field} className={styles["input-container"]}>
+          <label className={styles["input-label"]}>
+          {field}:
+          <input
+            type="text"
+            name={field}
+            value={String(formData[field as keyof PetForm] || "")}
+            onChange={handleInputChange}
+            className={styles["input-field"]}
+          />
+        </label>
+      </div>
+      ))}
 
               <div className={styles["input-container"]}>
                 <label className={styles["input-label"]}>
@@ -297,14 +295,14 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId, onClose }) => {
                 <button className={styles["save-button"]} onClick={handleSave}>
                   Save
                 </button>
+                <button className={styles["save-button"]} onClick={handleDelete}>
+                  Delete Pet
+                </button>
                 <button
                   className={styles["cancel-button"]}
                   onClick={() => setIsEditing(false)}
                 >
                   Cancel
-                </button>
-                <button className={styles["delete-button"]} onClick={handleDelete}>
-                  Delete
                 </button>
               </div>
             </>
