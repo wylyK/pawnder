@@ -1,59 +1,21 @@
-// components/VetPetOverview/VetPetOverview.tsx
 "use client";
+
 import React, { useState } from "react";
+import Image from "next/image";
 import { AiOutlinePlus } from "react-icons/ai";
-import styles from "./VetPetOverview.module.css";
 import Modal from "../PetOverview/Modal";
 import VetPetProfile from "./VetPetProfile";
-
-interface Pet {
-  id: string;
-  name: string;
-  breed: string;
-  owner: string;
-  image: string;
-}
-
-const pets: Pet[] = [
-  {
-    id: "1",
-    name: "Fionn",
-    breed: "Irish Setter + Golden Retriever",
-    owner: "Alice",
-    image: "/doggo.JPG",
-  },
-  {
-    id: "2",
-    name: "Spike",
-    breed: "Maine Coon",
-    owner: "Sowrathi",
-    image: "/dog2.avif",
-  },
-  {
-    id: "3",
-    name: "Luna",
-    breed: "Golden Retriever",
-    owner: "Bob",
-    image: "/retriever.jpeg",
-  },
-  {
-    id: "4",
-    name: "Max",
-    breed: "Labrador",
-    owner: "John",
-    image: "/dog2.avif",
-  },
-  {
-    id: "5",
-    name: "Bella",
-    breed: "Pomeranian",
-    owner: "Sophia",
-    image: "/catto.jpeg",
-  },
-];
+import styles from "./VetPetOverview.module.css";
+import { useAuth } from "@/context/UserContext";
+import { useGetPetsByVetId } from "@/hooks/use-get-pets-by-vetId";
 
 const VetPetOverview: React.FC = () => {
+  const { user } = useAuth();
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+
+  // Fetch pets assigned to this vet
+  const { pets, status, error } = useGetPetsByVetId(user?.Id || "");
 
   const handleOpenModal = (id: string) => {
     setSelectedPetId(id);
@@ -63,33 +25,69 @@ const VetPetOverview: React.FC = () => {
     setSelectedPetId(null);
   };
 
+  const handleOpenConnectModal = () => {
+    setShowConnectModal(true);
+  };
+
+  const handleCloseConnectModal = () => {
+    setShowConnectModal(false);
+  };
+
+  if (status === "pending") return <div>Loading pets...</div>;
+  if (status === "error") return <div>Error: {error?.message || "Failed to load pets."}</div>;
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid}>
-        {pets.map((pet) => (
-          <div
-            key={pet.id}
-            className={styles.card}
-            onClick={() => handleOpenModal(pet.id)}
-          >
-            <img src={pet.image} alt={pet.name} />
-            <div className={styles["card-content"]}>
-              <h2 className={styles["card-title"]}>{pet.name}</h2>
-              <p className={styles["card-subtitle"]}>{pet.breed}</p>
-              <p className={styles["card-owner"]}>Owner - {pet.owner}</p>
+        {/* Display pets assigned to this vet */}
+        {pets.length > 0 ? (
+          pets.map((pet) => (
+            <div
+              key={pet.id}
+              className={styles.card}
+              onClick={() => handleOpenModal(pet.id)}
+            >
+              <Image
+                src={pet.Avatar || "/default_user.jpg"}
+                alt={pet.Name}
+                width={150}
+                height={150}
+                className={styles.image}
+              />
+              <div className={styles["card-content"]}>
+                <h2 className={styles["card-title"]}>{pet.Name}</h2>
+                <p className={styles["card-subtitle"]}>{pet.Breed}</p>
+              </div>
             </div>
-          </div>
-        ))}
-        <div className={`${styles.card} ${styles["add-card"]}`}>
-          <AiOutlinePlus size={50} color="#555" />
-          <p>Add Pet</p>
+          ))
+        ) : (
+          <div className={styles.noPets}>No pets assigned to you yet.</div>
+        )}
+
+        {/* Add Pet button */}
+        <div
+          className={`${styles.card} ${styles["add-card"]}`}
+          onClick={handleOpenConnectModal}
+        >
+          <AiOutlinePlus size={30} />
+          <p>Connect Pet</p>
         </div>
       </div>
 
-      {/* Modal for displaying PetProfile */}
+      {/* Modal for Viewing Pet Profile */}
       {selectedPetId && (
         <Modal onClose={handleCloseModal}>
           <VetPetProfile petId={selectedPetId} />
+        </Modal>
+      )}
+
+      {/* Modal for Connecting a Pet */}
+      {showConnectModal && (
+        <Modal onClose={handleCloseConnectModal}>
+          <div className={styles.connectModal}>
+            <h2>Connect a Pet</h2>
+            <p>Functionality to connect pets coming soon.</p>
+          </div>
         </Modal>
       )}
     </div>
