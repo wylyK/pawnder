@@ -10,11 +10,12 @@ import PetProfile from "./PetProfile";
 import AddPet from "./AddPet";
 import styles from "./PetOverview.module.css";
 import { useQueryClient } from "@tanstack/react-query";
+import { Pet } from "@/share/type";
 
 const PetOverview: React.FC = () => {
   const queryClient = useQueryClient();
-  const { petIds, status: petIdsStatus, error: petIdsError } = useGetAllPetIdsByUserId();
-  const { pets, status: petsStatus, error: petsError } = usePetsByPetIds(petIds || []);
+  const { petIds } = useGetAllPetIdsByUserId();
+  const { pets } = usePetsByPetIds(petIds || []);
 
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [isAddingPet, setIsAddingPet] = useState(false);
@@ -44,9 +45,9 @@ const PetOverview: React.FC = () => {
     setIsAddingPet(true);
   };
 
-  const handleCloseAddPet = (newPet?: Record<string, any>) => {
+  const handleCloseAddPet = (newPet?: Record<string, Pet>) => {
     setIsAddingPet(false);
-  
+
     if (newPet) {
       // Update the React Query cache manually
       queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
@@ -59,15 +60,6 @@ const PetOverview: React.FC = () => {
       });
     }
   };
-
-  // Handle loading or errors
-  if (petIdsStatus === "pending" || petsStatus === "pending") {
-    return <div>Loading your pets...</div>;
-  }
-
-  if (petIdsStatus === "error" || petsStatus === "error") {
-    return <div>Error loading pets. Please try again later.</div>;
-  }
 
   return (
     <div className={styles.wrapper}>
