@@ -85,7 +85,7 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
       alert("Name, Breed, Type, and Age are mandatory fields.");
       return;
     }
-  
+
     setIsSaving(true);
     try {
       // Step 1: Create the pet
@@ -98,22 +98,22 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
       petData.append("UserId", formData.UserId);
       if (formData.Avatar) petData.append("Avatar", formData.Avatar);
       formData.Tag.forEach((tag) => petData.append("Tag[]", tag));
-  
-      console.log("petdata",petData);
+
+      console.log("petdata", petData);
       const response = await api.post("/pets/create", petData);
-      console.log("res",response);
-  
+      console.log("res", response);
+
       const petId = response.data.pet?.id; // Extract petId from response
       if (!petId) {
         alert("Failed to create pet. Please try again.");
         return;
       }
-  
+
       console.log("New Pet ID:", petId);
-  
+
       // Step 2: Add health records
       await api.post(`/pets/${petId}/health`, healthData);
-  
+
       alert("Pet and health records added successfully!");
       onClose();
     } catch (error) {
@@ -123,7 +123,6 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
       setIsSaving(false);
     }
   };
-  
 
   return (
     <div className={styles.modal}>
@@ -188,7 +187,9 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
                   type="text"
                   name={field}
                   className={styles["input-box"]}
-                  value={(formData[field as keyof typeof formData] as string) || ""}
+                  value={
+                    (formData[field as keyof typeof formData] as string) || ""
+                  }
                   onChange={handleInputChange}
                 />
               </div>
@@ -207,7 +208,7 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
                     onChange={handleInputChange}
                   />
                 </div>
-              )
+              ),
             )}
           </div>
         </div>
