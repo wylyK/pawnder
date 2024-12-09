@@ -15,6 +15,31 @@ pet_db = db.collection("PET")
 bucket = storage.bucket()
 load_dotenv()
 
+#GET /vets/<vet_id>/pets
+
+@users_api.get('/vets/<vet_id>/pets')
+def get_pets_by_vet_id(vet_id):
+    try:
+        # Query pets that have this vet in their HEALTH subcollection
+        pets = []
+        pet_docs = pet_db.stream()
+        
+        for pet_doc in pet_docs:
+            health_docs = pet_doc.reference.collection("HEALTH").stream()
+            for health_doc in health_docs:
+                health_data = health_doc.to_dict()
+                if health_data.get("VetId") == vet_id:  # Match vet_id
+                    pets.append({"id": pet_doc.id, **pet_doc.to_dict()})
+                    break  # No need to check other health docs for this pet
+        
+        if not pets:
+            return jsonify({"message": "No pets found for this vet."}), 404
+        
+        return jsonify(pets), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
 @users_api.put('/connect_vet/')
 def connect_vet():
     try:
