@@ -56,7 +56,13 @@ const PetOverview: React.FC = () => {
             className={styles.card}
             onClick={() => handleOpenModal(pet.id)}
           >
-            <Image src={pet.Avatar || "/default_user.jpg"} width={0} height={0} sizes="100vw" alt={pet.Name} />
+            <Image
+              src={pet.Avatar || "/default_user.jpg"}
+              width={0}
+              height={0}
+              sizes="100vw"
+              alt={pet.Name}
+            />
             <div className={styles["card-content"]}>
               <h2 className={styles["card-title"]}>{pet.Name}</h2>
               <p className={styles["card-subtitle"]}>{pet.Breed}</p>

@@ -85,7 +85,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
       Tag: (prev.Tag || []).filter((_, i) => i !== index),
     }));
   };
-  
+
   //Handle image file uploaded by user
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -107,13 +107,13 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
       data.append("Age", formData.Age || "");
 
       if (formData.Avatar) {
-        data.append("Avatar", formData.Avatar); 
+        data.append("Avatar", formData.Avatar);
       }
       const response = await api.put(`/pets/${petId}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }); 
+      });
       const updatedPet = response.data;
       setPet((prev) =>
         prev
@@ -124,7 +124,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
               Breed: updatedPet["Breed"],
               Avatar: updatedPet["Avatar"],
               Description: updatedPet["Description"],
-              Tag: [...(prev.Tag || [])]
+              Tag: [...(prev.Tag || [])],
             }
           : null,
       );
@@ -174,8 +174,8 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
           <Image
             src={pet.Avatar || "/default_user.jpg"}
             alt={pet.Name}
-            width={0} 
-            height={0} 
+            width={0}
+            height={0}
             sizes="100vw"
             className={styles.image}
           />
@@ -276,7 +276,7 @@ const PetProfile: React.FC<PetProfileProps> = ({ petId }) => {
                   />
                 </label>
               </div>
-              
+
               <div className={styles["action-buttons"]}>
                 <button
                   className={styles["cancel-button"]}
