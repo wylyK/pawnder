@@ -23,6 +23,16 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
     Tag: [] as string[],
     UserId: "",
   });
+
+  const [healthData, setHealthData] = useState({
+    VetId: "N/A",
+    Weight: "N/A",
+    Height: "N/A",
+    Diet: "N/A",
+    Prescription: "N/A",
+    Insurance: "N/A",
+  });
+
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -33,21 +43,33 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name in healthData) {
+      setHealthData((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData((prev) => ({ ...prev, Avatar: file }));
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setFormData((prev) => ({
+        ...prev,
+        Avatar: file,
+      }));
+    }
   };
 
   const handleAddTag = () => {
     const newTag = prompt("Enter a new tag:");
-    if (newTag && newTag.trim()) {
+    const trimmedTag = newTag?.trim();
+    if (trimmedTag && !formData.Tag.includes(trimmedTag)) {
       setFormData((prev) => ({
         ...prev,
-        Tag: [...prev.Tag, newTag.trim()],
+        Tag: [...prev.Tag, trimmedTag],
       }));
+    } else if (trimmedTag) {
+      alert("Tag already exists.");
     }
   };
 
@@ -63,9 +85,10 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
       alert("Name, Breed, Type, and Age are mandatory fields.");
       return;
     }
-
+  
     setIsSaving(true);
     try {
+      // Step 1: Create the pet
       const petData = new FormData();
       petData.append("Name", formData.Name);
       petData.append("Breed", formData.Breed);
@@ -75,89 +98,131 @@ const AddPet: React.FC<AddPetProps> = ({ onClose }) => {
       petData.append("UserId", formData.UserId);
       if (formData.Avatar) petData.append("Avatar", formData.Avatar);
       formData.Tag.forEach((tag) => petData.append("Tag[]", tag));
-
-      await api.post("/pets/create", petData);
-      alert("Pet added successfully!");
+  
+      console.log("petdata",petData);
+      const response = await api.post("/pets/create", petData);
+      console.log("res",response);
+  
+      const petId = response.data.pet?.id; // Extract petId from response
+      if (!petId) {
+        alert("Failed to create pet. Please try again.");
+        return;
+      }
+  
+      console.log("New Pet ID:", petId);
+  
+      // Step 2: Add health records
+      await api.post(`/pets/${petId}/health`, healthData);
+  
+      alert("Pet and health records added successfully!");
       onClose();
     } catch (error) {
-      console.error("Error adding pet:", error);
-      alert("Failed to add pet. Please try again.");
+      console.error("Error adding pet and health records:", error);
+      alert("Failed to add pet or health records. Please try again.");
     } finally {
       setIsSaving(false);
     }
   };
+  
 
   return (
     <div className={styles.modal}>
       <div className={styles.content}>
-        <div className={styles["image-card"]}>
-          <div className={styles.imagePlaceholder}>
-            {formData.Avatar ? (
-              <img
-                src={URL.createObjectURL(formData.Avatar)}
-                alt="Avatar Preview"
-                className={styles.avatarPreview}
-              />
-            ) : (
-              <div className={styles.addPhotoContent}>
-                <span>
-                  <b>Click to Add Photo</b>
-                </span>
+        <h1 className={styles.header}>New Pet</h1>
+        <div className={styles.container}>
+          {/* Left Image and Tags Section */}
+          <div className={styles["image-section"]}>
+            <div className={styles.imagePlaceholder}>
+              {formData.Avatar ? (
+                <img
+                  src={URL.createObjectURL(formData.Avatar)}
+                  alt="Avatar Preview"
+                  className={styles.avatarPreview}
+                />
+              ) : (
+                <div className={styles.addPhotoContent}>
+                  <span>
+                    <b>Click to Add Photo</b>
+                  </span>
+                </div>
+              )}
+              <div className={styles["input-container"]}>
+                <label className={styles["input-label"]}>
+                  <input
+                    type="file"
+                    name="Avatar"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className={styles["input-field"]}
+                  />
+                </label>
               </div>
-            )}
-            <input
-              type="file"
-              className={styles.fileInput}
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+            </div>
+            <div className={styles["tags-container"]}>
+              {formData.Tag.map((tag, index) => (
+                <span key={index} className={styles.tag}>
+                  {tag}
+                  <button
+                    className={styles["remove-tag-button"]}
+                    onClick={() => handleRemoveTag(index)}
+                  >
+                    ✖
+                  </button>
+                </span>
+              ))}
+              <button
+                className={styles["add-tag-button"]}
+                onClick={handleAddTag}
+              >
+                Click To Add Tags
+              </button>
+            </div>
           </div>
-          <div className={styles["tags-container"]}>
-            {formData.Tag.map((tag, index) => (
-              <span key={index} className={styles.tag}>
-                {tag}
-                <button
-                  className={styles["remove-tag-button"]}
-                  onClick={() => handleRemoveTag(index)}
-                >
-                  ✖
-                </button>
-              </span>
+
+          {/* Right Form Section */}
+          <div className={styles["form-section"]}>
+            {["Name", "Breed", "Type", "Age", "Description"].map((field) => (
+              <div key={field} className={styles["input-container"]}>
+                <label className={styles["input-label"]}>{field}:</label>
+                <input
+                  type="text"
+                  name={field}
+                  className={styles["input-box"]}
+                  value={(formData[field as keyof typeof formData] as string) || ""}
+                  onChange={handleInputChange}
+                />
+              </div>
             ))}
-            <button className={styles["add-tag-button"]} onClick={handleAddTag}>
-              Add Tag
-            </button>
+
+            <h2 className={styles["section-title"]}>Health Records</h2>
+            {["Weight", "Height", "Diet", "Prescription", "Insurance"].map(
+              (field) => (
+                <div key={field} className={styles["input-container"]}>
+                  <label className={styles["input-label"]}>{field}:</label>
+                  <input
+                    type="text"
+                    name={field}
+                    className={styles["input-box"]}
+                    value={healthData[field as keyof typeof healthData] || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )
+            )}
           </div>
         </div>
 
-        <div className={styles["info-card"]}>
-          {["Name", "Breed", "Type", "Age", "Description"].map((field) => (
-            <div key={field} className={styles["input-container"]}>
-              <label className={styles["input-label"]}>{field}:</label>
-              <input
-                type="text"
-                name={field}
-                className={styles["input-box"]}
-                value={
-                  (formData[field as keyof typeof formData] as string) || ""
-                }
-                onChange={handleInputChange}
-              />
-            </div>
-          ))}
-
-          <div className={styles["action-buttons"]}>
-            <button className={styles["cancel-button"]} onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              className={styles["save-button"]}
-              onClick={handleSave}
-              disabled={isSaving}
-            >
-              {isSaving ? "Saving..." : "Save"}
-            </button>
-          </div>
+        <div className={styles["action-buttons"]}>
+          <button className={styles["cancel-button"]} onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className={styles["save-button"]}
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? "Saving..." : "Save"}
+          </button>
         </div>
       </div>
     </div>

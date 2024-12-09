@@ -1,95 +1,169 @@
-/* VetPetProfile.module.css */
-
-.profile-container {
+.modal {
   display: flex;
+  flex-direction: column;
   gap: 30px;
-  padding: 0;
-  background-color: transparent;
-  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
-.image-section {
-  flex: 1.5;
+.content {
   display: flex;
-  justify-content: center;
+  gap: 30px;
+  align-items: flex-start;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.image-card {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex: 1;
 }
 
 .image {
   width: 100%;
-  max-width: 400px;
+  max-width: 200px;
   height: auto;
   border-radius: 15px;
 }
 
-.info-section {
-  flex: 2.5;
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.tag {
+  background-color: #f08080;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.remove-tag-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.add-tag-button {
+  display: inline-block;
+  color: black;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.info-card {
   display: flex;
   flex-direction: column;
+  flex: 2;
+  gap: 15px;
+  font-size: 1.2rem;
+  font-weight: 400;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-.details-container {
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #333;
+}
+
+.input-container {
   display: flex;
-  gap: 30px;
-  margin-bottom: 20px;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.details-box {
+.input-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.input-field {
+  font-size: 1rem;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cancel-button {
+  padding: 8px 15px;
   background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
-  flex: 1;
-  font-size: 1.1rem;
-  position: relative;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #ddd;
+}
+
+.save-button {
+  padding: 8px 15px;
+  background-color: #f08080;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.save-button:hover {
+  background-color: #fa5f5f;
 }
 
 .edit-button {
-  padding: 10px 20px;
-  background-color: #ef4a75;
+  padding: 8px 15px;
+  background-color: #f08080;
   color: white;
   border: none;
-  border-radius: 30px;
+  border-radius: 20px;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  align-self: flex-end;
 }
 
 .edit-button:hover {
-  background-color: #fd5564;
-}
-
-/* New styles for the message box */
-.message-box {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
-  font-size: 1.1rem;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.message-button {
-  padding: 10px 20px;
-  background-color: #ef4a75;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  align-self: flex-start;
-}
-
-.message-button:hover {
-  background-color: #fd5564;
+  background-color: #fa5f5f;
 }

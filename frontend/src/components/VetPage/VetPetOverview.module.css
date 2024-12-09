@@ -1,29 +1,16 @@
-/* VetPetOverview.module.css */
-
 .wrapper {
-  display: flex;
-  overflow: hidden;
-  height: 500px;
-  padding: 0;
+  display:flex;
+  justify-content: center;
+  padding: 20px;
+  background-color: transparent;
 }
 
 .grid {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding: 5px;
-  scrollbar-width: thin;
-  align-items: flex-start;
-  margin-right: 20px;
-}
-
-.grid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.grid::-webkit-scrollbar-thumb {
-  background-color: #e0dcdc;
-  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .card {
@@ -31,13 +18,10 @@
   border-radius: 15px;
   box-shadow: 0 8px 5px #e0dcdc;
   overflow: hidden;
-  width: 275px;
-  height: 400px;
-  margin: 10px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  flex: 0 0 auto;
+  justify-content: flex-start;
   transition: transform 0.2s;
 }
 
@@ -47,16 +31,17 @@
 
 .card img {
   width: 100%;
-  height: 300px;
+  height: 320px;
   object-fit: cover;
 }
 
 .card-content {
-  padding: 15px;
+  padding: 10px;
+  text-align: center;
 }
 
 .card-title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   margin: 5px 0 0;
   color: var(--text-color);
@@ -68,25 +53,33 @@
   margin: 7.5px 0;
 }
 
-.card-owner {
-  color: var(--text-color);
-  font-size: 1rem;
-  font-weight: normal;
-  margin-top: 5px;
-}
-
 .add-card {
   display: flex;
-  justify-content: center;
   align-items: center;
-  background-color: #f5f5f5;
-  border: 2px dashed #ddd;
-  width: 275px;
-  height: 400px;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
   cursor: pointer;
-  flex-direction: column;
+  background-color: #f9f9f9;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+  transition: background-color 0.3s ease;
+  height: 400px;
+}
+
+.add-card:hover {
+  background-color: #eaeaea;
+}
+
+.connectModal {
+  padding: 20px;
+  text-align: center;
+}
+
+.noPets {
+  text-align: center;
   font-size: 1.5rem;
-  font-weight: bold;
-  margin-right: 20px;
-  color: var(--main-color1);
+  color: #777;
+  margin-top: 20px;
 }

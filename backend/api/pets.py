@@ -130,13 +130,23 @@ def create_pet():
             Age=data.get('Age'),
             Breed=data.get('Breed'),
             Type=data.get('Type'),
-            Avatar="",
+            Avatar=data.get('Avatar', None),
             Description=data.get('Description', ""),
             Tag=data.get('Tag', []),
             UserId=data['UserId']
         )
         pet_ref = db.collection("PET").document()
         pet_ref.set(pet.to_dict())
+        default_health = {
+            "VetId": "N/A",
+            "Weight": "N/A",
+            "Height": "N/A",
+            "Diet": "N/A",
+            "Prescription": "N/A",
+            "Insurance": "N/A",
+        }
+        pet_ref.collection("HEALTH").document().set(default_health)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
@@ -145,7 +155,7 @@ def create_pet():
         update_pet_by_id(pet_ref.id)
 
     created_pet = pet_ref.get().to_dict()
-
+    created_pet["id"] = pet_ref.id
     return jsonify({"message": f"Pet {pet_ref.id} created successfully", "pet": created_pet}), 201
 
 # PUT update pet profile data by Firestore document ID

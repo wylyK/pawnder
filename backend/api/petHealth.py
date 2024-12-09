@@ -20,13 +20,20 @@ def get_health(petId):
 # Create the health information of a pet
 @pet_health_api.post('/pets/<petId>/health')
 def create_health(petId):
-    data = request.json
+    data = request.form  # Use form for FormData payloads
     pet_doc_ref = pet_db.document(petId)
     pet_doc = pet_doc_ref.get()
     if pet_doc.exists:
         try:
             health_ref = pet_doc_ref.collection("HEALTH").document()  # Auto-generate a new document ID
-            health = Health.from_dict(data)
+            health = Health.from_dict({
+                "VetId": data.get("VetId", "N/A"),
+                "Weight": data.get("Weight", "N/A"),
+                "Height": data.get("Height", "N/A"),
+                "Diet": data.get("Diet", "N/A"),
+                "Prescription": data.get("Prescription", "N/A"),
+                "Insurance": data.get("Insurance", "N/A")
+            })
             health_ref.set(health.to_dict())  # Use `set` to save the data
             return jsonify({"message": f"Health information of pet {petId} created successfully"}), 201
         except Exception as e:
