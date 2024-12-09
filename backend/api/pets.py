@@ -122,20 +122,31 @@ def get_pet_by_id(pet_id):
 # POST create new pet profile with basic information
 @pets_api.post('/pets/create')
 def create_pet():
-    data = request.json
+    data = request.form
+    print(data)
     try: 
         pet = Pet(
-            Name=data['Name'],
-            Age=data['Age'],
-            Breed=data['Breed'],
-            Type=data['Type'],
-            Avatar=data['Avatar'],
+            Name=data.get('Name'),
+            Age=data.get('Age'),
+            Breed=data.get('Breed'),
+            Type=data.get('Type'),
+            Avatar=data.get('Avatar', None),
             Description=data.get('Description', ""),
             Tag=data.get('Tag', []),
             UserId=data['UserId']
         )
         pet_ref = db.collection("PET").document()
         pet_ref.set(pet.to_dict())
+        default_health = {
+            "VetId": "N/A",
+            "Weight": "N/A",
+            "Height": "N/A",
+            "Diet": "N/A",
+            "Prescription": "N/A",
+            "Insurance": "N/A",
+        }
+        pet_ref.collection("HEALTH").document().set(default_health)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
@@ -143,7 +154,9 @@ def create_pet():
     if 'Avatar' in request.files:
         update_pet_by_id(pet_ref.id)
 
-    return jsonify({"message": f"Pet {pet_ref.id} created successfully"}), 201
+    created_pet = pet_ref.get().to_dict()
+    created_pet["id"] = pet_ref.id
+    return jsonify({"message": f"Pet {pet_ref.id} created successfully", "pet": created_pet}), 201
 
 # PUT update pet profile data by Firestore document ID
 @pets_api.put('/pets/<pet_id>')
