@@ -3,6 +3,7 @@
 pawnder-firebase-adminsdk.json
 
 venv
+venv2
 myenv
 __pycache__/
 *.pyc
