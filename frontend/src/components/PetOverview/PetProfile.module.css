@@ -56,6 +56,12 @@
   font-weight: 600;
   font-style: italic;
 }
+.section-title {
+  font-size: 1.5rem; /* Adjust size if needed */
+  font-weight: bold;
+  margin-top: 20px; /* Add spacing above the section */
+  color: var(--text-color, #333); /* Optional for consistent text color */
+}
 
 .info-card {
   display: flex;

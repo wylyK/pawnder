@@ -1,77 +1,112 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import { AiOutlinePlus } from "react-icons/ai";
-import api from "../../../api"; // Adjust the path if needed
-import styles from "./PetOverview.module.css";
+import { useGetAllPetIdsByUserId } from "@/hooks/use-get-all-pet-ids-by-user-id";
+import { usePetsByPetIds } from "@/hooks/use-pets-by-pet-ids";
 import Modal from "./Modal";
 import PetProfile from "./PetProfile";
-
-interface Pet {
-  id: string;
-  Name: string;
-  Breed: string;
-  Avatar: string;
-}
+import AddPet from "./AddPet";
+import styles from "./PetOverview.module.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PetOverview: React.FC = () => {
-  const [pets, setPets] = useState<Pet[]>([]);
+  const queryClient = useQueryClient();
+  const { petIds, status: petIdsStatus, error: petIdsError } = useGetAllPetIdsByUserId();
+  const { pets, status: petsStatus, error: petsError } = usePetsByPetIds(petIds || []);
+
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPets = async () => {
-      try {
-        // Explicitly type the response as a dictionary-like object
-        const response = await api.get<{ [key: string]: Omit<Pet, "id"> }>(
-          "/pets",
-        );
-        // Ensure data is correctly mapped and id is added
-        const petsData = Object.entries(response.data).map(([id, pet]) => ({
-          id,
-          ...pet, // `pet` is now safely typed
-        }));
-        setPets(petsData);
-      } catch (error) {
-        console.error("Error fetching pets:", error);
-      }
-    };
-
-    fetchPets();
-  }, []);
+  const [isAddingPet, setIsAddingPet] = useState(false);
 
   const handleOpenModal = (id: string) => {
     setSelectedPetId(id);
   };
 
-  const handleCloseModal = () => {
-    setSelectedPetId(null);
+  const handleCloseModal = (deletedPetId?: string) => {
+    setSelectedPetId(null); // Close modal
+    if (deletedPetId) {
+      // Update the React Query cache manually
+      queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
+        if (!oldData) return oldData; // If no data, return as is
+        const updatedData = { ...oldData };
+        delete updatedData[deletedPetId]; // Remove the deleted pet
+        return updatedData;
+      });
+    }
   };
+
+  const handleOpenAddPet = () => {
+    setIsAddingPet(true);
+  };
+
+  const handleCloseAddPet = (newPet?: Record<string, any>) => {
+    setIsAddingPet(false);
+  
+    if (newPet) {
+      // Update the React Query cache manually
+      queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
+        if (!oldData) return { ...newPet }; // If no data, return the new pet as initial data
+        return { ...oldData, ...newPet }; // Add the new pet to the existing data
+      });
+    }
+  };
+
+  // Handle loading or errors
+  if (petIdsStatus === "pending" || petsStatus === "pending") {
+    return <div>Loading your pets...</div>;
+  }
+
+  if (petIdsStatus === "error" || petsStatus === "error") {
+    return <div>Error loading pets. Please try again later.</div>;
+  }
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid}>
-        {pets.map((pet) => (
-          <div
-            key={pet.id}
-            className={styles.card}
-            onClick={() => handleOpenModal(pet.id)}
-          >
-            <Image src={pet.Avatar || "/default_user.jpg"} width={0} height={0} sizes="100vw" alt={pet.Name} />
-            <div className={styles["card-content"]}>
-              <h2 className={styles["card-title"]}>{pet.Name}</h2>
-              <p className={styles["card-subtitle"]}>{pet.Breed}</p>
+        {pets &&
+          Object.entries(pets).map(([id, pet]) => (
+            <div
+              key={id}
+              className={styles.card}
+              onClick={() => handleOpenModal(id)}
+            >
+              <Image
+                src={pet.Avatar || "/default_user.jpg"}
+                width={200}
+                height={200}
+                alt={pet.Name}
+                className={styles.image}
+              />
+              <div className={styles["card-content"]}>
+                <h2 className={styles["card-title"]}>{pet.Name}</h2>
+                <p className={styles["card-subtitle"]}>{pet.Breed}</p>
+              </div>
             </div>
-          </div>
-        ))}
-        <div className={`${styles.card} ${styles["add-card"]}`}>
+          ))}
+        <div
+          className={`${styles.card} ${styles["add-card"]}`}
+          onClick={handleOpenAddPet}
+        >
           <AiOutlinePlus size={50} color="#555" />
           <p>Add Pet</p>
         </div>
       </div>
 
+      {/* Modal for displaying PetProfile */}
       {selectedPetId && (
-        <Modal onClose={handleCloseModal}>
-          <PetProfile petId={selectedPetId} />
+        <Modal onClose={() => handleCloseModal()}>
+          <PetProfile
+            petId={selectedPetId}
+            onClose={(deletedPetId) => handleCloseModal(deletedPetId)}
+          />
+        </Modal>
+      )}
+
+      {/* Modal for adding a new pet */}
+      {isAddingPet && (
+        <Modal onClose={handleCloseAddPet}>
+          <AddPet onClose={handleCloseAddPet} />
         </Modal>
       )}
     </div>
@@ -79,81 +114,3 @@ const PetOverview: React.FC = () => {
 };
 
 export default PetOverview;
-
-// // components/PetOverview.tsx
-// "use client";
-// import React, { useState } from "react";
-// import { AiOutlinePlus } from "react-icons/ai";
-// import styles from "./PetOverview.module.css";
-// import Modal from "./Modal";
-// import PetProfile from "./PetProfile";
-
-// interface Pet {
-//   id: string;
-//   name: string;
-//   breed: string;
-//   image: string;
-// }
-
-// const pets: Pet[] = [
-//   {
-//     id: "1",
-//     name: "Fionn",
-//     breed: "Irish Setter + Golden Retriever",
-//     image: "/doggo.JPG",
-//   },
-//   { id: "2", name: "Spike", breed: "Maine Coon", image: "/dog2.avif" },
-//   {
-//     id: "3",
-//     name: "Luna",
-//     breed: "Golden Retriever",
-//     image: "/retriever.jpeg",
-//   },
-//   { id: "4", name: "Max", breed: "Labrador", image: "/dog2.avif" },
-//   { id: "5", name: "Bella", breed: "Pomeranian", image: "/catto.jpeg" },
-// ];
-
-// const PetOverview: React.FC = () => {
-//   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
-
-//   const handleOpenModal = (id: string) => {
-//     setSelectedPetId(id);
-//   };
-
-//   const handleCloseModal = () => {
-//     setSelectedPetId(null);
-//   };
-
-//   return (
-//     <div className={styles.wrapper}>
-//       <div className={styles.grid}>
-//         {pets.map((pet) => (
-//           <div
-//             key={pet.id}
-//             className={styles.card}
-//             onClick={() => handleOpenModal(pet.id)}
-//           >
-//             <img src={pet.image} alt={pet.name} />
-//             <div className={styles["card-content"]}>
-//               <h2 className={styles["card-title"]}>{pet.name}</h2>
-//               <p className={styles["card-subtitle"]}>{pet.breed}</p>
-//             </div>
-//           </div>
-//         ))}
-//         <div className={`${styles.card} ${styles["add-card"]}`}>
-//           <AiOutlinePlus size={50} color="#555" />
-//           <p>Add Pet</p>
-//         </div>
-//       </div>
-
-//       {/* Modal for displaying PetProfile */}
-//       {selectedPetId && (
-//         <Modal onClose={handleCloseModal}>
-//           <PetProfile petId={selectedPetId} />
-//         </Modal>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default PetOverview;
