@@ -11,9 +11,12 @@ import AddPet from "./AddPet";
 import styles from "./PetOverview.module.css";
 import { useQueryClient } from "@tanstack/react-query";
 import { Pet } from "@/share/type";
+import { Pet } from "@/share/type";
 
 const PetOverview: React.FC = () => {
   const queryClient = useQueryClient();
+  const { petIds } = useGetAllPetIdsByUserId();
+  const { pets } = usePetsByPetIds(petIds || []);
   const { petIds } = useGetAllPetIdsByUserId();
   const { pets } = usePetsByPetIds(petIds || []);
 
@@ -28,16 +31,15 @@ const PetOverview: React.FC = () => {
     setSelectedPetId(null); // Close modal
     if (deletedPetId) {
       // Update the React Query cache manually
-      queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
-        if (!oldData) return oldData; // If no data, return as is
-        const updatedData = { ...oldData };
-        delete updatedData[deletedPetId]; // Remove the deleted pet
-        return updatedData;
-      });
-      queryClient.setQueryData(["petIds"], (oldIds: string[] | undefined) => {
-        if (!oldIds) return oldIds;
-        return oldIds.filter((id) => id !== deletedPetId); // Remove the deleted ID
-      });
+      queryClient.setQueryData(
+        ["usePetsByPetIds"],
+        (oldData: Record<string, Pet> | undefined) => {
+          if (!oldData) return oldData; // If no data, return as is
+          const updatedData = { ...oldData };
+          delete updatedData[deletedPetId]; // Remove the deleted pet
+          return updatedData;
+        },
+      );
     }
   };
 
@@ -46,18 +48,19 @@ const PetOverview: React.FC = () => {
   };
 
   const handleCloseAddPet = (newPet?: Record<string, Pet>) => {
+  const handleCloseAddPet = (newPet?: Record<string, Pet>) => {
     setIsAddingPet(false);
+
 
     if (newPet) {
       // Update the React Query cache manually
-      queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
-        if (!oldData) return { ...newPet }; // If no data, return the new pet as initial data
-        return { ...oldData, ...newPet }; // Add the new pet to the existing data
-      });
-      queryClient.setQueryData(["petIds"], (oldIds: string[] | undefined) => {
-        if (!oldIds) return [newPet.id];
-        return [...oldIds, newPet.id]; // Add new pet ID
-      });
+      queryClient.setQueryData(
+        ["usePetsByPetIds"],
+        (oldData: Record<string, Pet> | undefined) => {
+          if (!oldData) return { ...newPet }; // If no data, return the new pet as initial data
+          return { ...oldData, ...newPet }; // Add the new pet to the existing data
+        },
+      );
     }
   };
 
