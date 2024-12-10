@@ -28,12 +28,15 @@ const PetOverview: React.FC = () => {
     setSelectedPetId(null); // Close modal
     if (deletedPetId) {
       // Update the React Query cache manually
-      queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
-        if (!oldData) return oldData; // If no data, return as is
-        const updatedData = { ...oldData };
-        delete updatedData[deletedPetId]; // Remove the deleted pet
-        return updatedData;
-      });
+      queryClient.setQueryData(
+        ["usePetsByPetIds"],
+        (oldData: Record<string, any> | undefined) => {
+          if (!oldData) return oldData; // If no data, return as is
+          const updatedData = { ...oldData };
+          delete updatedData[deletedPetId]; // Remove the deleted pet
+          return updatedData;
+        },
+      );
       queryClient.setQueryData(["petIds"], (oldIds: string[] | undefined) => {
         if (!oldIds) return oldIds;
         return oldIds.filter((id) => id !== deletedPetId); // Remove the deleted ID
@@ -50,10 +53,13 @@ const PetOverview: React.FC = () => {
 
     if (newPet) {
       // Update the React Query cache manually
-      queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
-        if (!oldData) return { ...newPet }; // If no data, return the new pet as initial data
-        return { ...oldData, ...newPet }; // Add the new pet to the existing data
-      });
+      queryClient.setQueryData(
+        ["usePetsByPetIds"],
+        (oldData: Record<string, any> | undefined) => {
+          if (!oldData) return { ...newPet }; // If no data, return the new pet as initial data
+          return { ...oldData, ...newPet }; // Add the new pet to the existing data
+        },
+      );
       queryClient.setQueryData(["petIds"], (oldIds: string[] | undefined) => {
         if (!oldIds) return [newPet.id];
         return [...oldIds, newPet.id]; // Add new pet ID
