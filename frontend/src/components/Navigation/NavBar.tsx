@@ -37,7 +37,7 @@ const NavBar: React.FC = () => {
 
         {/* Paw Icon */}
         <li className={styles.li}>
-          <Link href="/pets" className={`${styles.link} ${styles.paw}`}>
+          <Link href="/matchmaker" className={`${styles.link} ${styles.paw}`}>
             <PiPawPrintBold className={styles["dormant"]} />
             <PiPawPrintFill className={styles["hovered"]} />
           </Link>
