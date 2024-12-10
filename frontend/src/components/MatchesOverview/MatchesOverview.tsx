@@ -36,7 +36,7 @@ const MatchesOverview: React.FC = () => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const response = await api.get<{ [key: string]: Omit<Pet, "id"> }>("/pets{");
+        const response = await api.get<{ [key: string]: Omit<Pet, "id"> }>("/pets");
         const petsData = Object.entries(response.data).map(([id, pet]) => ({
           id,
           ...pet,
