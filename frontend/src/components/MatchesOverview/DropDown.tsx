@@ -12,7 +12,6 @@ interface DropDownProp {
 
 const DropDown: React.FC<DropDownProp> = ({ options, prefix, className, selectedIndex, onSelect }) => {
     const [expanded, setExpanded] = useState(false);
-    console.log(options[selectedIndex]);
     return (
         <div className={`${styles.select} ${className}`}>
             <div className={styles.bar}>
