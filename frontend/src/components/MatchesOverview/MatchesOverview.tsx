@@ -15,18 +15,7 @@ import MatchesPanel from "./MatchesPanel"
 import api from "../../../api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/UserContext";
-import { User } from "@/share/type";
-
-interface Pet {
-  id: string;
-  Name: string;
-  Age: string;
-  Breed: string;
-  Avatar: string;
-  Tag: string[];
-  UserId: string;
-  Description: string;
-}
+import { User, Pet } from "@/share/type";
 
 const MatchesOverview: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([])
@@ -42,7 +31,7 @@ const MatchesOverview: React.FC = () => {
     router.push("/login");
   }, [user, router]);
 
-  console.log(user);
+  // const userId = "xRcD1XgIZWgdxgY3bAXFK6V1DVq2";
   const userId = (user as User).Id
 
   useEffect(() => {
@@ -80,23 +69,23 @@ const MatchesOverview: React.FC = () => {
     const fetchAllMatches = async () => {
       const fetchMatch = async (pet: Pet) => {
         try {
-          const response = await api.get<string[]>(`/pets/${pet.id}/matches?status=matched`);
+          const response = await api.get<string[]>(`/pets/${pet.Id}/matches?status=matched`);
+          console.log("response " + response.data);
           const matchedIds = response.data || [];
           console.log(`${pet.Name}'s matches: ${matchedIds}`)
           everyMatchedIds = [...everyMatchedIds, ...matchedIds];
-          console.log(everyMatchedIds);
           
         } catch (error) {
-          console.error(`For ${pet.id}, error occured trying to fetch matched ids: ${error}`);
+          console.error(`For ${pet.Id}, error occured trying to fetch matched ids: ${error}`);
         }
 
         try {
-          const response = await api.get<string[]>(`/pets/${pet.id}/matches?status=pending`);
+          const response = await api.get<string[]>(`/pets/${pet.Id}/matches?status=pending`);
           const pendingIds = response.data || [];
           everyPendingIds = [...everyPendingIds, ...pendingIds];
           
         } catch (error) {
-          console.error(`For ${pet.id}, error occurred trying to fetch pending ids: ${error}`);
+          console.error(`For ${pet.Id}, error occurred trying to fetch pending ids: ${error}`);
         }
       }
       await Promise.all(yourPets.map((pet) => fetchMatch(pet)));
@@ -111,13 +100,13 @@ const MatchesOverview: React.FC = () => {
   console.log("matches:" + [...allMatchedIds, ...allPendingIds]);
 
   const filteredPetsList = pets.filter((pet) => pet.UserId != userId)
-                               .filter((pet) => [...allMatchedIds, ...allPendingIds].every((id) => pet.id != id))
+                               .filter((pet) => [...allMatchedIds, ...allPendingIds].every((id) => pet.Id != id))
                                .filter((pet) => filters.every(
                                 ({ type, value }) => {
                                   if (type === "Breed" || type === "Age") {
                                     return pet[type].toString().toLowerCase().trim() === value.toString().toLowerCase().trim();
                                   }
-                                  if (type === "Tag") return pet.Tag.includes(value as string);
+                                  return true;
                                 }))
 
   const [displayedIndex, updateDisplayedIndex] = useState(0);
@@ -167,14 +156,14 @@ const MatchesOverview: React.FC = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${baseUrl}/pets/${yourPets[matchFor].id}/matches`, {
+      const response = await fetch(`${baseUrl}/pets/${yourPets[matchFor].Id}/matches`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "myPetID": yourPets[matchFor].id,
-          "PetId": filteredPetsList[displayedIndex].id
+          "myPetID": yourPets[matchFor].Id,
+          "PetId": filteredPetsList[displayedIndex].Id
         })
     });
 
@@ -207,15 +196,15 @@ const MatchesOverview: React.FC = () => {
         onSelect={(index) => { setMatchFor(index) }}
       />
       <div className={styles["slides"]}>
-        {filteredPetsList.map(({ id, Name, Age, Breed, Avatar, Tag }, index) => (
+        {filteredPetsList.map(({ Id, Name, Age, Breed, Avatar }, index) => (
           <PetCard
+            key={Id}
             className={`${styles["card"]} ${sliderIndex(index)}`}
-            key={id}
             name={Name}
             breed={Breed}
-            age={parseInt(Age)}
-            tags={Tag}
-            image={Avatar}
+            age={Age}
+            tags={[]}
+            image={Avatar || ""}
             handlePopup={() => { 
               const position = slidePosition(index);
               if (-3 < position && position < 3) slide(position)
