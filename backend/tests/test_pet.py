@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import MagicMock 
 from flask import Flask
 from io import BytesIO
+import io
 
 # @pytest.fixture
 # def client():
@@ -85,7 +86,7 @@ def test_create_pet_missing_fields(client):
     assert "error" in response.get_json()
 
 
-# Test 3: update pet with sucess ------------------------------------------------------------
+# Test 3: update pet with success ------------------------------------------------------------
 def test_update_pet_success(client, mocker):
     pet_id = "pet123"
     data = {"Name": "Buddy Updated", "Age": 4}
@@ -111,7 +112,57 @@ def test_update_pet_success(client, mocker):
     mock_document.set.assert_called_once()
 
 
-# Test 4: update pet with error (no pet) ------------------------------------------------------------
+# Test 4: update pet with avatar success ------------------------------------------------------------
+def test_update_pet_with_avatar_upload_success(client, mocker):
+    pet_id = "pet123"
+    file_name = "avatar.png"
+    file_content = b"fake image content"
+
+    # Mock Firestore pet reference
+    mock_pet_ref = mocker.patch("api.pets.db.collection")
+    mock_document = MagicMock()
+    mock_pet_ref.return_value.document.return_value = mock_document
+    mock_document.get.return_value.exists = True  
+    mock_document.get.return_value.to_dict.return_value = {
+        "Name": "Buddy",
+        "Age": 3,
+        "Breed": "Golden Retriever",
+        "Type": "Dog",
+        "Avatar": "",
+        "UserId": "user123"
+    }
+
+    # Mock Firebase Storage bucket and blob
+    mock_bucket = mocker.patch("api.pets.bucket")
+    mock_blob = MagicMock()
+    mock_bucket.blob.return_value = mock_blob
+    mock_blob.upload_from_file.return_value = None
+    mock_bucket.name = "test-bucket"
+
+    # Create a BytesIO object for the file content
+    file_stream = io.BytesIO(file_content)
+
+    data = {
+        "Name": "Buddy Updated",
+        "Age": 4,
+        "Avatar": (file_stream, file_name),  
+    }
+    response = client.put(
+        f"/pets/{pet_id}",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    # Assertions
+    assert response.status_code == 200
+    updated_pet = response.get_json()
+    assert "Avatar" in updated_pet
+    mock_pet_ref.assert_called_once_with("PET")
+    mock_document.set.assert_called_once()
+    mock_blob.upload_from_file.assert_called_once()
+
+
+# Test 5: update pet with error (no pet) ------------------------------------------------------------
 def test_update_pet_not_found(client, mocker):
     pet_id = "pet123"
     data = {"Name": "Buddy Updated", "Age": 4}
@@ -129,7 +180,7 @@ def test_update_pet_not_found(client, mocker):
     mock_document.set.assert_not_called()
     
     
-# Test 5: delete pet with sucess ------------------------------------------------------------
+# Test 6: delete pet with sucess ------------------------------------------------------------
 def test_delete_pet_success(client, mocker):
     pet_id = "pet123"
 
@@ -149,7 +200,7 @@ def test_delete_pet_success(client, mocker):
     mock_document.delete.assert_called_once()
 
 
-# Test 6: delete pet with error (no pet) ------------------------------------------------------------
+# Test 7: delete pet with error (no pet) ------------------------------------------------------------
 def test_delete_pet_not_found(client, mocker):
     pet_id = "pet123"
 
@@ -167,7 +218,7 @@ def test_delete_pet_not_found(client, mocker):
     mock_document.delete.assert_not_called()
 
 
-# Test 7: get pet by type with sucess ------------------------------------------------------------
+# Test 8: get pet by type with sucess ------------------------------------------------------------
 def test_get_pets_by_type_success(client, mocker):
     pet_type = "Dog"
     expected_pet_ids = ["pet1", "pet2", "pet3"]
@@ -183,7 +234,7 @@ def test_get_pets_by_type_success(client, mocker):
     mock_pet_ref.assert_called_once_with("PET")
 
 
-# Test 8: get pet by location with sucess ------------------------------------------------------------
+# Test 9: get pet by location with sucess ------------------------------------------------------------
 def test_get_pets_by_location_success(client, mocker):
     location = "NY"
     user_ids = ["user1", "user2"]
@@ -217,7 +268,7 @@ def test_get_pets_by_location_success(client, mocker):
     mock_pet_collection.where.assert_called_with("UserId", "in", user_ids)
 
 
-# Test 9: get pet by location with sucess 2------------------------------------------------------------
+# Test 10: get pet by location with sucess 2------------------------------------------------------------
 def test_get_pets_by_location_no_owners(client, mocker):
     location = "NY"
 
@@ -230,7 +281,7 @@ def test_get_pets_by_location_no_owners(client, mocker):
     assert response.get_json() == []
 
 
-# Test 10: get all pet with success ------------------------------------------------------------
+# Test 11: get all pet with success ------------------------------------------------------------
 def test_get_all_pets_success(client, mocker):
     expected_pets = {
         "pet1": {"Name": "Buddy", "MatchRecords": [], "HealthRecords": [], "EventRecords": []},
@@ -257,7 +308,7 @@ def test_get_all_pets_success(client, mocker):
     mock_pet_ref.assert_called_once_with("PET")
 
 
-# Test 11: get pet by id with success ------------------------------------------------------------
+# Test 12: get pet by id with success ------------------------------------------------------------
 def test_get_pet_by_id_success(client, mocker):
     pet_id = "pet1"
     expected_pet_data = {
@@ -283,7 +334,7 @@ def test_get_pet_by_id_success(client, mocker):
     mock_pet_ref.assert_called_once_with("PET")
 
 
-# Test 12: get pet by id with error (no id) ------------------------------------------------------------
+# Test 13: get pet by id with error (no id) ------------------------------------------------------------
 def test_get_pet_by_id_not_found(client, mocker):
     pet_id = "pet1"
 

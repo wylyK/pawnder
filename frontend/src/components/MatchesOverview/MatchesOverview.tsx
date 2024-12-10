@@ -44,9 +44,6 @@ const MatchesOverview: React.FC = () => {
     router.push("/login");
   }, [user, router]);
 
-  // const userId = "xRcD1XgIZWgdxgY3bAXFK6V1DVq2";
-  // const userId = (user as User).Id
-
   useEffect(() => {
     const fetchPets = async () => {
       try {
