@@ -26,29 +26,13 @@ pip install -r requirements.txt
 
 To ensure the app works correctly, you must configure .env files for both the frontend and backend. These files provide the necessary environment variables.
 
-### Frontend .env File
+### Frontend and Backend .env Files
 
-In the frontend directory, create a .env file with the following content:
+In the frontend and backend directories, create .env files and add the content from the .env file in the respective directories.
 
-```sh
-NEXT_PUBLIC_BASE_URL="http://127.0.0.1:5000"
-```
+`https://drive.google.com/drive/folders/1YbB_pWQInPr7gTW5FliuprQDy7g_-TJE?usp=drive_link`
+
 This sets the backend API URL for the frontend during development.
-
-### Backend .env File
-
-In the backend directory, create a .env file with the following content:
-
-```sh
-GOOGLE_APPLICATION_CREDENTIALS=pawnder-firebase-adminsdk.json
-FIREBASE_API_KEY=AIzaSyAtmPYrMrZ2l2QEMDQ44YjQeKUX-CuUz9A
-FIREBASE_AUTH_DOMAIN=pawnder-3a450.firebaseapp.com
-FIREBASE_PROJECT_ID=pawnder-3a450
-FIREBASE_STORAGE_BUCKET=pawnder-3a450.appspot.com
-FIREBASE_MESSAGING_SENDER_ID=508962509505
-FIREBASE_APP_ID=1:508962509505:web:99633ada34ddc4e187ba40
-FIREBASE_MEASUREMENT_ID=G-Y3NMKEVSMD
-```
 Ensure the file pawnder-firebase-adminsdk.json (used by GOOGLE_APPLICATION_CREDENTIALS) is placed in the backend directory. This file is critical for Firebase operations.
 
 ## Login Credentials for Testing
