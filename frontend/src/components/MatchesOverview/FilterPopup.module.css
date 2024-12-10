@@ -1,0 +1,65 @@
+.popup {
+    width: 350px !important;
+    height: 300px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup h1 {
+    font-size: 115%;
+    margin-bottom: 35px;
+}
+
+.content {
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tabs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab {
+    width: 90px;
+    height: 35px;
+    font-size: 85%;
+    color: var(--text-color);
+    border-top: 2px solid var(--text-color);
+}
+
+.tab:hover {
+    color: var(--main-color3);
+    border-color: var(--main-color3);
+}
+
+.tab.selected {
+    color: var(--main-color1);
+    border-color: var(--main-color1);
+}
+
+.field {
+    background-color: var(--background-color);
+    border-radius: 20px;
+    width: 280px;
+    height: 35px;
+    display: flex;
+    padding: 0 20px;
+}
+
+.add-filter {
+    color: white;
+    background-color: var(--text-color);
+    border-radius: 20px;
+    width: 150px;
+    height: 40px;
+    margin-top: 45px;
+}

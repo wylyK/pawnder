@@ -1,0 +1,91 @@
+.popup {
+    width: 700px;
+    height: 400px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 0;
+}
+
+.content {
+    width: 44%;
+    margin-top: 25px;
+    overflow: hidden;
+}
+
+.image-container {
+    width: 50%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px 0 0 15px;
+}
+
+.image-container img {
+    object-fit: cover;
+    height: 100%;
+}
+
+.title {
+    font-size: 200%;
+    font-weight: bold;
+    color: var(--main-color1)
+}
+
+  .age {
+    font-size: 90%;
+    font-weight: lighter;
+    margin-top: 3px;
+    font-style: normal;
+  }
+  
+  .subtitle {
+    color: #777;
+    font-style: italic;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .buttons-container {
+    position: absolute;
+    right:  20px;
+    bottom: 20px;
+  }
+
+  .buttons-container button {
+    color: white;
+    font-weight: bold;
+    width: 90px;
+    height: 40px;
+    border-radius: 20px;
+  }
+
+.accept,
+.remove {
+    background-color: var(--main-color1);
+    border: 3px solid var(--main-color1)
+}
+
+.accept:hover,
+.remove:hover {
+    background-color: white;
+    color: var(--main-color1)
+}
+
+.reject {
+    background-color: var(--text-color);
+    border: 3px solid var(--text-color)
+}
+
+.reject:hover {
+    background-color: white;
+    color: var(--text-color)
+}
+
+.decision-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px
+}
