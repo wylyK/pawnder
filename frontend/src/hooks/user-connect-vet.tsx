@@ -1,6 +1,5 @@
 import { useAuth } from "@/context/UserContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import api from "../../api";
 
 export const useConnectVet = () => {
   const { user } = useAuth();

@@ -34,7 +34,8 @@ const VetPetOverview: React.FC = () => {
   };
 
   if (status === "pending") return <div>Loading pets...</div>;
-  if (status === "error") return <div>Error: {error?.message || "Failed to load pets."}</div>;
+  if (status === "error")
+    return <div>Error: {error?.message || "Failed to load pets."}</div>;
 
   return (
     <div className={styles.wrapper}>

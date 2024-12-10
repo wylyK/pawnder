@@ -156,7 +156,10 @@ const VetPetProfile: React.FC<VetPetProfileProps> = ({ petId }) => {
       setPet({
         ...pet,
         ...formData,
-        Avatar: formData.Avatar instanceof File ? pet.Avatar : formData.Avatar || pet.Avatar,
+        Avatar:
+          formData.Avatar instanceof File
+            ? pet.Avatar
+            : formData.Avatar || pet.Avatar,
       } as Pet);
 
       setHealth(healthData as HealthRecord);
@@ -276,15 +279,31 @@ const VetPetProfile: React.FC<VetPetProfileProps> = ({ petId }) => {
           ) : (
             <>
               <h1 className={styles.title}>{pet.Name}</h1>
-              <p><strong>Breed:</strong> {pet.Breed}</p>
-              <p><strong>Age:</strong> {pet.Age || "N/A"}</p>
-              <p><strong>Description:</strong> {pet.Description || "N/A"}</p>
-              <p><strong>Owner:</strong> {pet.Owner}</p>
+              <p>
+                <strong>Breed:</strong> {pet.Breed}
+              </p>
+              <p>
+                <strong>Age:</strong> {pet.Age || "N/A"}
+              </p>
+              <p>
+                <strong>Description:</strong> {pet.Description || "N/A"}
+              </p>
+              <p>
+                <strong>Owner:</strong> {pet.Owner}
+              </p>
               <h2 className={styles["section-title"]}>Health Records</h2>
-              <p><strong>Weight:</strong> {health?.Weight || "N/A"}</p>
-              <p><strong>Diet:</strong> {health?.Diet || "N/A"}</p>
-              <p><strong>Prescription:</strong> {health?.Prescription || "N/A"}</p>
-              <p><strong>Insurance:</strong> {health?.Insurance || "N/A"}</p>
+              <p>
+                <strong>Weight:</strong> {health?.Weight || "N/A"}
+              </p>
+              <p>
+                <strong>Diet:</strong> {health?.Diet || "N/A"}
+              </p>
+              <p>
+                <strong>Prescription:</strong> {health?.Prescription || "N/A"}
+              </p>
+              <p>
+                <strong>Insurance:</strong> {health?.Insurance || "N/A"}
+              </p>
               <button
                 className={styles["edit-button"]}
                 onClick={() => setIsEditing(true)}

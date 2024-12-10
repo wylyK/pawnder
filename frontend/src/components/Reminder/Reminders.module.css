@@ -1,6 +1,6 @@
 .reminders {
   background: white;
-  width: calc(100% + 20px);
+  width: calc(100% + 60px);
   height: 360px;
   overflow: scroll;
   position: relative;

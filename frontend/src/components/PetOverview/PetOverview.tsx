@@ -10,11 +10,12 @@ import PetProfile from "./PetProfile";
 import AddPet from "./AddPet";
 import styles from "./PetOverview.module.css";
 import { useQueryClient } from "@tanstack/react-query";
+import { Pet } from "@/share/type";
 
 const PetOverview: React.FC = () => {
   const queryClient = useQueryClient();
-  const { petIds, status: petIdsStatus, error: petIdsError } = useGetAllPetIdsByUserId();
-  const { pets, status: petsStatus, error: petsError } = usePetsByPetIds(petIds || []);
+  const { petIds } = useGetAllPetIdsByUserId();
+  const { pets } = usePetsByPetIds(petIds || []);
 
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [isAddingPet, setIsAddingPet] = useState(false);
@@ -33,6 +34,10 @@ const PetOverview: React.FC = () => {
         delete updatedData[deletedPetId]; // Remove the deleted pet
         return updatedData;
       });
+      queryClient.setQueryData(["petIds"], (oldIds: string[] | undefined) => {
+        if (!oldIds) return oldIds;
+        return oldIds.filter((id) => id !== deletedPetId); // Remove the deleted ID
+      });
     }
   };
 
@@ -40,26 +45,21 @@ const PetOverview: React.FC = () => {
     setIsAddingPet(true);
   };
 
-  const handleCloseAddPet = (newPet?: Record<string, any>) => {
+  const handleCloseAddPet = (newPet?: Record<string, Pet>) => {
     setIsAddingPet(false);
-  
+
     if (newPet) {
       // Update the React Query cache manually
       queryClient.setQueryData(["usePetsByPetIds"], (oldData: Record<string, any> | undefined) => {
         if (!oldData) return { ...newPet }; // If no data, return the new pet as initial data
         return { ...oldData, ...newPet }; // Add the new pet to the existing data
       });
+      queryClient.setQueryData(["petIds"], (oldIds: string[] | undefined) => {
+        if (!oldIds) return [newPet.id];
+        return [...oldIds, newPet.id]; // Add new pet ID
+      });
     }
   };
-
-  // Handle loading or errors
-  if (petIdsStatus === "pending" || petsStatus === "pending") {
-    return <div>Loading your pets...</div>;
-  }
-
-  if (petIdsStatus === "error" || petsStatus === "error") {
-    return <div>Error loading pets. Please try again later.</div>;
-  }
 
   return (
     <div className={styles.wrapper}>
