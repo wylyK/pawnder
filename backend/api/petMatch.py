@@ -68,6 +68,7 @@ def get_all_not_match(petId):
     # Get all matched pet IDs
     match_pet_ids = {doc.to_dict().get('PetId') for doc in match_collection.stream()}
     match_pet_ids = {pet_id for pet_id in match_pet_ids}
+    match_pet_ids.add(petId)
 
     # Get all pet IDs
     pet_ids = {doc.id for doc in pet_db.stream()}  
