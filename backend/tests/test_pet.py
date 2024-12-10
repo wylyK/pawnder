@@ -142,7 +142,7 @@ def test_delete_pet_success(client, mocker):
     response = client.delete(f'/pets/{pet_id}')
 
     assert response.status_code == 200
-    assert f"Pet {pet_id} deleted successfully" in response.get_json()["message"]
+    assert f"Pet {pet_id} and all associated data deleted successfully" in response.get_json()["message"]
 
     # Ensure Firestore was called correctly
     mock_pet_ref.assert_called_once_with("PET")
