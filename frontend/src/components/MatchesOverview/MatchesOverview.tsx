@@ -13,6 +13,9 @@ import DropDown from "./DropDown"
 import FilterList, { Filter } from "./FilterList"
 import MatchesPanel from "./MatchesPanel"
 import api from "../../../api";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/UserContext";
+import { User } from "@/share/type";
 
 interface Pet {
   id: string;
@@ -30,8 +33,16 @@ const MatchesOverview: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [filters, updateFilters] = useState<Filter[]>([]);
 
-  const testId = ["5hUjIkRlY4U7vGeIxsl49nZQr6e2", "xRcD1XgIZWgdxgY3bAXFK6V1DVq2", "cRZjl1iAb6vU1GTYSNuK"];
-  const userId = testId[0];
+  const router = useRouter();
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user !== null) {
+      return;
+    }
+    router.push("/login");
+  }, [user, router]);
+
+  const userId = (user as User).Id
 
   useEffect(() => {
     const fetchPets = async () => {
