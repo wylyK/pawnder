@@ -2,6 +2,7 @@ import React from "react"
 import styles from "./PanelEntryPopup.module.css"
 import Modal from "./Modal"
 import { PetPair } from "./MatchesPanel"
+import Image from "next/image"
 
 interface PanelEntryProps {
     pair: PetPair | null
@@ -86,10 +87,16 @@ const PanelEntryPopup: React.FC<PanelEntryProps> = ({ pair, popupType, handleClo
     popupType != "None" && (
     <Modal className={styles.popup} onClose={handleClosePopup}>
         <div className={styles["image-container"]}>
-            <img 
+            {/* <img 
                 src={(pair as PetPair).matePet.Avatar}
                 alt={(pair as PetPair).matePet.Name}
-            />
+            /> */}
+        <Image
+            src={(pair as PetPair).matePet.Avatar || "/default_user.jpg"}
+            alt={(pair as PetPair).matePet.Name}
+            width={350}
+            height={400}
+          />
         </div>
         <div className={styles.content}>
             <p className={styles.title}>
