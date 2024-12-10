@@ -15,7 +15,7 @@ import MatchesPanel from "./MatchesPanel"
 import api from "../../../api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/UserContext";
-import { User, Pet } from "@/share/type";
+import { Pet } from "@/share/type";
 
 const MatchesOverview: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([])
@@ -32,7 +32,7 @@ const MatchesOverview: React.FC = () => {
   }, [user, router]);
 
   // const userId = "xRcD1XgIZWgdxgY3bAXFK6V1DVq2";
-  const userId = (user as User).Id
+  // const userId = (user as User).Id
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -55,8 +55,8 @@ const MatchesOverview: React.FC = () => {
 
   // User's pets
   const yourPets = React.useMemo(
-    () => pets.filter((pet) => pet.UserId === userId),
-    [pets, userId]
+    () => pets.filter((pet) => pet.UserId === user?.Id),
+    [pets, user]
   );
   // Pressing the match button sends a match request from yourPets[matchFor] to filteredPetsList[displayedIndex]
   const [matchFor, setMatchFor] = useState(0);
@@ -99,7 +99,7 @@ const MatchesOverview: React.FC = () => {
 
   console.log("matches:" + [...allMatchedIds, ...allPendingIds]);
 
-  const filteredPetsList = pets.filter((pet) => pet.UserId != userId)
+  const filteredPetsList = pets.filter((pet) => pet.UserId != user?.Id)
                                .filter((pet) => [...allMatchedIds, ...allPendingIds].every((id) => pet.Id != id))
                                .filter((pet) => filters.every(
                                 ({ type, value }) => {
@@ -196,15 +196,15 @@ const MatchesOverview: React.FC = () => {
         onSelect={(index) => { setMatchFor(index) }}
       />
       <div className={styles["slides"]}>
-        {filteredPetsList.map(({ Id, Name, Age, Breed, Avatar }, index) => (
+        {filteredPetsList.map(({Name, Age, Breed, Avatar }, index) => (
           <PetCard
-            key={Id}
+            key={index}
             className={`${styles["card"]} ${sliderIndex(index)}`}
             name={Name}
             breed={Breed}
             age={Age}
             tags={[]}
-            image={Avatar || ""}
+            image={Avatar || "/default_user.jpg"}
             handlePopup={() => { 
               const position = slidePosition(index);
               if (-3 < position && position < 3) slide(position)
