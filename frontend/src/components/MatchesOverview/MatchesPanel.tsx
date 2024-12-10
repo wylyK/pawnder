@@ -5,24 +5,24 @@ import api from "../../../api";
 import { MdOutlineArrowLeft } from "react-icons/md";
 import { Pet } from "./MatchesOverview";
 
-interface PanelProps {
+export interface PanelProps {
     matchForIndex: number
     yourPets: Pet[]
     pets: Pet[]
 }
 
-  interface PetPair {
+export interface PetPair {
     matePet: Pet
     userPet: Pet
 }
 
-interface Match {
+export interface Match {
     pair: PetPair
     sender: string
     recipient: string
 }
 
-interface Popup {
+export interface Popup {
     pair: PetPair | null
     popupType: PopupType
 }
@@ -140,4 +140,3 @@ const MatchesPanel: React.FC<PanelProps> = ({ matchForIndex, yourPets, pets }) =
 }
 
 export default MatchesPanel
-export type { PetPair }
