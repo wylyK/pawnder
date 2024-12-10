@@ -7,4 +7,6 @@
 
 ### Frontend
 
-- Move into the frontend folder and run `npx jest tests/components`
+- Move into the frontend folder
+- In tsconfig.js, change to "jsx": "react-jsx" (the original value is "preserve"). - - Each time you run `npm run dev`, the value will be changed back to "preserve". So, remember to change it to "react-jsx" when testing.
+- Run `npx jest tests`
