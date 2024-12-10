@@ -17,6 +17,7 @@ import { useGetAllPetIdsByUserId } from "@/hooks/use-get-all-pet-ids-by-user-id"
 import { usePetsByPetIds } from "@/hooks/use-pets-by-pet-ids";
 import { useAuth } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { Pet } from "@/share/type";
 
 const MatchesOverview: React.FC = () => {
   const router = useRouter();
@@ -28,21 +29,18 @@ const MatchesOverview: React.FC = () => {
     router.push("/login");
   }, [user, router]);
 
-  if (user) console.log("id:" + user.Id);
-  
   const { petIds: myPetIds, status, error } = useGetAllPetIdsByUserId();
-  console.log("error:" + status + error)
-  const myPets   = usePetsByPetIds(myPetIds || []).pets;
+  const { pets: myPets}  = usePetsByPetIds(myPetIds || []);
   const [filters, updateFilters] = useState<Filter[]>([]);
   const [matchFor, setMatchFor] = useState(0);
   const [unmatchedIds, setUnmatchedIds] = useState<string[]>([]);
+  const [unmatchedPets, setUnmatchedPets] = useState<Record<string, Pet>>();
 
   useEffect(() => {
     const fetchUnmatchedIds = async () => {
       if (!myPetIds) return
       try {
         const response = await api.get<string[]>(`/pets/${myPetIds[matchFor]}/not_match`);
-        console.log("data:" + response.data);
         setUnmatchedIds(response.data || []);
       } catch (error) {
         console.log(`For ${myPetIds[matchFor]}, error occured when fetching unmatched ids: ${error}`);
@@ -51,26 +49,58 @@ const MatchesOverview: React.FC = () => {
     fetchUnmatchedIds()
   }, [matchFor, myPetIds]);
 
-  const unmatchedPets = usePetsByPetIds(unmatchedIds).pets;
+  console.log("unm", unmatchedIds);
 
-  const filterCondition = (id: string) =>
-      filters.every(( { type, value} ) => {
-                                            if (type === "Breed" || type === "Age") {
-                                              return unmatchedPets[id][type].toString().toLowerCase().trim() === value.toString().toLowerCase().trim();
-                                            } return true;
-                                          })
+  useEffect(() => {
+    const fetchUnmatchedPets = async () => {
+      if (!unmatchedIds) return
+      try {
+        console.log("unnnn", unmatchedIds);
+        const queryString = `ids=${unmatchedIds.join(",")}`;
+        const response = await api.get<Record<string, Pet>>(`/pets/ids?${queryString}`);
+        console.log("res",response)
+        const petsObject = (response.data) as Record<string, Pet>;
+        console.log("petObjects", petsObject);
+        setUnmatchedPets(petsObject);
+      } catch (error) {
+        console.log(`error occured when fetching unmatched ids: ${error}`);
+      }
+    }
+    fetchUnmatchedPets()
+  }, [unmatchedIds]);
 
-  const filteredPetIds = unmatchedIds.filter(filterCondition); 
+  console.log("unm", unmatchedPets);
+
+  
+  // const { pets: unmatchedPets, status: unmatchedPetsStatus } = usePetsByPetIds(unmatchedIds);
+
+  // const [filteredPetIds, setFilteredPetIds] = useState<string[]>([]);
+
+
+  
+  // useEffect(() => {
+  //   if (unmatchedIds) {
+  //     const filterCondition = (id: string) =>
+  //     filters.every(( { type, value} ) => {
+  //                                             if (type === "Breed" || type === "Age") {
+  //                                             return unmatchedPets[id][type].toString().toLowerCase().trim() === value.toString().toLowerCase().trim();
+  //                                           } return true;
+  //                                         })
+  //     setFilteredPetIds(unmatchedIds.filter(filterCondition))
+  //     console.log(filteredPetIds);
+  //   }
+  // }, [unmatchedIds, unmatchedPets, filteredPetIds, filters, ]);
 
   // Pet being shown at the cetner is filteredPetsList[displayedIndex]
+
   const [displayedIndex, updateDisplayedIndex] = useState(0);
 
   useEffect(() => {
     updateDisplayedIndex((currentIndex) => {
-      const newIndex = Math.floor(filteredPetIds.length / 2);
-      return currentIndex < 0 || currentIndex > filteredPetIds.length - 1 ? newIndex : currentIndex;
+      const newIndex = Math.floor(unmatchedIds.length / 2);
+      return currentIndex < 0 || currentIndex > unmatchedIds.length - 1 ? newIndex : currentIndex;
     })
-  }, [filteredPetIds]);
+  }, [unmatchedIds]);
 
   // Maps the index of a pet in filteredPetsList to its slide position,
   // which in is the range [-2, 2], so at most 5 pets can be shown on the slide
@@ -100,7 +130,7 @@ const MatchesOverview: React.FC = () => {
   // Increment/decrement slider index when user presses right/left arrow key
   const slide = (direction: number) => {
     updateDisplayedIndex((index) =>
-      0 <= index + direction && index + direction < filteredPetIds.length
+      0 <= index + direction && index + direction < unmatchedIds.length
         ? index + direction
         : index,
     );
@@ -117,8 +147,8 @@ const MatchesOverview: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "myPetID": myPetIds[matchFor],
-          "PetId": filteredPetIds[displayedIndex]
+          // "myPetID": myPetIds[matchFor],
+          "PetId": unmatchedIds[displayedIndex]
         })
     });
 
@@ -133,7 +163,7 @@ const MatchesOverview: React.FC = () => {
     }
   };
 
-  if (!user) return <div>Loading...</div>;
+  console.log("unmatched", unmatchedPets);
 
   return (
     <div className={styles.overview}>
@@ -149,15 +179,18 @@ const MatchesOverview: React.FC = () => {
         onSelect={(index) => { setMatchFor(index) }}
       />
       <div className={styles["slides"]}>
-        {filteredPetIds.map((id) => { return { id, ...unmatchedPets[id]} }).map((pet, index) => (
+        {unmatchedPets &&
+            Object.keys(unmatchedPets).length > 0 &&
+            Object.entries(unmatchedPets).map(([petId, petRecord], index) => ( 
           <PetCard
             className={`${styles["card"]} ${sliderIndex(index)}`}
-            key={pet.id}
-            name={pet.Name}
-            breed={pet.Breed}
-            age={pet.Age}
-            tags={[]}
-            image={pet.Avatar || ""}
+            key={index}
+            // name={pet.Name}
+            // breed={pet.Breed}
+            // age={pet.Age}
+            // tags={[]}
+            // image={pet.Avatar || ""}
+            petRecord = { petRecord }
             handlePopup={() => { 
               const position = slidePosition(index);
               if (-3 < position && position < 3) slide(position)

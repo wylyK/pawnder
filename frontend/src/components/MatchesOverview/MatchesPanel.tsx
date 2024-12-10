@@ -68,8 +68,8 @@ const MatchesPanel: React.FC<PanelProps> = ({ myPetIds, myPets }) => {
         fetchAllMatches();
       }, [myPetIds]);
 
-    const allMatchedPets = usePetsByPetIds(allMatchedIds).pets;
-    const allPendingPets = usePetsByPetIds(allPendingIds).pets;
+    const allMatchedPets = usePetsByPetIds(allMatchedIds);
+    const allPendingPets = usePetsByPetIds(allPendingIds);
 
     const closedPopup: Popup = { pair: null, popupType: "None"};
     const [popup, setPopup] = useState<Popup>(closedPopup);
@@ -100,10 +100,10 @@ const MatchesPanel: React.FC<PanelProps> = ({ myPetIds, myPets }) => {
                             <p className={styles["body-text"]}>
                                 <p className={styles["body-text"]}>
                                         <span className={styles["normal-text"]}>wants to match with </span>
-                                        <b>{myPets[pair.myPetId].Name}</b>
+                                        {/* <b>{myPets[pair.myPetId].Name}</b> */}
                                 </p>
                             </p>
-                            <p className={styles["emphasized-text"]}>{allPendingPets[pair.petId].Name}</p>
+                            {/* <p className={styles["emphasized-text"]}>{allPendingPets[pair.petId].Name}</p> */}
                             </div>
                         </div>)})}
                         { tab === "Paw Mates" && matchedList.map((pair, index) => (
@@ -115,7 +115,7 @@ const MatchesPanel: React.FC<PanelProps> = ({ myPetIds, myPets }) => {
                                 className={`${styles.entry} ${styles.matches}`}
                                 onClick={() => { setPopup( {pair: pair, popupType: "Match"} ) }}
                             >
-                                <p className={styles["emphasized-text"]}>{allMatchedPets[pair.petId].Name}</p>
+                                {/* <p className={styles["emphasized-text"]}>{allMatchedPets[pair.petId].Name}</p> */}
                                 <p className={styles["body-text"]}>
                                     <span className={styles["normal-text"]}>matched with </span>
                                     <b>{myPets[pair.myPetId].Name}</b>
