@@ -58,6 +58,26 @@ def get_all_matched(petId):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     
+# Get all the ID of pets that is not currently matched with my pet
+@pet_match_api.get('/pets/<petId>/not_match')
+def get_all_not_match(petId):
+    # Reference the specific pet document
+    pet_doc_ref = pet_db.document(petId)
+    match_collection = pet_doc_ref.collection("MATCH")
+
+    # Get all matched pet IDs
+    match_pet_ids = {doc.to_dict().get('PetId') for doc in match_collection.stream()}
+    match_pet_ids = {pet_id for pet_id in match_pet_ids}
+
+    # Get all pet IDs
+    pet_ids = {doc.id for doc in pet_db.stream()}  
+
+    # Get IDs of pets not matched with the given pet
+    unmatched_pet_ids = list(pet_ids - match_pet_ids)
+
+    # Return as a JSON response
+    return jsonify({"unmatched_pet_ids": unmatched_pet_ids}), 200
+
 
 # /pets/<petId>/matches?action=accept Accept a pending match request
 @pet_match_api.put('/pets/<petId>/matches')
