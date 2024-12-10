@@ -15,7 +15,20 @@ import MatchesPanel from "./MatchesPanel"
 import api from "../../../api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/UserContext";
-import { User, Pet } from "@/share/type";
+import { User } from "@/share/type";
+
+export interface Pet {
+  id: string;
+  Name: string;
+  Breed: string;
+  Type: string;
+  Age: number;
+  Avatar?: string;
+  Description?: string;
+  Tag?: string;
+  UserId: string;
+}
+
 
 const MatchesOverview: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([])
@@ -69,23 +82,22 @@ const MatchesOverview: React.FC = () => {
     const fetchAllMatches = async () => {
       const fetchMatch = async (pet: Pet) => {
         try {
-          const response = await api.get<string[]>(`/pets/${pet.Id}/matches?status=matched`);
-          console.log("response " + response.data);
+          const response = await api.get<string[]>(`/pets/${pet.id}/matches?status=matched`);
+          console.log("response for " + pet.id + " ");
           const matchedIds = response.data || [];
-          console.log(`${pet.Name}'s matches: ${matchedIds}`)
           everyMatchedIds = [...everyMatchedIds, ...matchedIds];
           
         } catch (error) {
-          console.error(`For ${pet.Id}, error occured trying to fetch matched ids: ${error}`);
+          console.error(`For ${pet.id}, error occured trying to fetch matched ids: ${error}`);
         }
 
         try {
-          const response = await api.get<string[]>(`/pets/${pet.Id}/matches?status=pending`);
+          const response = await api.get<string[]>(`/pets/${pet.id}/matches?status=pending`);
           const pendingIds = response.data || [];
           everyPendingIds = [...everyPendingIds, ...pendingIds];
           
         } catch (error) {
-          console.error(`For ${pet.Id}, error occurred trying to fetch pending ids: ${error}`);
+          console.error(`For ${pet.id}, error occurred trying to fetch pending ids: ${error}`);
         }
       }
       await Promise.all(yourPets.map((pet) => fetchMatch(pet)));
@@ -100,7 +112,7 @@ const MatchesOverview: React.FC = () => {
   console.log("matches:" + [...allMatchedIds, ...allPendingIds]);
 
   const filteredPetsList = pets.filter((pet) => pet.UserId != userId)
-                               .filter((pet) => [...allMatchedIds, ...allPendingIds].every((id) => pet.Id != id))
+                               .filter((pet) => [...allMatchedIds, ...allPendingIds].every((id) => pet.id != id))
                                .filter((pet) => filters.every(
                                 ({ type, value }) => {
                                   if (type === "Breed" || type === "Age") {

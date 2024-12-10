@@ -15,13 +15,13 @@ const PanelEntryPopup: React.FC<PanelEntryProps> = ({ pair, popupType, handleClo
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const acceptRequest = async () => {
         try {
-            const response = await fetch(`${baseUrl}/pets/${(pair as PetPair).userPet.Id}/matches?action=accept`, {
+            const response = await fetch(`${baseUrl}/pets/${(pair as PetPair).userPet.id}/matches?action=accept`, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                "PetId": (pair as PetPair).matePet.Id 
+                "PetId": (pair as PetPair).matePet.id 
               })
           });
       
@@ -38,13 +38,13 @@ const PanelEntryPopup: React.FC<PanelEntryProps> = ({ pair, popupType, handleClo
 
     const rejectRequest = async () => {
         try {
-            const response = await fetch(`${baseUrl}/pets/${(pair as PetPair).userPet.Id}/matches?action=reject`, {
+            const response = await fetch(`${baseUrl}/pets/${(pair as PetPair).userPet.id}/matches?action=reject`, {
               method: "DELETE",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                "PetId": (pair as PetPair).matePet.Id 
+                "PetId": (pair as PetPair).matePet.id 
               })
           });
       
@@ -61,13 +61,13 @@ const PanelEntryPopup: React.FC<PanelEntryProps> = ({ pair, popupType, handleClo
 
     const unmatch = async () => {
         try {
-            const response = await fetch(`${baseUrl}/pets/${(pair as PetPair).userPet.Id}/matches?action=unmatch`, {
+            const response = await fetch(`${baseUrl}/pets/${(pair as PetPair).userPet.id}/matches?action=unmatch`, {
               method: "DELETE",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                "PetId": (pair as PetPair).matePet.Id 
+                "PetId": (pair as PetPair).matePet.id 
               })
           });
       

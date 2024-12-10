@@ -3,7 +3,19 @@ import styles from "./MatchesPanel.module.css"
 import PanelEntryPopup, { PopupType } from "./PanelEntryPopup"
 import api from "../../../api";
 import { MdOutlineArrowLeft } from "react-icons/md";
-import { Pet } from "@/share/type";
+import { } from "@/share/type";
+
+export interface Pet {
+    id: string;
+    Name: string;
+    Breed: string;
+    Type: string;
+    Age: number;
+    Avatar?: string;
+    Description?: string;
+    Tag?: string;
+    UserId: string;
+  }
 
 interface PanelProps {
     matchForIndex: number
@@ -37,10 +49,10 @@ const MatchesPanel: React.FC<PanelProps> = ({ matchForIndex, yourPets, pets }) =
     useEffect(() => {
         const fetchPendingList = async () => {
           try {
-            const response = await api.get<string[]>(`/pets/${yourPets[matchForIndex].Id}/matches?status=pending`);
+            const response = await api.get<string[]>(`/pets/${yourPets[matchForIndex].id}/matches?status=pending`);
             const matchIds = response.data || [];
             console.log("pendingIds: " + matchIds);
-            const newPendingList = pets.filter((pet) => matchIds.includes(pet.Id))
+            const newPendingList = pets.filter((pet) => matchIds.includes(pet.id))
                                        .map((pet) => { return { 
                                                         pair: { matePet: pet, userPet: yourPets[matchForIndex] },
                                                         sender: pet.UserId,
@@ -58,11 +70,11 @@ const MatchesPanel: React.FC<PanelProps> = ({ matchForIndex, yourPets, pets }) =
     useEffect(() => {
         const fetchPawMates = async() => {
             try {
-                const response = await api.get<string[]>(`/pets/${yourPets[matchForIndex].Id}/matches?status=matched`);
+                const response = await api.get<string[]>(`/pets/${yourPets[matchForIndex].id}/matches?status=matched`);
                 const matchIds = response.data || []
                 console.log("matchIds: " + matchIds);
-                const newPawMates = pets.filter((pet) => matchIds.includes(pet.Id))
-                                       .map((pet) => { return { 
+                const newPawMates = pets.filter((pet) => matchIds.includes(pet.id))
+                                        .map((pet) => { return { 
                                                         pair: { matePet: pet, userPet: yourPets[matchForIndex] },
                                                         sender: pet.UserId,
                                                         recipient: yourPets[matchForIndex].UserId
