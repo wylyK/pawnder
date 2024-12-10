@@ -165,7 +165,6 @@ def get_user_by_id(user_id):
     else:
         return jsonify({"error": "User not found"}), 404
     
-from flask import request, jsonify
 
 # GET users by IDs
 # /users/ids?ids=userId1,userId2

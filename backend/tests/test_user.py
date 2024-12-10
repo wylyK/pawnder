@@ -14,7 +14,58 @@ def client():
     app.testing = True
     return app.test_client()
 
-# Test 1: create user with sucess ------------------------------------------------------------
+# Test -2: get pet by vet id success ------------------------------------------------------------
+def test_get_pets_by_vet_id(client, mocker):
+    mock_pet_db = mocker.patch("api.users.pet_db.stream")
+
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.id = "pet1"
+    mock_pet_doc.to_dict.return_value = {"Name": "Fluffy", "Type": "Dog"}
+
+    mock_health_doc = MagicMock()
+    mock_health_doc.to_dict.return_value = {"VetId": "12345"}
+
+    mock_pet_doc.reference.collection.return_value.stream.return_value = [mock_health_doc]
+
+    mock_pet_db.return_value = [mock_pet_doc]
+
+    response = client.get('/vets/12345/pets')
+    assert response.status_code == 200
+    assert response.get_json() == [{"id": "pet1", "Name": "Fluffy", "Type": "Dog"}]
+
+
+# Test -1: get pet by vet id failure (vet id not found) ------------------------------------------------------------
+def test_get_pets_by_vet_id_not_found(client, mocker):
+    mock_pet_db = mocker.patch("api.users.pet_db.stream")
+
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.id = "pet1"
+    mock_pet_doc.to_dict.return_value = {"Name": "Fluffy", "Type": "Dog"}
+
+    mock_health_doc = MagicMock()
+    mock_health_doc.to_dict.return_value = {"VetId": "99999"}  
+
+    mock_pet_doc.reference.collection.return_value.stream.return_value = [mock_health_doc]
+
+    mock_pet_db.return_value = [mock_pet_doc]
+
+    response = client.get('/vets/12345/pets')  
+    assert response.status_code == 404
+    assert response.get_json() == {"message": "No pets found for this vet."}
+
+
+# Test 0: get pet by vet id error ------------------------------------------------------------
+def test_get_pets_by_vet_id_error(client, mocker):
+    mock_pet_db = mocker.patch("api.users.pet_db.stream")
+    mock_pet_db.side_effect = Exception("Firestore error")  
+
+    response = client.get('/vets/12345/pets')  
+    assert response.status_code == 500
+    assert "error" in response.get_json()
+    assert response.get_json()["error"] == "Firestore error"
+ 
+
+# Test 1: create user with success ------------------------------------------------------------
 def test_create_user_success(client, mocker):
     user_data = {
         "FName": "John",
@@ -76,7 +127,63 @@ def test_create_user_email_duplication(client, mocker):
     mock_create_user.assert_called_once_with(email=user_data["Email"], password=user_data["Password"])
     
 
-# Test 4: update user with sucess ------------------------------------------------------------
+# Test 4: create user with error (no email or password) ------------------------------------------------------------
+def test_login_missing_email_or_password(client):
+    missing_email_data = {"Password": "securepassword123"}
+    response = client.post('/users/login', json=missing_email_data)
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "Email and Password are required"
+
+    missing_password_data = {"Email": "test@example.com"}
+    response = client.post('/users/login', json=missing_password_data)
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "Email and Password are required"
+
+
+# Test 5: create user with error (missing API key) ------------------------------------------------------------
+def test_login_missing_firebase_api_key(client, mocker):
+    mocker.patch("os.getenv", return_value=None)
+
+    valid_data = {"Email": "test@example.com", "Password": "securepassword123"}
+
+    response = client.post('/users/login', json=valid_data)
+    assert response.status_code == 500
+    assert response.get_json()["error"] == "API key not configured"
+
+
+# Test 6: create user with error (user not found) ------------------------------------------------------------
+def test_login_user_record_not_found(client, mocker):
+    mocker.patch("os.getenv", return_value="fake_firebase_api_key")
+
+    mock_requests_post = mocker.patch("requests.post")
+    mock_requests_post.return_value.status_code = 200
+    mock_requests_post.return_value.json.return_value = {
+        "idToken": "fakeIdToken",
+        "refreshToken": "fakeRefreshToken",
+        "expiresIn": "3600",
+        "localId": "user123"
+    }
+
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = False 
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    login_data = {
+        "Email": "test@example.com",
+        "Password": "securepassword123"
+    }
+
+    response = client.post('/users/login', json=login_data)
+
+    assert response.status_code == 404
+    assert response.get_json()["error"] == "User record not found"
+
+    mock_requests_post.assert_called_once()
+    mock_user_ref.assert_called_once_with("user123")
+
+
+# Test 7: update user with success ------------------------------------------------------------
 def test_update_user_success(client, mocker):
     user_id = "12345"
     update_data = {
@@ -133,8 +240,7 @@ def test_update_user_success(client, mocker):
     mock_quote.assert_called_once_with("userImages/12345.png", safe="")
 
     
-
-# Test 5: update user with error ------------------------------------------------------------
+# Test 8: update user with error ------------------------------------------------------------
 def test_update_user_not_found(client, mocker):
     user_id = "12345"
     update_data = {"FName": "Jane", "Location": "Boston"}
@@ -152,7 +258,7 @@ def test_update_user_not_found(client, mocker):
     mock_document.update.assert_not_called()
 
 
-# Test 6: delete user with sucess ------------------------------------------------------------
+# Test 9: delete user with sucess ------------------------------------------------------------
 def test_delete_user_success(client, mocker):
     user_id = "12345"
 
@@ -174,7 +280,7 @@ def test_delete_user_success(client, mocker):
     mock_document.delete.assert_called_once()
 
 
-# Test 7: delete user with error ------------------------------------------------------------
+# Test 10: delete user with error ------------------------------------------------------------
 def test_delete_user_not_found(client, mocker):
     user_id = "12345"
 
@@ -195,7 +301,7 @@ def test_delete_user_not_found(client, mocker):
     mock_document.delete.assert_not_called()
     
 
-# Test 8: Login with sucess ------------------------------------------------------------
+# Test 11: Login with sucess ------------------------------------------------------------
 def test_login_success(client, mocker):
     login_data = {
         "Email": "john.doe@example.com",
@@ -231,7 +337,7 @@ def test_login_success(client, mocker):
     assert response_data["refreshToken"] == "mock_refresh_token"
 
 
-# Test 9: Login with error (no user) ------------------------------------------------------------
+# Test 12: Login with error (no user) ------------------------------------------------------------
 def test_login_no_user(client, mocker):
     login_data = {
         "Email": "nonexistent@example.com",
@@ -252,7 +358,7 @@ def test_login_no_user(client, mocker):
     assert "EMAIL_NOT_FOUND" in response.get_json()["error"]
 
 
-# Test 10: Login with error (wrong password) ------------------------------------------------------------
+# Test 13: Login with error (wrong password) ------------------------------------------------------------
 def test_login_invalid_credentials(client, mocker):
     login_data = {
         "Email": "john.doe@example.com",
@@ -273,7 +379,7 @@ def test_login_invalid_credentials(client, mocker):
     assert "INVALID_PASSWORD" in response.get_json()["error"]
     
 
-# Test 11: Logout with success ------------------------------------------------------------
+# Test 14: Logout with success ------------------------------------------------------------
 def test_logout_success(client):
     with client.session_transaction() as session:
         session['user_id'] = "12345"
@@ -288,7 +394,7 @@ def test_logout_success(client):
         assert 'email' not in session
 
 
-# Test 12: connect vet with error (no vet) ------------------------------------------------------------
+# Test 15: connect vet with error (no vet) ------------------------------------------------------------
 def test_connect_vet_not_found(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
@@ -304,7 +410,7 @@ def test_connect_vet_not_found(client, mocker):
     mock_vet_ref.assert_called_once_with("vet123")
 
 
-# Test 13: connect vet error (wrong role) ------------------------------------------------------------
+# Test 16: connect vet error (wrong role) ------------------------------------------------------------
 def test_connect_vet_not_a_vet(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
@@ -321,7 +427,7 @@ def test_connect_vet_not_a_vet(client, mocker):
     mock_vet_ref.assert_called_once_with("vet123")
 
 
-# Test 14: connect vet error (missing health doc) ------------------------------------------------------------
+# Test 17: connect vet error (missing health doc) ------------------------------------------------------------
 def test_connect_vet_create_health_success(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
@@ -348,7 +454,7 @@ def test_connect_vet_create_health_success(client, mocker):
     mock_create_health.assert_called_once_with("pet456")
 
 
-# Test 15: connect vet error (health doc creation error) ------------------------------------------------------------
+# Test 18: connect vet error (health doc creation error) ------------------------------------------------------------
 def test_connect_vet_create_health_failure(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
@@ -373,7 +479,7 @@ def test_connect_vet_create_health_failure(client, mocker):
     mock_create_health.assert_called_once_with("pet456")
 
 
-# Test 16: connect vet with success ------------------------------------------------------------
+# Test 19: connect vet with success ------------------------------------------------------------
 def test_connect_vet_success(client, mocker):
     data = {"VetId": "vet123", "PetId": "pet456"}
 
@@ -402,3 +508,233 @@ def test_connect_vet_success(client, mocker):
     mock_vet_ref.return_value.update.assert_called_once_with({
         "PetId": firestore.ArrayUnion(["pet456"])
     })
+
+
+# Test 20: connect vet raise error ------------------------------------------------------------
+def test_connect_vet_error(client, mocker):
+    data = {"VetId": "vet123", "PetId": "pet456"}
+
+    mock_vet_ref = mocker.patch("api.users.user_db.document")
+    mock_vet_ref.side_effect = Exception("Simulated Firestore error")
+
+    response = client.put('/connect_vet/', json=data)
+
+    assert response.status_code == 500
+    assert "error" in response.get_json()
+    assert response.get_json()["error"] == "Simulated Firestore error"
+
+    mock_vet_ref.assert_called_once_with("vet123")
+
+
+# Test 21: get user by id success ------------------------------------------------------------
+def test_get_user_by_id_user_found(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = True  
+    mock_user_doc.id = "user123"  
+    mock_user_doc.to_dict.return_value = {
+        "FName": "John",
+        "LName": "Doe",
+        "Email": "john.doe@example.com",
+        "Role": "Owner"
+    }
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    response = client.get('/users/user123')
+
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "user123": {
+            "FName": "John",
+            "LName": "Doe",
+            "Email": "john.doe@example.com",
+            "Role": "Owner"
+        }
+    }
+
+    mock_user_ref.assert_called_once_with("user123")
+
+
+# Test 22: get user by id error ------------------------------------------------------------
+def test_get_user_by_id_user_not_found(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = False  
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    response = client.get('/users/user123')
+
+    assert response.status_code == 404
+    assert response.get_json() == {"error": "User not found"}
+
+    mock_user_ref.assert_called_once_with("user123")
+
+
+# Test 22: get multiple users by id success ------------------------------------------------------------
+def test_get_users_by_ids(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    
+    mock_user_doc1 = MagicMock()
+    mock_user_doc1.exists = True
+    mock_user_doc1.to_dict.return_value = {
+        "FName": "John",
+        "LName": "Doe",
+        "Email": "john.doe@example.com",
+        "Role": "Owner"
+    }
+    
+    mock_user_doc2 = MagicMock()
+    mock_user_doc2.exists = False  
+
+    def mock_document(user_id):
+        if user_id == "user123":
+            return MagicMock(get=MagicMock(return_value=mock_user_doc1))
+        elif user_id == "user456":
+            return MagicMock(get=MagicMock(return_value=mock_user_doc2))
+    
+    mock_user_ref.side_effect = mock_document
+
+    response = client.get('/users/ids?ids=user123,user456')
+
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "user123": {
+            "FName": "John",
+            "LName": "Doe",
+            "Email": "john.doe@example.com",
+            "Role": "Owner"
+        },
+        "user456": {"error": "User not found"}
+    }
+
+    mock_user_ref.assert_any_call("user123")
+    mock_user_ref.assert_any_call("user456")
+    assert mock_user_ref.call_count == 2
+
+
+# Test 23: get user with ver role by pet id success ------------------------------------------------------------
+def test_get_users_by_pet_id_users_found(client, mocker):
+    mock_user_db = mocker.patch("api.users.user_db")
+    
+    mock_user_doc = MagicMock()
+    mock_user_doc.id = "user123"
+    mock_user_doc.to_dict.return_value = {
+        "FName": "John",
+        "LName": "Doe",
+        "Email": "john.doe@example.com",
+        "Role": "Vet",
+        "PetId": ["pet456"]
+    }
+
+    mock_query = MagicMock()
+    mock_query.stream.return_value = [mock_user_doc]  
+
+    mock_user_db.where.return_value = mock_query
+    mock_query.where.return_value = mock_query
+
+    response = client.get('/users/petId/pet456')
+    
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "user123": {
+            "FName": "John",
+            "LName": "Doe",
+            "Email": "john.doe@example.com",
+            "Role": "Vet",
+            "PetId": ["pet456"]
+        }
+    }
+
+
+# Test 24: get all event by user owner success (has event) ------------------------------------------------------------
+def test_get_events_by_user_id_owner_with_events(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = True
+    mock_user_doc.to_dict.return_value = {"Role": "Owner"}
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    mock_pet_db = mocker.patch("api.users.pet_db.where")
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.id = "pet123"
+    mock_event_doc = MagicMock()
+    mock_event_doc.id = "event123"
+    mock_event_doc.to_dict.return_value = {"Name": "Vet Visit"}
+
+    mock_pet_doc.reference.collection.return_value.stream.return_value = [mock_event_doc]
+    mock_pet_db.return_value.stream.return_value = [mock_pet_doc]
+
+    response = client.get('/users/user123/events')
+
+    assert response.status_code == 200
+    assert response.get_json() == [{"Id": "event123", "Name": "Vet Visit", "PetId": "pet123"}]
+
+
+# Test 25: get all event by user owner success (no event) ------------------------------------------------------------
+def test_get_events_by_user_id_owner_without_events(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = True
+    mock_user_doc.to_dict.return_value = {"Role": "Owner"}
+
+    mock_pet_db = mocker.patch("api.users.pet_db.where")
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.id = "pet123"
+    mock_pet_doc.reference.collection.return_value.stream.return_value = []
+    mock_pet_db.return_value.stream.return_value = [mock_pet_doc]
+
+    response = client.get('/users/user123/events')
+
+    assert response.status_code == 200
+    assert response.get_json() == []
+
+
+# Test 26: get all event by user vet success ------------------------------------------------------------
+def test_get_events_by_user_id_non_owner_with_events(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = True
+    mock_user_doc.to_dict.return_value = {"Role": "Vet", "PetId": ["pet123"]}
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    mock_pet_db = mocker.patch("api.users.pet_db.document")
+    mock_event_doc = MagicMock()
+    mock_event_doc.id = "event123"
+    mock_event_doc.to_dict.return_value = {"Name": "Playtime"}
+
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.collection.return_value.stream.return_value = [mock_event_doc]
+    mock_pet_db.return_value = mock_pet_doc
+
+    response = client.get('/users/user123/events')
+
+    assert response.status_code == 200
+    assert response.get_json() == [
+        {"Id": "event123", "Name": "Playtime", "PetId": "pet123"}
+    ]
+
+
+# Test 27: get all reminder by user id success ------------------------------------------------------------
+def test_get_reminders_by_user_id_success_owner(client, mocker):
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = True
+    mock_user_doc.to_dict.return_value = {"Role": "Owner"}
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    mock_pet_db = mocker.patch("api.users.pet_db.where")
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.id = "pet123"
+    mock_reminder_doc = MagicMock()
+    mock_reminder_doc.id = "reminder123"
+    mock_reminder_doc.to_dict.return_value = {"Name": "Vaccination"}
+
+    mock_pet_doc.reference.collection.return_value.stream.return_value = [mock_reminder_doc]
+    mock_pet_db.return_value.stream.return_value = [mock_pet_doc]
+
+    response = client.get('/users/user123/reminders')
+
+    assert response.status_code == 200
+    assert response.get_json() == [
+        {"Id": "reminder123", "Name": "Vaccination", "PetId": "pet123"}
+    ]    
