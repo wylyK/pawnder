@@ -10,7 +10,7 @@ def client():
     app.testing = True
     return app.test_client()
 
-# Test 1: get reminder with sucess ------------------------------------------------------------
+# Test 1: get reminder with success ------------------------------------------------------------
 def test_get_reminders_by_petid_success(client, mocker):
     pet_id = "pet123"
     mock_reminders = [
@@ -47,7 +47,7 @@ def test_get_reminders_by_petid_not_found(client, mocker):
     assert "Pet not found" in response.get_json()["error"]
 
 
-# Test 3: get reminder with sucess ------------------------------------------------------------
+# Test 3: get reminder with success ------------------------------------------------------------
 def test_get_reminder_by_id_success(client, mocker):
     reminder_id = "reminder123"
     reminder_data = {"Name": "Vaccination Reminder", "Date": "2024-12-10"}
@@ -91,7 +91,7 @@ def test_get_reminder_by_id_not_found(client, mocker):
     assert "Reminder not found" in response.get_json()["error"]
     
 
-# Test 5: create reminder with sucess ------------------------------------------------------------
+# Test 5: create reminder with success ------------------------------------------------------------
 def test_create_reminder_success(client, mocker):
     pet_id = "pet123"
     reminder_data = {"Name": "Vaccination Reminder", "DateTime": "2024-12-10T10:00:00", "Description": "Get the annual vaccines."}
@@ -162,3 +162,56 @@ def test_delete_reminder_by_id_not_found(client, mocker):
     assert response.status_code == 404
     assert "Reminder not found" in response.get_json()["error"]
 
+
+# Test 9: delete multiple reminders success ------------------------------------------------------------
+def test_delete_multiple_reminders_success(client, mocker):
+    pet_id = "pet123"
+    reminder_id = "reminder123"
+
+    # Mock the reminder document
+    mock_reminder_doc = MagicMock(id=reminder_id)
+    mock_reminder_doc.exists = True  
+    mock_reminder_ref = MagicMock()
+    mock_reminder_ref.get.return_value = mock_reminder_doc
+    mock_reminder_ref.delete.return_value = None
+
+    # Mock the REMINDER subcollection
+    mock_reminder_collection = MagicMock()
+    mock_reminder_collection.document.return_value = mock_reminder_ref
+
+    # Mock the pet document reference
+    mock_pet_doc_ref = MagicMock(id=pet_id)
+    mock_pet_doc_ref.collection.return_value = mock_reminder_collection
+
+    mock_pet_db = mocker.patch("api.petReminder.pet_db.stream")
+    mock_pet_db.return_value = mock_pet_doc_ref
+
+    response = client.delete(
+        '/pets/reminders/delete',
+        json={"reminderIds": reminder_id}
+    )
+
+    assert response.status_code == 200
+
+
+def test_get_reminders_by_petid_exception(client, mocker):
+    pet_id = "pet123"
+
+    # Mock Firestore pet document
+    mock_pet_doc_ref = mocker.patch("api.petReminder.pet_db.document")
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.exists = True  # Simulate that the pet exists
+    mock_pet_doc_ref.return_value.get.return_value = mock_pet_doc
+
+    # Simulate an exception during `stream()` call
+    mock_reminder_collection = mock_pet_doc_ref.return_value.collection.return_value
+    mock_reminder_collection.stream.side_effect = Exception("Firestore error")
+
+    # Perform the GET request
+    response = client.get(f"/pets/{pet_id}/reminders")
+
+    # Assertions
+    assert response.status_code == 500
+    assert response.get_json() == {"error": "Firestore error"}
+    mock_pet_doc_ref.assert_called_once_with(pet_id)
+    mock_reminder_collection.stream.assert_called_once()
