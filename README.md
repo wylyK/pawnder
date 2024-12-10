@@ -6,6 +6,9 @@ Pawnder also has a unique social feature: Pet Tinder—a playful element that ma
 
 The goal of Pawnder is to eliminate the confusion and hassle often associated with managing pet care. With a clean, user-friendly interface and straightforward features, it ensures an enjoyable experience for both pet owners and vets, while keeping pets’ needs at the forefront.
 
+# Demo
+Link to our demo: [Pawnder](https://drive.google.com/file/d/1boloLyCnhHhj62U_65z99DMxEe1RRSGX/view?usp=drive_link)
+
 # Installation Instructions and Configuration
 
 ## [Development](./docs/development.md)
