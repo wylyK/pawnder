@@ -1,0 +1,27 @@
+.loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: 40%;
+    right: calc(50% - 200px);
+    font-size: 300%;
+    font-weight: bold;
+}
+
+@keyframes loader {
+    0% {background-position: 0%;}
+    50% {background-position: 50%;}
+    100% {background-position: 100%;}
+}
+
+.bar {
+    width: 400px;
+    height: 60px;
+    border-radius: 35px;
+    background: linear-gradient(90deg, var(--main-color1) 0%, var(--main-color2) 33.3%, var(--main-color1) 66.6%, var(--main-color1) 100%);
+    background-size: 200%;
+    animation: loader 4s infinite;
+}
