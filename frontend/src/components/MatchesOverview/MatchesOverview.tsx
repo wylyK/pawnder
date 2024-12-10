@@ -15,7 +15,8 @@ import MatchesPanel from "./MatchesPanel"
 import api from "../../../api";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/UserContext";
-import { User } from "@/share/type";
+import { useGetAllPetIdsByUserId } from "@/hooks/use-get-all-pet-ids-by-user-id";
+import { useMatch } from "@/hooks/use-match";
 
 export interface Pet {
   id: string;
@@ -28,7 +29,6 @@ export interface Pet {
   Tag?: string;
   UserId: string;
 }
-
 
 const MatchesOverview: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([])
@@ -43,9 +43,6 @@ const MatchesOverview: React.FC = () => {
     }
     router.push("/login");
   }, [user, router]);
-
-  // const userId = "xRcD1XgIZWgdxgY3bAXFK6V1DVq2";
-  const userId = (user as User).Id
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -68,9 +65,13 @@ const MatchesOverview: React.FC = () => {
 
   // User's pets
   const yourPets = React.useMemo(
-    () => pets.filter((pet) => pet.UserId === userId),
-    [pets, userId]
+    () => pets.filter((pet) => pet.UserId === user?.Id),
+    [pets, user]
   );
+
+  const { petIds } = useGetAllPetIdsByUserId();
+  const { sendRequest } = useMatch();
+
   // Pressing the match button sends a match request from yourPets[matchFor] to filteredPetsList[displayedIndex]
   const [matchFor, setMatchFor] = useState(0);
   const [allMatchedIds, setAllMatchedIds] = useState<string[]>([]);
@@ -83,7 +84,6 @@ const MatchesOverview: React.FC = () => {
       const fetchMatch = async (pet: Pet) => {
         try {
           const response = await api.get<string[]>(`/pets/${pet.id}/matches?status=matched`);
-          console.log("response for " + pet.id + " ");
           const matchedIds = response.data || [];
           everyMatchedIds = [...everyMatchedIds, ...matchedIds];
           
@@ -109,9 +109,8 @@ const MatchesOverview: React.FC = () => {
     fetchAllMatches();
   }, [yourPets]);
 
-  console.log("matches:" + [...allMatchedIds, ...allPendingIds]);
 
-  const filteredPetsList = pets.filter((pet) => pet.UserId != userId)
+  const filteredPetsList = pets.filter((pet) => pet.UserId != user?.Id)
                                .filter((pet) => [...allMatchedIds, ...allPendingIds].every((id) => pet.id != id))
                                .filter((pet) => filters.every(
                                 ({ type, value }) => {
@@ -164,30 +163,20 @@ const MatchesOverview: React.FC = () => {
     );
   };
 
-  // Sends a match request to the pet at displayedIndex in filteredPetList
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/pets/${yourPets[matchFor].Id}/matches`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          "myPetID": yourPets[matchFor].Id,
-          "PetId": filteredPetsList[displayedIndex].Id
-        })
-    });
-
-      if (response.ok) {
+  const handleSubmit = () => {  
+    if (!petIds) { return; }
+    sendRequest({
+      petId: petIds[matchFor],
+      otherPetId: filteredPetsList[displayedIndex].id,
+    },
+    {
+      onSuccess: () => {
         console.log("Success");
-      } else {
-        const errorData = await response.json();
-        console.log(errorData.error || "Failed to send request. Please try again.");
+      },
+      onError: (error) => {
+        console.log(error);
       }
-    } catch (err) {
-      console.error("Error Occurred When Trying Send Request:", err);
-    }
+    });
   };
 
   if (isLoading) {
@@ -208,15 +197,15 @@ const MatchesOverview: React.FC = () => {
         onSelect={(index) => { setMatchFor(index) }}
       />
       <div className={styles["slides"]}>
-        {filteredPetsList.map(({ Id, Name, Age, Breed, Avatar }, index) => (
+        {filteredPetsList.map(({Name, Age, Breed, Avatar }, index) => (
           <PetCard
-            key={Id}
+            key={index}
             className={`${styles["card"]} ${sliderIndex(index)}`}
             name={Name}
             breed={Breed}
             age={Age}
             tags={[]}
-            image={Avatar || ""}
+            image={Avatar || "/default_user.jpg"}
             handlePopup={() => { 
               const position = slidePosition(index);
               if (-3 < position && position < 3) slide(position)

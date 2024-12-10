@@ -1,5 +1,6 @@
 "use client";
 import styles from "./PetCard.module.css";
+import Image from "next/image";
 
 interface CardContent {
   id?: string,
@@ -23,7 +24,13 @@ const PetCard: React.FC<CardContent> = ({
 }) => {
   return (
     <div className={`${styles.card} ${className}`} onClick={handlePopup}>
-      <img src={image} alt={name} />
+      <Image
+        src={image}
+        alt={name}
+        width={150}
+        height={150}
+        className={styles.image}
+      />
       <div className={styles["tags-container"]}>
         {tags.map((tag, index) =>
           (<div key={index} className={styles["tag"]}>{tag}</div>))
