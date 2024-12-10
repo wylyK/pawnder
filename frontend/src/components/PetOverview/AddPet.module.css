@@ -23,7 +23,7 @@
   flex-direction: column;
   gap: 20px;
   scrollbar-width: thin;
-  scrollbar-color: auto; 
+  scrollbar-color: auto;
   overflow-y: scroll;
 }
 
@@ -45,7 +45,7 @@
 .container {
   display: flex;
   gap: 20px;
-  overflow-y: hidden; 
+  overflow-y: hidden;
 }
 
 .image-section {
@@ -75,7 +75,6 @@
   font-weight: bold;
   margin-top: 10px;
 }
-
 
 .scrollable {
   flex: 1;

@@ -214,8 +214,14 @@ def delete_pet_by_id(pet_id):
 
     if pet_doc.exists:
         try:
+            # Delete all subcollections (e.g., HEALTH)
+            health_subcollection = pet_ref.collection("HEALTH").stream()
+            for doc in health_subcollection:
+                doc.reference.delete()
+            
+            # Delete the pet document itself
             pet_ref.delete()
-            return jsonify({"message": f"Pet {pet_id} deleted successfully"}), 200
+            return jsonify({"message": f"Pet {pet_id} and all associated data deleted successfully"}), 200
         except Exception as e:
             return jsonify({"error": f"Error deleting pet profile: {str(e)}"}), 500
     else:
