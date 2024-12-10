@@ -1,0 +1,47 @@
+.filter-list {
+    font-size: 125%;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.filter {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background-color: var(--main-color3);
+    color: white;
+    height: 35px;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.breed {
+    background-color: var(--main-color3);
+}
+
+.age {
+    background-color: var(--main-color2);
+}
+
+.tag {
+    background-color: var(--main-color1);
+}
+
+.add {
+    background-color: var(--text-color);
+}
+
+.filter:hover {
+    transform: scale(1.1);
+}
+
+.cross-icon:hover,
+.filter.add:hover {
+    cursor: pointer;
+}
