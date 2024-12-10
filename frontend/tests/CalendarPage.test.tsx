@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import CalendarPage from '../src/components/calendar/CalendarPage'; // Adjust path if needed
 import { useRouter } from 'next/navigation'; // Mock useRouter hook
 import UserContext from '@/context/UserContext'; // Import UserContext
@@ -10,6 +10,15 @@ import { Role } from "../src/share/type";
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
+
+const mockUser = {
+    Id: "1",
+    FName: "John",
+    LName: "Doe",
+    Email: "john.doe@example.com",
+    Location: "New York",
+    Role: Role.Owner,
+  };
 
 describe('CalendarPage', () => {
   const mockRouterPush = jest.fn();
@@ -25,14 +34,6 @@ describe('CalendarPage', () => {
 
     // Mock user context with a sample user
     const mockSetUser = jest.fn();
-    const mockUser = {
-        Id: "1",
-        FName: "John",
-        LName: "Doe",
-        Email: "john.doe@example.com",
-        Location: "New York",
-        Role: Role.Owner,
-      };
 
     render(
       <QueryClientProvider client={queryClient}>
