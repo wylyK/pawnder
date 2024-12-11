@@ -10,6 +10,18 @@ The goal of Pawnder is to eliminate the confusion and hassle often associated wi
 ## Link to our demo: [Pawnder](https://drive.google.com/file/d/1boloLyCnhHhj62U_65z99DMxEe1RRSGX/view?usp=drive_link)
 ![image](https://github.com/user-attachments/assets/5bc4d238-e406-4909-8b1c-4db1833c1e22)
 
+
+# Tech Stack 
+- Frontend: React.js with TypeScript, Next.js
+- Backend: Flask (Python)
+- Database: Google Firestore
+- Authentication: Firebase Authentication
+- Storage: Firebase Storage
+### Other Tools:
+- React Query for state management
+- Jest for frontend testing
+- Pytest for backend testing
+
 # Installation Instructions and Configuration
 
 ## [Development](./docs/development.md)
