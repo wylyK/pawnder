@@ -42,5 +42,24 @@
 - Vet Home Page(Pet Overview + Pet Profile)
   
 # Trung Nguyen
+## Backend
+- Implement pet model, event model, reminder model, health model
+- Develop endpoints for CRUD operations on pets
+- Create API endpoints to get events by pet, get events by status, create event for vet, update event, and delete event
+- Create API endpoints to get reminders, create reminder, update reminder, delete reminder
+
+## Frontend
+- Integrate Calendar Feature
+- Add filter events on Calendar by Pet
+- Integrate Reminder Feature
+- Designe a form allowing pet owners to either create new reminders or retrieve existing events directly from the calendar
+- Integrate User Profile Feature
+
+## CI/CD
+- Configured a GitHub Actions workflow to automate code quality checks, ensuring error-free code before integration
+
+## Documents
+- Authored a comprehensive development document to assist team members in setting up the codebase
+- Included step-by-step instructions on the processes to follow before merging code into the main branch
 
 # Willy Chen
