@@ -68,8 +68,8 @@
 - Designed the UI for Reminders and implemented a delete reminders function
 - Designed the UI for Login and Signup pages
 - Designed an animated loading page
-- Organized the Codebase by breaking down React omponents down into smaller resuable components
-- Created the matchmaking page, fetching a list of pets that the user's pets can potentially match with,
+- Organized the Codebase by breaking down React omponents down into smaller reusable components
+- Created the matchmaking page that fetches from the db a list of pets that the user's pets can potentially match with,
   a list of incoming match requests, and a list of pets already matched;
-  And implemented matching function, allowing the user to send match requests to another user's pet
+  And implemented match/accept/reject/remove functions, allowing the user to send match requests to another user's pet, accept/reject an incoming request, and remove a current match
 - Implemented filtering matchmaker, allowing the user to filter the rendered list of pets by breed, age, and/or tags.
