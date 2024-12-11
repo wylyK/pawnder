@@ -258,4 +258,6 @@ Next, run `git push origin ${YOUR_BRANCH}`
 
 ### Frontend
 
+- Go to frontend folder `cd frontend`
+- In tsconfig.js, change to "jsx": "react-jsx" (the original value is "preserve"). - - Each time you run `npm run dev`, the value will be changed back to "preserve". So, remember to change it to "react-jsx" when testing.
 - Move into the frontend folder and run `npx jest tests/components`
