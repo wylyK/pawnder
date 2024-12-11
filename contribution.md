@@ -3,7 +3,7 @@
 - Set up Flask for backend
 - Connect Firebase with Flask
 - Create CRUD API endpoint for user
-- Create API endpoint for matching pets, unmatch pet, get all pending match request, accept or reject a request
+- Create API endpoint for matching pets, un-match pet, get all pending match request, accept or reject a request
 - Create data model for Match object for matching pet
 - Connect with Firebase Storage
 - Add endpoint to allow user to upload avatar picture for pet and user profile
@@ -14,7 +14,7 @@
 - Create basic skeleton for Home Page
 - Create User Profile page
 - Set up frontend folder structure with Next.js
-- Hook up the frontend for login signup page to call endpoint from backend
+- Hook up the frontend for login sign up page to call endpoint from backend
 - Create UserContext to hold the currently authenticated user
 - Create a button in Pet Profile and user Profile to allow uploading avatar picture. Hook up with backend to call the endpoint and store the picture in Firebase Storage
   
@@ -30,17 +30,20 @@
 - Updated CRUD API endpoints for pet health
 
 ## Testing
-- Added 62 tests for tesing backend endpoints (go over all functions)
+- Added 62 tests for testing backend endpoints (go over all functions)
 - Added all frontend tests 
   
 # Sowrathi Somasundaram
 ## Frontend
-- Pet Owner Landing/Home Page
-- Pet Overview: List all pets that the ownder has
-- Pet Profile: Show all detail for a particular pet
-- Add Pet: Form to create a new pet and integrate with backend
-- Calendar: Display calendat with event
-- Vet Home Page(Pet Overview + Pet Profile)
+- Designed UI and integrated backend for:
+- - Pet Owner Landing/Home Page
+- - Pet Profile: Display/edit/delete details for a particular pet
+- - Display/edit/delete Heath Records in pet profile
+- - Pet Overview: Displays all the pets of a user (owner/vet)
+- - Add Pet feature - Allows user to create new pet
+- Calendar: Display calendar with event
+- Vet Home Page(Pet Overview + Pet Profile features from above)
+- Integration of different Homepages with Authentication(login/sign up)
   
 # Trung Nguyen
 ## Backend
@@ -53,7 +56,7 @@
 - Integrate Calendar Feature
 - Add filter events on Calendar by Pet
 - Integrate Reminder Feature
-- Designe a form allowing pet owners to either create new reminders or retrieve existing events directly from the calendar
+- Design a form allowing pet owners to either create new reminders or retrieve existing events directly from the calendar
 - Integrate User Profile Feature
 
 ## CI/CD
@@ -67,7 +70,7 @@
 
 ## Frontend
 - Designed the UI for Reminders and implemented a delete reminders function
-- Designed the UI for Login and Signup pages
+- Designed the UI for Login and Sign up pages
 - Designed an animated loading page
 - Organized the Codebase by breaking down React components down into smaller reusable components
 - Created the matchmaking page that fetches from the db a list of pets that the user's pets can potentially match with,
