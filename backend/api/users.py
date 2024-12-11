@@ -278,7 +278,7 @@ def get_reminders_by_user_id(user_id):
                 reminder_data['PetId'] = pet_id
                 reminders.append(reminder_data)
 
-        return jsonify(reminders),
+        return jsonify(reminders), 200
 
 # GET all petids by userId
 @users_api.get('/users/<user_id>/pets')

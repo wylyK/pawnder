@@ -738,3 +738,53 @@ def test_get_reminders_by_user_id_success_owner(client, mocker):
     assert response.get_json() == [
         {"Id": "reminder123", "Name": "Vaccination", "PetId": "pet123"}
     ]    
+
+
+# Test 28: get all reminder by user vet id success ------------------------------------------------------------
+def test_get_reminders_by_user_id_success_non_owner(client, mocker):
+    # Mock Firestore user reference
+    mock_user_ref = mocker.patch("api.users.user_db.document")
+    mock_user_doc = MagicMock()
+    mock_user_doc.exists = True
+    mock_user_doc.to_dict.return_value = {
+        "Role": "Vet",  # Non-owner role
+        "PetId": ["pet123", "pet456"]
+    }
+    mock_user_ref.return_value.get.return_value = mock_user_doc
+
+    # Mock Firestore pet document reference and REMINDER subcollection
+    mock_pet_db = mocker.patch("api.users.pet_db.document")
+    
+    # Mock reminders for pet123
+    mock_reminder_doc1 = MagicMock()
+    mock_reminder_doc1.id = "reminder123"
+    mock_reminder_doc1.to_dict.return_value = {"Name": "Vaccination"}
+    mock_pet_doc1 = MagicMock()
+    mock_pet_doc1.collection.return_value.stream.return_value = [mock_reminder_doc1]
+
+    # Mock reminders for pet456
+    mock_reminder_doc2 = MagicMock()
+    mock_reminder_doc2.id = "reminder456"
+    mock_reminder_doc2.to_dict.return_value = {"Name": "Check-up"}
+    mock_pet_doc2 = MagicMock()
+    mock_pet_doc2.collection.return_value.stream.return_value = [mock_reminder_doc2]
+
+    # Configure pet_db.document to return different pet documents
+    def mock_document(pet_id):
+        if pet_id == "pet123":
+            return mock_pet_doc1
+        elif pet_id == "pet456":
+            return mock_pet_doc2
+        return MagicMock()
+
+    mock_pet_db.side_effect = mock_document
+
+    # Perform the GET request
+    response = client.get('/users/user123/reminders')
+
+    # Assertions
+    assert response.status_code == 200
+    assert response.get_json() == [
+        {"Id": "reminder123", "Name": "Vaccination", "PetId": "pet123"},
+        {"Id": "reminder456", "Name": "Check-up", "PetId": "pet456"}
+    ]

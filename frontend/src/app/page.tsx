@@ -4,9 +4,11 @@
 import React, { useEffect } from "react";
 import HomePage from "../components/Home/Home";
 import VetHomePage from "../components/VetPage/VetHomePage"; // Import VetHomePage
+import LoadingScreen from "../components/LoadingScreen/LoadingScreen" // Import Loading Screen
 import { useAuth } from "@/context/UserContext"; // Import authentication context
 import { useRouter } from "next/navigation";
 import "./globals.css";
+
 
 const Page: React.FC = () => {
   const { user } = useAuth(); // Get user details from context
@@ -19,7 +21,7 @@ const Page: React.FC = () => {
   }, [user, router]);
 
   if (!user) {
-    return <div>Loading...</div>; // Show a loading state while waiting for authentication
+    return <LoadingScreen/>; // Show a loading state while waiting for authentication
   }
 
   return (

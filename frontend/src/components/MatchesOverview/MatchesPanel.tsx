@@ -3,38 +3,26 @@ import styles from "./MatchesPanel.module.css"
 import PanelEntryPopup, { PopupType } from "./PanelEntryPopup"
 import api from "../../../api";
 import { MdOutlineArrowLeft } from "react-icons/md";
-import { } from "@/share/type";
+import { Pet } from "./MatchesOverview";
 
-export interface Pet {
-    id: string;
-    Name: string;
-    Breed: string;
-    Type: string;
-    Age: number;
-    Avatar?: string;
-    Description?: string;
-    Tag?: string;
-    UserId: string;
-  }
-
-interface PanelProps {
+export interface PanelProps {
     matchForIndex: number
     yourPets: Pet[]
     pets: Pet[]
 }
 
-  interface PetPair {
+export interface PetPair {
     matePet: Pet
     userPet: Pet
 }
 
-interface Match {
+export interface Match {
     pair: PetPair
     sender: string
     recipient: string
 }
 
-interface Popup {
+export interface Popup {
     pair: PetPair | null
     popupType: PopupType
 }
@@ -74,7 +62,7 @@ const MatchesPanel: React.FC<PanelProps> = ({ matchForIndex, yourPets, pets }) =
                 const matchIds = response.data || []
                 console.log("matchIds: " + matchIds);
                 const newPawMates = pets.filter((pet) => matchIds.includes(pet.id))
-                                        .map((pet) => { return { 
+                                       .map((pet) => { return { 
                                                         pair: { matePet: pet, userPet: yourPets[matchForIndex] },
                                                         sender: pet.UserId,
                                                         recipient: yourPets[matchForIndex].UserId
@@ -152,4 +140,3 @@ const MatchesPanel: React.FC<PanelProps> = ({ matchForIndex, yourPets, pets }) =
 }
 
 export default MatchesPanel
-export type { PetPair }

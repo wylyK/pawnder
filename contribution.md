@@ -22,14 +22,55 @@
 - Add 23 tests for testing backend endpoints raising test coverage by 20%
   
 # Anh Pham
+## Backend
+- Updated CRUD API endpoints for user (after changing database schema and model)
+- User model
+- User login/logout
+- Connect Vet and Pet function 
+- Updated CRUD API endpoints for pet health
+
+## Testing
+- Added 62 tests for tesing backend endpoints (go over all functions)
+- Added all frontend tests 
+  
 # Sowrathi Somasundaram
-- Pet Owner Landing/Home Page Frontend
-- Pet Overview Feature
-- Pet Profile Feature
-- Add Pet Feature
-- Calendar Frontend
+## Frontend
+- Pet Owner Landing/Home Page
+- Pet Overview: List all pets that the ownder has
+- Pet Profile: Show all detail for a particular pet
+- Add Pet: Form to create a new pet and integrate with backend
+- Calendar: Display calendat with event
 - Vet Home Page(Pet Overview + Pet Profile)
   
 # Trung Nguyen
+## Backend
+- Implement pet model, event model, reminder model, health model
+- Develop endpoints for CRUD operations on pets
+- Create API endpoints to get events by pet, get events by status, create event for vet, update event, and delete event
+- Create API endpoints to get reminders, create reminder, update reminder, delete reminder
+
+## Frontend
+- Integrate Calendar Feature
+- Add filter events on Calendar by Pet
+- Integrate Reminder Feature
+- Designe a form allowing pet owners to either create new reminders or retrieve existing events directly from the calendar
+- Integrate User Profile Feature
+
+## CI/CD
+- Configured a GitHub Actions workflow to automate code quality checks, ensuring error-free code before integration
+
+## Documents
+- Authored a comprehensive development document to assist team members in setting up the codebase
+- Included step-by-step instructions on the processes to follow before merging code into the main branch
 
 # Willy Chen
+
+## Frontend
+- Designed the UI for Reminders and implemented a delete reminders function
+- Designed the UI for Login and Signup pages
+- Designed an animated loading page
+- Organized the Codebase by breaking down React components down into smaller reusable components
+- Created the matchmaking page that fetches from the db a list of pets that the user's pets can potentially match with,
+  a list of incoming match requests, and a list of pets already matched;
+  And implemented match/accept/reject/remove functions, allowing the user to send match requests to another user's pet, accept/reject an incoming request, and remove a current match
+- Implemented filtering in matchmaker, allowing the user to filter the rendered list of pets by breed, age, and/or tags.

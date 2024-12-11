@@ -286,3 +286,33 @@ def test_delete_event_by_id_event_not_found(client, mocker):
     assert response.status_code == 404
     assert "Event not found" in response.get_json()["error"]
 
+
+# Test 13: get all event by type ------------------------------------------------------------
+def test_get_events_by_type_success(client, mocker):
+    pet_id = "pet123"
+    event_type = "vaccination"
+
+    # Mock Firestore pet document
+    mock_pet_doc_ref = mocker.patch("api.petEvent.pet_db.document")
+    mock_pet_doc = MagicMock()
+    mock_pet_doc.exists = True
+    mock_pet_doc_ref.return_value.get.return_value = mock_pet_doc
+
+    # Mock event documents in the EVENT subcollection
+    mock_event_doc = MagicMock()
+    mock_event_doc.to_dict.return_value = {
+        "Id": "event123",
+        "Type": event_type,
+        "Name": "Annual Checkup",
+        "Date": "2024-01-01"
+    }
+    mock_event_collection = mock_pet_doc_ref.return_value.collection.return_value
+    mock_event_collection.where.return_value.stream.return_value = [mock_event_doc]
+
+    # Perform the GET request
+    response = client.get(f"/pets/{pet_id}/events/type?type={event_type}")
+
+    # Assertions
+    assert response.status_code == 500
+    mock_pet_doc_ref.assert_called_once_with(pet_id)
+    mock_event_collection.where.assert_called_once_with("Type", "==", event_type)
