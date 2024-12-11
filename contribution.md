@@ -34,11 +34,12 @@
 - Added all frontend tests 
   
 # Sowrathi Somasundaram
-- Pet Owner Landing/Home Page Frontend
-- Pet Overview Feature
-- Pet Profile Feature
-- Add Pet Feature
-- Calendar Frontend
+## Frontend
+- Pet Owner Landing/Home Page
+- Pet Overview: List all pets that the ownder has
+- Pet Profile: Show all detail for a particular pet
+- Add Pet: Form to create a new pet and integrate with backend
+- Calendar: Display calendat with event
 - Vet Home Page(Pet Overview + Pet Profile)
   
 # Trung Nguyen
