@@ -22,6 +22,26 @@ This app uses `pip` for backend development. To install dependencies, go the the
 pip install -r requirements.txt
 ```
 
+## Setting Up Environment Variables
+
+To ensure the app works correctly, you must configure .env files for both the frontend and backend. These files provide the necessary environment variables.
+
+### Frontend and Backend .env Files
+
+In the frontend and backend directories, create .env files and add the content from the .env file in the respective directories.
+
+`https://drive.google.com/drive/folders/1YbB_pWQInPr7gTW5FliuprQDy7g_-TJE?usp=drive_link`
+
+This sets the backend API URL for the frontend during development.
+Ensure the file pawnder-firebase-adminsdk.json (used by GOOGLE_APPLICATION_CREDENTIALS) is placed in the backend directory. This file is critical for Firebase operations.
+
+## Login Credentials for Testing
+
+To test the app, use the following login credentials:
+
+Pet Owner login: `testuser@gmail.com` / `123456`
+Vet login: `vet@gmail.com` / `123asd`
+
 ## Setup backend
 
 This project uses Flask for the backend. You need to create a virtual environment to manage dependencies and run the backend.

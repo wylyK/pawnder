@@ -1,14 +1,15 @@
-### Backend
+## Backend
+- Go into backend folder `cd backend`
+- Run test
+  - Mac: `PYTHONPATH=$(pwd) pytest tests` 
+  - Window `$env:PYTHONPATH = (Get-Location).Path; pytest` 
+- After running the test you will see this
+  ![image](https://github.com/user-attachments/assets/3ce7fbe6-7669-4f93-ae36-63fc4a2dff01)
 
-- Move into the backend folder and run `PYTHONPATH=$(pwd) pytest tests` (for Mac)
-- Move into backend and run `$env:PYTHONPATH = (Get-Location).Path; pytest` (for Window powershell)
-- This command will run all current tests cases
-- As of now, there are 6 different test files correspond to 6 API files
-- The tests folder is located in backend folder
-
-### Frontend
-
-- Move into the frontend folder. The tests folder (for frontend) is located in frontend folder (if you want to look at them).
+## Frontend
+- Go to frontend folder `cd frontend`
 - In tsconfig.js, change to "jsx": "react-jsx" (the original value is "preserve"). - - Each time you run `npm run dev`, the value will be changed back to "preserve". So, remember to change it to "react-jsx" when testing.
-- Run `npx jest tests`
+- Run test `npx jest tests`
+- After running test you will see this
+![image](https://github.com/user-attachments/assets/af6dded9-4657-46e7-b8d7-cb8b10237177)
 
