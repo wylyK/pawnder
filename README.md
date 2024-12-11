@@ -6,6 +6,17 @@ Pawnder also has a unique social feature: Pet Tinder—a playful element that ma
 
 The goal of Pawnder is to eliminate the confusion and hassle often associated with managing pet care. With a clean, user-friendly interface and straightforward features, it ensures an enjoyable experience for both pet owners and vets, while keeping pets’ needs at the forefront.
 
+# Tech Stack 
+- Frontend: React.js with TypeScript, Next.js
+- Backend: Flask (Python)
+- Database: Google Firestore
+- Authentication: Firebase Authentication
+- Storage: Firebase Storage
+### Other Tools:
+- React Query for state management
+- Jest for frontend testing
+- Pytest for backend testing
+
 # Installation Instructions and Configuration
 
 ## [Development](./docs/development.md)
