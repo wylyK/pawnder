@@ -22,6 +22,17 @@
 - Add 23 tests for testing backend endpoints raising test coverage by 20%
   
 # Anh Pham
+## Backend
+- Updated CRUD API endpoints for user (after changing database schema and model)
+- User model
+- User login/logout
+- Connect Vet and Pet function 
+- Updated CRUD API endpoints for pet health
+
+## Testing
+- Added 62 tests for tesing backend endpoints (go over all functions)
+- Added all frontend tests 
+  
 # Sowrathi Somasundaram
 - Pet Owner Landing/Home Page Frontend
 - Pet Overview Feature
